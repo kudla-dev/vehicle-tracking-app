@@ -6,4 +6,8 @@ plugins {
     alias(libs.plugins.composeMultiplatform) apply false
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
+    alias(libs.plugins.googleKsp) apply false
+    alias(libs.plugins.jetbrains.kotlin.serialization)
+    alias(libs.plugins.ktorfit)
+
 }

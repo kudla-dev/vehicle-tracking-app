@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.googleKsp)
 }
 
 kotlin {
@@ -33,16 +34,34 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+
+            implementation(libs.bundles.koin.android)
+            implementation(libs.ktor.client.android)
         }
         commonMain.dependencies {
+            plugins.apply(libs.plugins.jetbrains.kotlin.serialization.get().pluginId)
+
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material)
+            implementation(compose.material3)
+            implementation(compose.materialIconsExtended)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
+
+            implementation(libs.bundles.koin)
+            implementation(libs.bundles.ktor)
+            implementation(libs.bundles.datastore)
+            implementation(libs.bundles.coil)
+
+
+            implementation(libs.navigation.compose)
+
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
     }
 }
