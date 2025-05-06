@@ -4,6 +4,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.toUpperCase
+import cz.kudladev.vehicletracking.auth.data.models.UserResponse
 
 data class User(
     val firstName: String,
@@ -30,5 +32,26 @@ enum class Role(
         value = "ADMIN",
         displayName = "Admin",
         icon = Icons.Default.Shield
+    )
+}
+
+fun String.toRole(): Role {
+    return when (this.uppercase()) {
+        Role.USER.value -> Role.USER
+        Role.ADMIN.value -> Role.ADMIN
+        else -> throw IllegalArgumentException("Unknown role: $this")
+    }
+}
+
+fun UserResponse.toUser(): User {
+    return User(
+        firstName = firstName,
+        lastName = lastName,
+        fullName = "$firstName $lastName",
+        email = email,
+        phoneNumber = phoneNumber,
+        role = role.toRole(),
+        maximumDistance = maximumDistance,
+        overallDistance = overallDistance
     )
 }

@@ -35,7 +35,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import cz.kudladev.vehicletracking.core.presentation.TextField
+import cz.kudladev.vehicletracking.core.presentation.components.TextField
 
 @Composable
 fun PasswordTextField(

@@ -1,4 +1,4 @@
-package cz.kudladev.vehicletracking.core.presentation
+package cz.kudladev.vehicletracking.core.presentation.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource

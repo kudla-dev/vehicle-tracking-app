@@ -3,6 +3,7 @@ package cz.kudladev.vehicletracking.auth.presentation.register
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.kudladev.vehicletracking.auth.domain.AuthRepository
 import cz.kudladev.vehicletracking.auth.domain.use_cases.EmailValidation
 import cz.kudladev.vehicletracking.auth.domain.use_cases.FirstNameValidation
 import cz.kudladev.vehicletracking.auth.domain.use_cases.LastNameValidation
@@ -11,9 +12,12 @@ import cz.kudladev.vehicletracking.auth.domain.use_cases.PasswordValidation
 import cz.kudladev.vehicletracking.auth.domain.use_cases.PhoneNumberValidation
 import cz.kudladev.vehicletracking.auth.presentation.register.RegisterScreenAction
 import cz.kudladev.vehicletracking.auth.presentation.register.RegisterScreenState
+import cz.kudladev.vehicletracking.network.onError
+import cz.kudladev.vehicletracking.network.onSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class RegisterScreenViewModel(
     private val emailValidation: EmailValidation,
@@ -21,7 +25,8 @@ class RegisterScreenViewModel(
     private val lastNameValidation: LastNameValidation,
     private val passwordValidation: PasswordValidation,
     private val phoneNumberValidation: PhoneNumberValidation,
-    private val passwordConfirmValidation: PasswordConfirmValidation
+    private val passwordConfirmValidation: PasswordConfirmValidation,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(RegisterScreenState())
@@ -71,7 +76,15 @@ class RegisterScreenViewModel(
                 ) }
             }
             RegisterScreenAction.OnRegister -> {
-                validate()
+                if (validate()) {
+                    register(
+                        email = _state.value.email.trim(),
+                        firstName = _state.value.firstName.trim(),
+                        lastName = _state.value.lastName.trim(),
+                        password = _state.value.password,
+                        phoneNumber = _state.value.phoneNumber
+                    )
+                }
             }
 
         }
@@ -107,7 +120,7 @@ class RegisterScreenViewModel(
             eraseErrors()
         }
 
-        return hasError
+        return !hasError
     }
 
     private fun eraseErrors(){
@@ -121,5 +134,36 @@ class RegisterScreenViewModel(
         ) }
     }
 
+    private fun register(
+        email: String,
+        firstName: String,
+        lastName: String,
+        password: String,
+        phoneNumber: String
+    ) = viewModelScope.launch {
+        _state.update { it.copy(
+            registrationProcess = RegistrationProcess.Loading
+        ) }
+        authRepository
+            .register(
+                email = email,
+                firstName = firstName,
+                lastName = lastName,
+                password = password,
+                phoneNumber = phoneNumber
+            )
+            .onSuccess{ response ->
+                _state.update { it.copy(
+                    registrationProcess = RegistrationProcess.Success
+                ) }
+                println("Registration success: $response")
+            }
+            .onError { error ->
+                _state.update { it.copy(
+                    registrationProcess = RegistrationProcess.Error(error)
+                ) }
+                println("Registration error: $error")
+            }
+    }
 
 }

@@ -3,7 +3,6 @@ package cz.kudladev.vehicletracking.auth.presentation.login
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
@@ -36,11 +35,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cz.kudladev.vehicletracking.auth.presentation.register.RegisterScreenAction
-import cz.kudladev.vehicletracking.core.presentation.BackButton
-import cz.kudladev.vehicletracking.core.presentation.KeyboardClearFocus
-import cz.kudladev.vehicletracking.core.presentation.TextField
-import cz.kudladev.vehicletracking.core.presentation.TopAppBar
+import cz.kudladev.vehicletracking.core.presentation.components.BackButton
+import cz.kudladev.vehicletracking.core.presentation.components.KeyboardClearFocus
+import cz.kudladev.vehicletracking.core.presentation.components.TextField
+import cz.kudladev.vehicletracking.core.presentation.components.TopAppBar
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

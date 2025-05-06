@@ -1,5 +1,6 @@
 package cz.kudladev.vehicletracking.auth.presentation.register
 
+import StackedSnackbarHost
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,10 +25,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
@@ -37,11 +37,12 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.kudladev.vehicletracking.auth.presentation.register.components.PasswordTextField
-import cz.kudladev.vehicletracking.core.presentation.BackButton
-import cz.kudladev.vehicletracking.core.presentation.KeyboardClearFocus
-import cz.kudladev.vehicletracking.core.presentation.TextField
-import cz.kudladev.vehicletracking.core.presentation.TopAppBar
+import cz.kudladev.vehicletracking.core.presentation.components.BackButton
+import cz.kudladev.vehicletracking.core.presentation.components.KeyboardClearFocus
+import cz.kudladev.vehicletracking.core.presentation.components.TextField
+import cz.kudladev.vehicletracking.core.presentation.components.TopAppBar
 import org.koin.compose.viewmodel.koinViewModel
+import rememberStackedSnackbarHostState
 
 @Composable
 fun RegisterScreenRoot(
@@ -72,7 +73,38 @@ private fun RegisterScreen(
 
     val focusManager = LocalFocusManager.current
 
-    val focusRequester = remember { FocusRequester() }
+    val stackedSnackBarHostState = rememberStackedSnackbarHostState(
+        maxStack = 1,
+        animation = StackedSnackbarAnimation.Slide
+    )
+
+    LaunchedEffect(state.registrationProcess) {
+        when (state.registrationProcess){
+            is RegistrationProcess.Error -> {
+                stackedSnackBarHostState.showErrorSnackbar(
+                    title = "Registration failed",
+                    description = state.registrationProcess.message.message,
+                    duration = StackedSnackbarDuration.Short,
+
+                )
+            }
+            RegistrationProcess.Idle -> {}
+            RegistrationProcess.Loading -> {
+                stackedSnackBarHostState.showInfoSnackbar(
+                    title = "Registering",
+                    description = "Please wait...",
+                    duration = StackedSnackbarDuration.Short
+                )
+            }
+            RegistrationProcess.Success -> {
+                stackedSnackBarHostState.showSuccessSnackbar(
+                    title = "Registration successful",
+                    description = "You can now log in",
+                )
+                onRegisterConfirmed()
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -90,6 +122,7 @@ private fun RegisterScreen(
                 scrollBehavior = scrollBehavior
             )
         },
+        snackbarHost = { StackedSnackbarHost(hostState = stackedSnackBarHostState)  },
         modifier = Modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection)
             .imePadding()
@@ -104,9 +137,7 @@ private fun RegisterScreen(
                     modifier = Modifier.widthIn(500.dp, 750.dp).padding(horizontal = 8.dp),
                     value = state.firstName,
                     onValueChange = {
-                        if (!it.any { it.isWhitespace() }){
-                            onAction(RegisterScreenAction.OnFirstNameChanged(it))
-                        }
+                        onAction(RegisterScreenAction.OnFirstNameChanged(it))
                     },
                     label = {
                         Text(
@@ -133,9 +164,7 @@ private fun RegisterScreen(
                     modifier = Modifier.widthIn(500.dp, 750.dp).padding(horizontal = 8.dp),
                     value = state.lastName,
                     onValueChange = {
-                        if (!it.any { it.isWhitespace() }){
-                            onAction(RegisterScreenAction.OnLastNameChanged(it))
-                        }
+                        onAction(RegisterScreenAction.OnLastNameChanged(it))
                     },
                     label = {
                         Text(
@@ -162,9 +191,7 @@ private fun RegisterScreen(
                     modifier = Modifier.widthIn(500.dp, 750.dp).padding(horizontal = 8.dp),
                     value = state.email,
                     onValueChange = {
-                        if (!it.any { it.isWhitespace() }){
-                            onAction(RegisterScreenAction.OnEmailChanged(it))
-                        }
+                        onAction(RegisterScreenAction.OnEmailChanged(it))
                     },
                     label = {
                         Text(
@@ -192,9 +219,7 @@ private fun RegisterScreen(
                     modifier = Modifier.widthIn(500.dp, 750.dp).padding(horizontal = 8.dp),
                     value = state.phoneNumber,
                     onValueChange = {
-                        if (!it.any { it.isWhitespace() }){
-                            onAction(RegisterScreenAction.OnPhoneNumberChanged(it))
-                        }
+                        onAction(RegisterScreenAction.OnPhoneNumberChanged(it))
                     },
                     label = {
                         Text(
@@ -272,7 +297,15 @@ private fun RegisterScreen(
                     keyboardActions = KeyboardActions(
                         onDone = {
                             focusManager.clearFocus()
-                            onAction(RegisterScreenAction.OnRegister)
+                            if (state.registrationProcess !is RegistrationProcess.Loading){
+                                onAction(RegisterScreenAction.OnRegister)
+                            } else {
+                                stackedSnackBarHostState.showInfoSnackbar(
+                                    title = "Registering",
+                                    description = "Please wait...",
+                                    duration = StackedSnackbarDuration.Short
+                                )
+                            }
                         }
                     ),
                 )
@@ -284,8 +317,16 @@ private fun RegisterScreen(
                 ) {
                     Button(
                         onClick = {
-
-                            onAction(RegisterScreenAction.OnRegister)
+                            focusManager.clearFocus()
+                            if (state.registrationProcess !is RegistrationProcess.Loading){
+                                onAction(RegisterScreenAction.OnRegister)
+                            } else {
+                                stackedSnackBarHostState.showInfoSnackbar(
+                                    title = "Registering",
+                                    description = "Please wait...",
+                                    duration = StackedSnackbarDuration.Short
+                                )
+                            }
                         }
                     ) {
                         Text(

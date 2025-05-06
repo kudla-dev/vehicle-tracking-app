@@ -1,6 +1,5 @@
 package cz.kudladev.vehicletracking.modules
 
-import cz.kudladev.vehicletracking.auth.data.AuthApi
 import cz.kudladev.vehicletracking.auth.data.AuthRepositoryImpl
 import cz.kudladev.vehicletracking.auth.data.UserStateHolderImpl
 import cz.kudladev.vehicletracking.auth.domain.AuthRepository
@@ -17,10 +16,6 @@ val authModule = module {
 
     singleOf(::UserStateHolderImpl).bind(UserStateHolder::class)
 
-    single<AuthApi> {
-        get<Ktorfit>()
-            .create<AuthApi>()
-    }
 
     singleOf(::AuthRepositoryImpl).bind(AuthRepository::class)
 

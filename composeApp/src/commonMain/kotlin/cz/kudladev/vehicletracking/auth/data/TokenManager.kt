@@ -1,8 +1,10 @@
 package cz.kudladev.vehicletracking.auth.data
 
-object TokenManager {
-
-
-
-
-}
+//expect class TokenManager {
+//
+//
+//
+//
+//
+//
+//}

@@ -1,18 +1,24 @@
 package cz.kudladev.vehicletracking.auth.presentation.login
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.kudladev.vehicletracking.auth.domain.AuthRepository
+import cz.kudladev.vehicletracking.auth.domain.UserStateHolder
 import cz.kudladev.vehicletracking.auth.domain.use_cases.EmailValidation
-import cz.kudladev.vehicletracking.auth.presentation.login.LoginScreenAction
-import cz.kudladev.vehicletracking.auth.presentation.login.LoginScreenState
 import cz.kudladev.vehicletracking.core.domain.ValidationResult
+import cz.kudladev.vehicletracking.datastore.DataStoreRepository
+import cz.kudladev.vehicletracking.network.onError
+import cz.kudladev.vehicletracking.network.onSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class LoginScreenViewModel(
     private val emailValidation: EmailValidation,
+    private val authRepository: AuthRepository,
+    private val dataStoreRepository: DataStoreRepository,
+    private val userStateHolder: UserStateHolder
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(LoginScreenState())
@@ -38,7 +44,12 @@ class LoginScreenViewModel(
                 ) }
             }
             LoginScreenAction.OnLogin -> {
-                validate()
+                if (validate()) {
+                    login(
+                        email = _state.value.email,
+                        password = _state.value.password,
+                    )
+                }
             }
         }
     }
@@ -78,8 +89,61 @@ class LoginScreenViewModel(
             clearErrors()
         }
 
-        return hasError
+        return !hasError
     }
+
+    private fun login(
+        email: String,
+        password: String
+    ) = viewModelScope.launch {
+        _state.update { it.copy(
+            loginProgress = LoginProgress.Loading,
+        ) }
+
+        authRepository
+            .login(
+                email = email,
+                password = password,
+            )
+            .onSuccess { response ->
+                _state.update { it.copy(
+                    loginProgress = LoginProgress.Success,
+                ) }
+                dataStoreRepository.saveAccessToken(response.accessToken)
+                dataStoreRepository.saveRefreshToken(response.refreshToken)
+                auth()
+            }
+            .onError { error ->
+                _state.update { it.copy(
+                    loginProgress = LoginProgress.Error(error),
+                ) }
+                dataStoreRepository.clearTokens()
+            }
+    }
+
+    private fun auth() = viewModelScope.launch {
+        _state.update { it.copy(
+            loginProgress = LoginProgress.Loading
+        ) }
+
+        authRepository
+            .auth()
+            .onSuccess { user ->
+                _state.update { it.copy(
+                    loginProgress = LoginProgress.LoggedIn,
+                ) }
+                userStateHolder.updateUser(user)
+            }
+            .onError { error ->
+                _state.update { it.copy(
+                    loginProgress = LoginProgress.Error(error),
+                ) }
+                userStateHolder.updateUser(null)
+                dataStoreRepository.clearTokens()
+            }
+    }
+
+
 
 
 }
