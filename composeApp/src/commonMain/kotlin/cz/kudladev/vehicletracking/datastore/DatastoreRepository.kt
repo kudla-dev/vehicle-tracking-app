@@ -48,15 +48,19 @@ class DataStoreRepository(
 
 
     suspend fun saveAccessToken(token: String) {
+        println("Saving access token: $token")
         dataStore.edit { preferences ->
             preferences[ACCESS_TOKEN] = token
         }
+        println("Access token saved")
     }
 
     suspend fun saveRefreshToken(token: String) {
+        println("Saving refresh token: $token")
         dataStore.edit { preferences ->
             preferences[REFRESH_TOKEN] = token
         }
+        println("Refresh token saved")
     }
 
     suspend fun clearTokens() {

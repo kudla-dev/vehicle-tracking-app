@@ -4,7 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import cz.kudladev.vehicletracking.app.AppState
-import cz.kudladev.vehicletracking.auth.presentation.loading.LoadingScreen
+import cz.kudladev.vehicletracking.auth.presentation.loading.LoadingScreenRoot
 import cz.kudladev.vehicletracking.auth.presentation.login.LoginScreenRoot
 import cz.kudladev.vehicletracking.auth.presentation.register.RegisterScreenRoot
 import cz.kudladev.vehicletracking.auth.presentation.welcome.WelcomeScreenRoot
@@ -25,10 +25,30 @@ fun NavGraphBuilder.authNavigation(
     appState: AppState
 ){
     navigation<AuthRoot>(
-        startDestination = Welcome
+        startDestination = Loading
     ) {
         composable<Loading> {
-            LoadingScreen()
+            LoadingScreenRoot(
+                userStateHolder = appState.userStateHolder,
+                onAuth = {
+                    appState.navHostController.navigate(CoreRoot){
+                        popUpTo(AuthRoot) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+                onNonAuth = {
+                    appState.navHostController.navigate(Welcome) {
+                        popUpTo(AuthRoot) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
         }
         composable<Welcome> {
             WelcomeScreenRoot(
@@ -46,7 +66,13 @@ fun NavGraphBuilder.authNavigation(
                     appState.navHostController.navigateUp()
                 },
                 onRegisterConfirmed = {
-
+                    appState.navHostController.navigate(CoreRoot) {
+                        popUpTo(AuthRoot) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
             )
         }
@@ -56,7 +82,13 @@ fun NavGraphBuilder.authNavigation(
                     appState.navHostController.navigateUp()
                 },
                 onLoginConfirm = {
-
+                    appState.navHostController.navigate(CoreRoot) {
+                        popUpTo(AuthRoot) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
             )
         }

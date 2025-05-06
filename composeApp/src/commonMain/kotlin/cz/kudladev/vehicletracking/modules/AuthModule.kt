@@ -4,6 +4,7 @@ import cz.kudladev.vehicletracking.auth.data.AuthRepositoryImpl
 import cz.kudladev.vehicletracking.auth.data.UserStateHolderImpl
 import cz.kudladev.vehicletracking.auth.domain.AuthRepository
 import cz.kudladev.vehicletracking.auth.domain.UserStateHolder
+import cz.kudladev.vehicletracking.auth.presentation.loading.LoadingScreenViewModel
 import cz.kudladev.vehicletracking.auth.presentation.login.LoginScreenViewModel
 import cz.kudladev.vehicletracking.auth.presentation.register.RegisterScreenViewModel
 import de.jensklingenberg.ktorfit.Ktorfit
@@ -21,4 +22,5 @@ val authModule = module {
 
     viewModelOf(::RegisterScreenViewModel)
     viewModelOf(::LoginScreenViewModel)
+    viewModelOf(::LoadingScreenViewModel)
 }

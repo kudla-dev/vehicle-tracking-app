@@ -109,8 +109,11 @@ class LoginScreenViewModel(
                 _state.update { it.copy(
                     loginProgress = LoginProgress.Success,
                 ) }
+                println("Saving in viewmodel")
                 dataStoreRepository.saveAccessToken(response.accessToken)
                 dataStoreRepository.saveRefreshToken(response.refreshToken)
+                println("Saved in viewmodel")
+                println("Starting auth")
                 auth()
             }
             .onError { error ->

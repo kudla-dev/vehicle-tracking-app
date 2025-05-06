@@ -64,23 +64,23 @@ class HttpClientFactory(
 
                         var bearerTokens: BearerTokens? = null
 
+
+
                         if (refreshToken != null) {
                             val response = authRepository.refresh(refreshToken)
                             response
                                 .onSuccess {
                                     dataStoreRepository.saveAccessToken(it.accessToken)
                                     dataStoreRepository.saveRefreshToken(it.refreshToken)
-                                    println("New access token: ${it.accessToken}")
                                     bearerTokens = BearerTokens(it.accessToken, it.refreshToken)
                                 }
                                 .onError {
-                                    dataStoreRepository.clearTokens()
                                     println("Error refreshing token: ${it.message}")
-                                    bearerTokens = null
+                                    bearerTokens = BearerTokens("","")
                                 }
                             bearerTokens
                         } else {
-                            null
+                            BearerTokens("","")
                         }
                     }
                 }

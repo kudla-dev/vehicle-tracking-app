@@ -1,5 +1,6 @@
 package cz.kudladev.vehicletracking.auth.presentation.login
 
+import StackedSnackbarHost
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -40,6 +42,7 @@ import cz.kudladev.vehicletracking.core.presentation.components.KeyboardClearFoc
 import cz.kudladev.vehicletracking.core.presentation.components.TextField
 import cz.kudladev.vehicletracking.core.presentation.components.TopAppBar
 import org.koin.compose.viewmodel.koinViewModel
+import rememberStackedSnackbarHostState
 
 @Composable
 fun LoginScreenRoot(
@@ -69,6 +72,31 @@ fun LoginScreenScreen(
 
     val focusManager = LocalFocusManager.current
 
+    val stackedSnackBarHostState = rememberStackedSnackbarHostState(
+        maxStack = 1,
+        animation = StackedSnackbarAnimation.Slide
+    )
+
+    LaunchedEffect(state.loginProgress) {
+        when(state.loginProgress){
+            is LoginProgress.Error -> {
+                stackedSnackBarHostState.showErrorSnackbar(
+                    title = "Login failed",
+                    description = state.loginProgress.message.message,
+                    duration = StackedSnackbarDuration.Short
+                )
+            }
+            LoginProgress.LoggedIn -> {
+                stackedSnackBarHostState.showErrorSnackbar(
+                    title = "Logged in",
+                    duration = StackedSnackbarDuration.Short
+                )
+                onLoginConfirm()
+            }
+            LoginProgress.Idle, LoginProgress.Loading,LoginProgress.Success  -> {}
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -87,7 +115,10 @@ fun LoginScreenScreen(
         },
         modifier = Modifier
             .imePadding()
-            .nestedScroll(scrollBehavior.nestedScrollConnection)
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
+        snackbarHost = {
+            StackedSnackbarHost(hostState = stackedSnackBarHostState)
+        }
     ) { innerPadding ->
         KeyboardClearFocus {
             Column(
