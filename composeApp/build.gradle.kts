@@ -60,6 +60,7 @@ kotlin {
 
             implementation(libs.compose.stacked.snackbar)
 
+            implementation(libs.bundles.paging)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)

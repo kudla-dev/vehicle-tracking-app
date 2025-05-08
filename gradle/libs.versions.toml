@@ -11,11 +11,11 @@ androidx-espresso-core = "3.6.1"
 androidx-lifecycle = "2.8.4"
 androidx-material = "1.12.0"
 androidx-test-junit = "1.2.1"
-compose-multiplatform = "1.7.3"
+compose-multiplatform = "1.8.0"
 composeStackedSnackbar = "1.0.4"
 junit = "4.13.2"
 kotlin = "2.1.20"
-navigation-compose = "2.8.0-alpha10"
+navigation-compose = "2.9.0-beta01"
 koin = "4.0.3"
 coil3 = "3.1.0"
 landscapist = "2.4.7"
@@ -24,6 +24,8 @@ ksp = "2.1.10-1.0.30"
 ktorfit = "2.5.0"
 dataStore = "1.1.4"
 atomicfu = "0.26.0"
+
+paging = "3.3.0-alpha02-0.5.1"
 
 
 [libraries]
@@ -80,6 +82,10 @@ androidx-datastore = {group = "androidx.datastore", name = "datastore", version.
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "dataStore"}
 atomicfu = { module = "org.jetbrains.kotlinx:atomicfu", version.ref = "atomicfu" }
 
+#Paging
+paging-common = { module = "app.cash.paging:paging-common", version.ref = "paging" }
+paging-compose-common = { module = "app.cash.paging:paging-compose-common", version.ref = "paging" }
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -120,4 +126,8 @@ coil = [
     "coil-compose-core",
     "coil-http",
     "coil-landscapist"
+]
+paging = [
+    "paging-common",
+    "paging-compose-common"
 ]

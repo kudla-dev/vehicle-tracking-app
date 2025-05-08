@@ -9,14 +9,17 @@ import androidx.compose.ui.util.trace
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import cz.kudladev.vehicletracking.app.navigation.CoreRoot
-import cz.kudladev.vehicletracking.app.navigation.navigateToHistory
-import cz.kudladev.vehicletracking.app.navigation.navigateToSettings
-import cz.kudladev.vehicletracking.app.navigation.navigateToTracking
-import cz.kudladev.vehicletracking.app.navigation.navigateToVehicleList
+import cz.kudladev.vehicletracking.app.core.CoreRoot
+import cz.kudladev.vehicletracking.app.core.navigateToFavourites
+import cz.kudladev.vehicletracking.app.core.navigateToHistory
+import cz.kudladev.vehicletracking.app.core.navigateToSettings
+import cz.kudladev.vehicletracking.app.core.navigateToTracking
+import cz.kudladev.vehicletracking.app.core.navigateToVehicleList
 import cz.kudladev.vehicletracking.auth.domain.UserStateHolder
-import cz.kudladev.vehicletracking.core.presentation.components.BottomBarDestinations
+import cz.kudladev.vehicletracking.core.presentation.components.basics.BottomBarDestinations
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.compose.koinInject
@@ -24,17 +27,24 @@ import org.koin.compose.koinInject
 
 @Composable
 fun rememberAppState(
-    navHostController: NavHostController,
+    navController: NavHostController = rememberNavController(),
     userStateHolder: UserStateHolder = koinInject<UserStateHolder>()
-): AppState = remember(navHostController) {
-    AppState(
-        navHostController,
+): AppState {
+    val coreNavController = navController
+
+    return remember(
+        coreNavController,
         userStateHolder
-    )
+    ) {
+        AppState(
+            coreNavController = coreNavController,
+            userStateHolder = userStateHolder
+        )
+    }
 }
 
 class AppState(
-    val navHostController: NavHostController,
+    val coreNavController: NavHostController,
     val userStateHolder: UserStateHolder
 ) {
     private val _isInCoreGraph = MutableStateFlow(false)
@@ -44,7 +54,7 @@ class AppState(
     var paddingValues = PaddingValues()
 
     init {
-        navHostController.addOnDestinationChangedListener { _, _, _ ->
+        coreNavController.addOnDestinationChangedListener { _, _, _ ->
             updateCoreGraphState()
         }
         updateCoreGraphState()
@@ -54,7 +64,7 @@ class AppState(
     val currentDestination: NavDestination?
         @Composable
         get() {
-            val currentEntry = navHostController.currentBackStackEntryFlow.collectAsState(initial = null)
+            val currentEntry = coreNavController.currentBackStackEntryFlow.collectAsState(initial = null)
             return currentEntry.value?.destination.also { destination ->
                 if (destination != null) {
                     previousDestination.value = destination
@@ -63,7 +73,7 @@ class AppState(
         }
 
     fun updateCoreGraphState() {
-        val currentDestination = navHostController.currentDestination
+        val currentDestination = coreNavController.currentDestination
         val parentGraph = currentDestination?.parent
 
         val coreRootRoute = CoreRoot::class.qualifiedName
@@ -74,7 +84,7 @@ class AppState(
     }
 
     fun isSelectedBottomBarDestination(destination: BottomBarDestinations): Boolean{
-        val currentDestination = navHostController.currentDestination
+        val currentDestination = coreNavController.currentDestination
         val parentGraph = currentDestination?.parent
 
         return parentGraph?.route == destination.route.qualifiedName
@@ -86,18 +96,18 @@ class AppState(
     fun navigateToBottomBarDestination(bottomBarDestination: BottomBarDestinations) {
         trace("Navigation: ${bottomBarDestination.route}"){
             val bottomBarNavigationOptions = navOptions {
-                popUpTo(CoreRoot) {
+                popUpTo(coreNavController.graph.findStartDestination().id) {
                     saveState = true
-                    inclusive = true
                 }
                 launchSingleTop = true
                 restoreState = true
             }
             when (bottomBarDestination) {
-                BottomBarDestinations.VehicleListDest -> navHostController.navigateToVehicleList(bottomBarNavigationOptions)
-                BottomBarDestinations.CurrentTrackingDest -> navHostController.navigateToTracking(bottomBarNavigationOptions)
-                BottomBarDestinations.HistoryDest -> navHostController.navigateToHistory(bottomBarNavigationOptions)
-                BottomBarDestinations.SettingsDest -> navHostController.navigateToSettings(bottomBarNavigationOptions)
+                BottomBarDestinations.VehicleListDest -> coreNavController.navigateToVehicleList(bottomBarNavigationOptions)
+                BottomBarDestinations.FavouriteDest -> coreNavController.navigateToFavourites(bottomBarNavigationOptions)
+                BottomBarDestinations.CurrentTrackingDest -> coreNavController.navigateToTracking(bottomBarNavigationOptions)
+                BottomBarDestinations.HistoryDest -> coreNavController.navigateToHistory(bottomBarNavigationOptions)
+                BottomBarDestinations.MenuDest -> coreNavController.navigateToSettings(bottomBarNavigationOptions)
             }
         }
     }

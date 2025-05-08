@@ -36,7 +36,7 @@ class HttpClientFactory(
                 json(
                     json = Json {
                         ignoreUnknownKeys = true
-                        prettyPrint = true
+                        isLenient = true
                     }
                 )
             }
@@ -61,10 +61,7 @@ class HttpClientFactory(
 
                     refreshTokens {
                         val refreshToken = dataStoreRepository.getRefreshToken()
-
                         var bearerTokens: BearerTokens? = null
-
-
 
                         if (refreshToken != null) {
                             val response = authRepository.refresh(refreshToken)

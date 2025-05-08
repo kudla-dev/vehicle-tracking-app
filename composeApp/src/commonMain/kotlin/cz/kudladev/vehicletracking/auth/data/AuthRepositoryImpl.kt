@@ -77,6 +77,9 @@ class AuthRepositoryImpl(
             is Result.Error -> {
                 Result.Error(response.error)
             }
+            else -> {
+                Result.Loading
+            }
         }
     }
 }

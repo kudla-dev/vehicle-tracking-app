@@ -1,4 +1,4 @@
-package cz.kudladev.vehicletracking.app.navigation
+package cz.kudladev.vehicletracking.app.core
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -31,7 +31,7 @@ fun NavGraphBuilder.authNavigation(
             LoadingScreenRoot(
                 userStateHolder = appState.userStateHolder,
                 onAuth = {
-                    appState.navHostController.navigate(CoreRoot){
+                    appState.coreNavController.navigate(CoreRoot){
                         popUpTo(AuthRoot) {
                             inclusive = true
                         }
@@ -40,7 +40,7 @@ fun NavGraphBuilder.authNavigation(
                     }
                 },
                 onNonAuth = {
-                    appState.navHostController.navigate(Welcome) {
+                    appState.coreNavController.navigate(Welcome) {
                         popUpTo(AuthRoot) {
                             inclusive = true
                         }
@@ -53,20 +53,20 @@ fun NavGraphBuilder.authNavigation(
         composable<Welcome> {
             WelcomeScreenRoot(
                 onRegister = {
-                    appState.navHostController.navigate(Register)
+                    appState.coreNavController.navigate(Register)
                 },
                 onLogin = {
-                    appState.navHostController.navigate(Login)
+                    appState.coreNavController.navigate(Login)
                 }
             )
         }
         composable<Register> {
             RegisterScreenRoot(
                 onBack = {
-                    appState.navHostController.navigateUp()
+                    appState.coreNavController.navigateUp()
                 },
                 onRegisterConfirmed = {
-                    appState.navHostController.navigate(CoreRoot) {
+                    appState.coreNavController.navigate(CoreRoot) {
                         popUpTo(AuthRoot) {
                             inclusive = true
                         }
@@ -79,10 +79,10 @@ fun NavGraphBuilder.authNavigation(
         composable<Login> {
             LoginScreenRoot(
                 onBack = {
-                    appState.navHostController.navigateUp()
+                    appState.coreNavController.navigateUp()
                 },
                 onLoginConfirm = {
-                    appState.navHostController.navigate(CoreRoot) {
+                    appState.coreNavController.navigate(CoreRoot) {
                         popUpTo(AuthRoot) {
                             inclusive = true
                         }

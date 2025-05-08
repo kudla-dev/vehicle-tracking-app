@@ -1,4 +1,4 @@
-package cz.kudladev.vehicletracking.core.presentation.components
+package cz.kudladev.vehicletracking.core.presentation.components.basics
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding

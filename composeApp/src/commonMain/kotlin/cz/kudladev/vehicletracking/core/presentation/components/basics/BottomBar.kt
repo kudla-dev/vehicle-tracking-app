@@ -1,37 +1,45 @@
-package cz.kudladev.vehicletracking.core.presentation.components
+package cz.kudladev.vehicletracking.core.presentation.components.basics
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.DirectionsCar
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.DirectionsCar
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.History
-import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import cz.kudladev.vehicletracking.app.AppState
-import cz.kudladev.vehicletracking.app.navigation.CoreRoot
-import cz.kudladev.vehicletracking.app.navigation.History
-import cz.kudladev.vehicletracking.app.navigation.Settings
-import cz.kudladev.vehicletracking.app.navigation.Tracking
-import cz.kudladev.vehicletracking.app.navigation.VehicleList
+import cz.kudladev.vehicletracking.app.core.CoreRoot
+import cz.kudladev.vehicletracking.app.core.Favourites
+import cz.kudladev.vehicletracking.app.core.History
+import cz.kudladev.vehicletracking.app.core.Menu
+import cz.kudladev.vehicletracking.app.core.Tracking
+import cz.kudladev.vehicletracking.app.core.VehicleList
+import kotlinx.serialization.Serializable
 import kotlin.reflect.KClass
 
 enum class BottomBarDestinations(
     val unSelectedIcon: ImageVector,
     val selectedIcon: ImageVector,
     val label: String,
+    @Serializable
     val route: KClass<*>,
     val baseRoute: KClass<*> = route,
 ){
@@ -40,6 +48,12 @@ enum class BottomBarDestinations(
         selectedIcon = Icons.AutoMirrored.Filled.List,
         label = "Vehicles",
         route = VehicleList::class,
+    ),
+    FavouriteDest(
+        unSelectedIcon = Icons.Outlined.Favorite,
+        selectedIcon = Icons.Filled.Favorite,
+        label = "Favourite",
+        route = Favourites::class,
     ),
     CurrentTrackingDest(
         unSelectedIcon = Icons.Outlined.DirectionsCar,
@@ -53,11 +67,11 @@ enum class BottomBarDestinations(
         label = "History",
         route = History::class,
     ),
-    SettingsDest(
-        unSelectedIcon = Icons.Outlined.Settings,
-        selectedIcon = Icons.Filled.Settings,
-        label = "Settings",
-        route = Settings::class,
+    MenuDest(
+        unSelectedIcon = Icons.Outlined.Menu,
+        selectedIcon = Icons.Filled.Menu,
+        label = "Menu",
+        route = Menu::class,
     ),
 }
 
@@ -109,7 +123,15 @@ fun RowScope.BottomBarItem(
         },
         label = {
             Text(
-                text = destination.label
+                text = destination.label,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = if (isSelected) {
+                    FontWeight.Bold
+                } else {
+                    FontWeight.Normal
+                },
             )
         },
 

@@ -1,4 +1,4 @@
-package cz.kudladev.vehicletracking.core.presentation.components
+package cz.kudladev.vehicletracking.core.presentation.components.basics
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew

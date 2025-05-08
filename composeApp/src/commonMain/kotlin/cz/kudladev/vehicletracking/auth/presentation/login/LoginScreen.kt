@@ -37,10 +37,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cz.kudladev.vehicletracking.core.presentation.components.BackButton
-import cz.kudladev.vehicletracking.core.presentation.components.KeyboardClearFocus
-import cz.kudladev.vehicletracking.core.presentation.components.TextField
-import cz.kudladev.vehicletracking.core.presentation.components.TopAppBar
+import cz.kudladev.vehicletracking.core.presentation.components.basics.BackButton
+import cz.kudladev.vehicletracking.core.presentation.components.basics.KeyboardClearFocus
+import cz.kudladev.vehicletracking.core.presentation.components.basics.TextField
+import cz.kudladev.vehicletracking.core.presentation.components.basics.TopAppBar
 import org.koin.compose.viewmodel.koinViewModel
 import rememberStackedSnackbarHostState
 
