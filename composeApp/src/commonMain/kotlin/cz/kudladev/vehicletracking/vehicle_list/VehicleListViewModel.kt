@@ -6,7 +6,7 @@ import app.cash.paging.Pager
 import app.cash.paging.PagingConfig
 import app.cash.paging.cachedIn
 import cz.kudladev.vehicletracking.core.data.vehicle.VehiclePagingSource
-import cz.kudladev.vehicletracking.core.domain.vehicle.VehicleRepository
+import cz.kudladev.vehicletracking.core.domain.VehicleRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart

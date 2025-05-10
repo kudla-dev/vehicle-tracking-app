@@ -1,40 +1,50 @@
 package cz.kudladev.vehicletracking.vehicle_list
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.ViewAgenda
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
-import cz.kudladev.vehicletracking.app.nested.Search
 import cz.kudladev.vehicletracking.auth.domain.User
 import cz.kudladev.vehicletracking.auth.domain.UserStateHolder
 import cz.kudladev.vehicletracking.core.domain.models.Vehicle
-import cz.kudladev.vehicletracking.core.presentation.components.basics.TopAppBar
+import cz.kudladev.vehicletracking.core.presentation.components.basics.LargeTopBar
 import cz.kudladev.vehicletracking.core.presentation.components.vehicle.VehicleGridItem
 import cz.kudladev.vehicletracking.core.presentation.components.vehicle.VehicleHorizontalItem
 import org.koin.compose.koinInject
@@ -76,6 +86,7 @@ private fun VehicleListScreen(
     searchQuery: String?
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val pullToRefreshState = rememberPullToRefreshState()
 
 
     Scaffold(
@@ -83,7 +94,7 @@ private fun VehicleListScreen(
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(
+            LargeTopBar(
                 title = {
                     Text(
                         text = searchQuery?.let {
@@ -120,62 +131,99 @@ private fun VehicleListScreen(
             )
         }
     ) { innerPadding ->
-        LazyVerticalGrid(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                bottom = paddingValues.calculateBottomPadding() + 16.dp,
-                top = innerPadding.calculateTopPadding() + 16.dp,
-                start = innerPadding.calculateStartPadding(LocalLayoutDirection.current) + 16.dp,
-                end = innerPadding.calculateEndPadding(LocalLayoutDirection.current) + 16.dp,
-            ),
-            columns = when(state.selectedView){
-                VehicleListView.Grid -> GridCells.Adaptive(150.dp)
-                VehicleListView.List -> GridCells.Fixed(1)
-            },
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        val combinedPadding = PaddingValues(
+            bottom = paddingValues.calculateBottomPadding() + 16.dp,
+            top = innerPadding.calculateTopPadding() + 16.dp,
+            start = innerPadding.calculateStartPadding(LocalLayoutDirection.current) + 16.dp,
+            end = innerPadding.calculateEndPadding(LocalLayoutDirection.current) + 16.dp,
+        )
+        PullToRefreshBox(
+            modifier = Modifier
+                .fillMaxSize(),
+            state = pullToRefreshState,
+            isRefreshing = vehicles.loadState.refresh is LoadState.Loading,
+            onRefresh = { vehicles.refresh() }
         ) {
             when (vehicles.loadState.refresh) {
                 is LoadState.Loading -> {
-                    item(
-                        span = { GridItemSpan(maxLineSpan) },
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(combinedPadding),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(text = "Loading vehicles...")
+                        CircularProgressIndicator()
+                        Text(
+                            text = "Loading vehicles...",
+                            modifier = Modifier.padding(top = 8.dp),
+                            style = MaterialTheme.typography.titleSmall,
+                        )
                     }
                 }
                 is LoadState.Error -> {
-                    item(
-                        span = { GridItemSpan(maxLineSpan) },
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(combinedPadding),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(text = "Error loading vehicles ")
+                        Icon(
+                            imageVector = Icons.Outlined.ErrorOutline,
+                            contentDescription = "Error",
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(64.dp)
+                        )
+                        Text(
+                            text = "Error loading vehicles",
+                            modifier = Modifier.padding(top = 8.dp),
+                            style = MaterialTheme.typography.titleSmall,
+                        )
+                        Text(
+                            modifier = Modifier.widthIn(max = 300.dp),
+                            text = "${(vehicles.loadState.refresh as LoadState.Error).error.message}",
+                            style = MaterialTheme.typography.labelSmall,
+                            maxLines = 3,
+                            softWrap = true,
+                            overflow = TextOverflow.Ellipsis,
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
                 else -> {
-                    items(vehicles.itemCount) { index ->
-                        val vehicle = vehicles[index]
-                        if (vehicle != null) {
-                            when(state.selectedView){
-                                VehicleListView.Grid -> {
-                                    VehicleGridItem(
-                                        modifier = Modifier
-                                            .heightIn(min = 275.dp, max = 350.dp)
-                                            .fillMaxWidth(),
-                                        vehicle = vehicle,
-                                        onClick = {
-
-                                        }
-                                    )
-                                }
-                                VehicleListView.List -> {
-                                    VehicleHorizontalItem(
-                                        modifier = Modifier
-                                            .heightIn(min = 120.dp, max = 200.dp)
-                                            .fillMaxWidth(),
-                                        vehicle = vehicle,
-                                        onClick = {
-
-                                        }
-                                    )
+                    LazyVerticalGrid(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = combinedPadding,
+                        columns = when(state.selectedView){
+                            VehicleListView.Grid -> GridCells.Adaptive(150.dp)
+                            VehicleListView.List -> GridCells.Fixed(1)
+                        },
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        items(vehicles.itemCount) { index ->
+                            val vehicle = vehicles[index]
+                            if (vehicle != null) {
+                                when (state.selectedView) {
+                                    VehicleListView.Grid -> {
+                                        VehicleGridItem(
+                                            modifier = Modifier
+                                                .heightIn(min = 225.dp, max = 270.dp)
+                                                .fillMaxWidth(),
+                                            vehicle = vehicle,
+                                            onClick = { }
+                                        )
+                                    }
+                                    VehicleListView.List -> {
+                                        VehicleHorizontalItem(
+                                            modifier = Modifier
+                                                .heightIn(min = 100.dp, max = 130.dp)
+                                                .fillMaxWidth(),
+                                            vehicle = vehicle,
+                                            onClick = { }
+                                        )
+                                    }
                                 }
                             }
                         }

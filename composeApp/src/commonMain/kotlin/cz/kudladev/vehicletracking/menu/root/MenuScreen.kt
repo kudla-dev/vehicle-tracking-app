@@ -28,7 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.kudladev.vehicletracking.auth.domain.Role
 import cz.kudladev.vehicletracking.auth.domain.User
 import cz.kudladev.vehicletracking.auth.domain.UserStateHolder
-import cz.kudladev.vehicletracking.core.presentation.components.basics.TopAppBar
+import cz.kudladev.vehicletracking.core.presentation.components.basics.LargeTopBar
 import cz.kudladev.vehicletracking.core.presentation.components.user.UserCard
 import cz.kudladev.vehicletracking.core.presentation.components.user.UserNotLoggedIn
 import cz.kudladev.vehicletracking.menu.components.MenuSection
@@ -41,6 +41,7 @@ fun MenuScreenRoot(
     paddingValues: PaddingValues,
     userStateHolder: UserStateHolder = koinInject(),
     onAdminSettings: () -> Unit,
+    onManageVehicles: () -> Unit,
 ) {
     val user = userStateHolder.user.collectAsStateWithLifecycle().value
 
@@ -48,6 +49,7 @@ fun MenuScreenRoot(
         paddingValues = paddingValues,
         user = user,
         onAdminSettings = onAdminSettings,
+        onManageVehicles = onManageVehicles,
     )
 }
 
@@ -56,7 +58,8 @@ fun MenuScreenRoot(
 private fun MenuScreen(
      paddingValues: PaddingValues,
      user: User?,
-     onAdminSettings: () -> Unit
+     onAdminSettings: () -> Unit,
+     onManageVehicles: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
@@ -65,7 +68,7 @@ private fun MenuScreen(
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(
+            LargeTopBar(
                 title = {
                     Text("Menu")
                 },
@@ -113,7 +116,7 @@ private fun MenuScreen(
                             icon = Icons.TwoTone.DirectionsCar,
                             title = "Manage vehicles",
                             onClick = {
-
+                                onManageVehicles()
                             },
                         )
                         MenuSectionItem(

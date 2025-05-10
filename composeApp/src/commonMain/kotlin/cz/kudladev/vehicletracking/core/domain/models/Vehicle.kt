@@ -1,9 +1,10 @@
 package cz.kudladev.vehicletracking.core.domain.models
 
 import cz.kudladev.vehicletracking.core.data.models.vehicle.VehicleBasic
+import cz.kudladev.vehicletracking.core.data.models.vehicle.VehicleFromUrl
 
 data class Vehicle(
-    val id: Int,
+    val id: Int? = null,
     val brand: Brand,
     val fullName: String,
     val color: String,

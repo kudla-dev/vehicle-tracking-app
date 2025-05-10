@@ -1,10 +1,14 @@
 package cz.kudladev.vehicletracking.core.data.vehicle
 
 import cz.kudladev.vehicletracking.core.data.models.vehicle.VehicleBasic
+import cz.kudladev.vehicletracking.core.data.models.vehicle.VehicleFromUrl
 import cz.kudladev.vehicletracking.core.domain.models.Vehicle
-import cz.kudladev.vehicletracking.core.domain.vehicle.VehicleRepository
+import cz.kudladev.vehicletracking.core.domain.models.VehicleScrape
+import cz.kudladev.vehicletracking.core.domain.models.toDomain
+import cz.kudladev.vehicletracking.core.domain.VehicleRepository
 import cz.kudladev.vehicletracking.network.ErrorMessage
 import cz.kudladev.vehicletracking.network.Result
+import cz.kudladev.vehicletracking.network.mapSuccess
 import cz.kudladev.vehicletracking.network.safeCall
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -27,8 +31,8 @@ class VehicleRepositoryImpl(
         place: String?,
         page: Int,
         size: Int
-    ): Result<List<VehicleBasic>, ErrorMessage> {
-        return safeCall<List<VehicleBasic>>{
+    ): Result<List<Vehicle>, ErrorMessage> {
+        return safeCall<List<VehicleBasic>> {
             httpClient.get("/vehicles") {
                 parameter("search", search)
                 parameter("brandId", brandId)
@@ -44,6 +48,21 @@ class VehicleRepositoryImpl(
                 parameter("page", page)
                 parameter("size", size)
             }
+        }.mapSuccess {
+            it.map { vehicle->
+                vehicle.toDomain()
+            }
+        }
+    }
+
+    override suspend fun scrape(url: String): Result<VehicleScrape, ErrorMessage> {
+        return safeCall<VehicleFromUrl> {
+            httpClient.get("/vehicles/scrape") {
+                parameter("url", url)
+            }
+        }.mapSuccess {
+            it.toDomain()
         }
     }
 }
+

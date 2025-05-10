@@ -1,6 +1,7 @@
 package cz.kudladev.vehicletracking
 
 import cz.kudladev.vehicletracking.modules.authModule
+import cz.kudladev.vehicletracking.modules.brandModule
 import cz.kudladev.vehicletracking.modules.menuModule
 import cz.kudladev.vehicletracking.modules.networkModule
 import cz.kudladev.vehicletracking.modules.platformModule
@@ -20,7 +21,8 @@ fun initKoin(){
             validationModule,
             menuModule,
             vehicleModule,
-            searchModule
+            searchModule,
+            brandModule
         )
     }
 }

@@ -40,7 +40,7 @@ import cz.kudladev.vehicletracking.auth.presentation.register.components.Passwor
 import cz.kudladev.vehicletracking.core.presentation.components.basics.BackButton
 import cz.kudladev.vehicletracking.core.presentation.components.basics.KeyboardClearFocus
 import cz.kudladev.vehicletracking.core.presentation.components.basics.TextField
-import cz.kudladev.vehicletracking.core.presentation.components.basics.TopAppBar
+import cz.kudladev.vehicletracking.core.presentation.components.basics.LargeTopBar
 import org.koin.compose.viewmodel.koinViewModel
 import rememberStackedSnackbarHostState
 
@@ -108,7 +108,7 @@ private fun RegisterScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            LargeTopBar(
                 title = {
                     Text(
                         text = "Register",

@@ -4,7 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import cz.kudladev.vehicletracking.core.domain.models.Vehicle
 import cz.kudladev.vehicletracking.core.domain.models.toDomain
-import cz.kudladev.vehicletracking.core.domain.vehicle.VehicleRepository
+import cz.kudladev.vehicletracking.core.domain.VehicleRepository
 import cz.kudladev.vehicletracking.network.onError
 import cz.kudladev.vehicletracking.network.onSuccess
 
@@ -51,7 +51,7 @@ class VehiclePagingSource(
             )
             .onSuccess { response ->
                 return LoadResult.Page(
-                    data = response.map { it.toDomain() },
+                    data = response,
                     prevKey = if (nextPage == 1) null else nextPage - 1,
                     nextKey = if (response.isEmpty()) null else nextPage + 1
                 )

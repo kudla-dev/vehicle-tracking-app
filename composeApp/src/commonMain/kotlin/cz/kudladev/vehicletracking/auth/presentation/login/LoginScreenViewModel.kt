@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cz.kudladev.vehicletracking.auth.domain.AuthRepository
 import cz.kudladev.vehicletracking.auth.domain.UserStateHolder
 import cz.kudladev.vehicletracking.auth.domain.use_cases.EmailValidation
-import cz.kudladev.vehicletracking.core.domain.ValidationResult
+import cz.kudladev.vehicletracking.core.domain.use_cases.ValidationResult
 import cz.kudladev.vehicletracking.datastore.DataStoreRepository
 import cz.kudladev.vehicletracking.network.onError
 import cz.kudladev.vehicletracking.network.onSuccess

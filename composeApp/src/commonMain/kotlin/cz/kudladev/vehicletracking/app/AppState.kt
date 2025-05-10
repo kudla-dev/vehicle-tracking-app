@@ -96,7 +96,7 @@ class AppState(
     fun navigateToBottomBarDestination(bottomBarDestination: BottomBarDestinations) {
         trace("Navigation: ${bottomBarDestination.route}"){
             val bottomBarNavigationOptions = navOptions {
-                popUpTo(coreNavController.graph.findStartDestination().id) {
+                popUpTo(CoreRoot) {
                     saveState = true
                 }
                 launchSingleTop = true

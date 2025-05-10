@@ -3,6 +3,7 @@ package cz.kudladev.vehicletracking
 import android.app.Application
 import cz.kudladev.vehicletracking.app.AppContext
 import cz.kudladev.vehicletracking.modules.authModule
+import cz.kudladev.vehicletracking.modules.brandModule
 import cz.kudladev.vehicletracking.modules.menuModule
 import cz.kudladev.vehicletracking.modules.networkModule
 import cz.kudladev.vehicletracking.modules.platformModule
@@ -23,7 +24,8 @@ class VehicleTrackingApp: Application() {
                 validationModule,
                 menuModule,
                 vehicleModule,
-                searchModule
+                searchModule,
+                brandModule
             )
             androidContext(this@VehicleTrackingApp)
         }

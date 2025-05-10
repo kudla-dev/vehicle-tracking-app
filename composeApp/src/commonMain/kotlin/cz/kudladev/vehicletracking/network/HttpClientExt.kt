@@ -1,5 +1,7 @@
 package cz.kudladev.vehicletracking.network
 
+import cz.kudladev.vehicletracking.core.domain.models.toDomain
+import cz.kudladev.vehicletracking.network.Result
 import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.call.body
 import io.ktor.client.network.sockets.SocketTimeoutException
@@ -93,5 +95,13 @@ suspend inline fun <reified T> responseToResult(
             }
             Result.Error(error)
         }
+    }
+}
+
+inline fun <T, R> Result<T, ErrorMessage>.mapSuccess(transform: (T) -> R): Result<R, ErrorMessage> {
+    return when (this) {
+        is Result.Success -> Result.Success<R>(transform(data))
+        is Result.Error -> Result.Error(error)
+        is Result.Loading -> Result.Loading
     }
 }

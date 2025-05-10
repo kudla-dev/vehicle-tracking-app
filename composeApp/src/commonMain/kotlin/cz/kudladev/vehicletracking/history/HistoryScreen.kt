@@ -10,7 +10,7 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import cz.kudladev.vehicletracking.core.presentation.components.basics.TopAppBar
+import cz.kudladev.vehicletracking.core.presentation.components.basics.LargeTopBar
 
 @Composable
 fun HistoryScreenRoot(
@@ -34,7 +34,7 @@ fun HistoryScreen(
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(
+            LargeTopBar(
                 title = {
                     Text("History")
                 },

@@ -8,6 +8,7 @@ import coil3.compose.setSingletonImageLoaderFactory
 import coil3.memory.MemoryCache
 import coil3.network.ktor3.KtorNetworkFetcherFactory
 import coil3.request.CachePolicy
+import coil3.request.crossfade
 import coil3.util.DebugLogger
 import cz.kudladev.vehicletracking.app.core.VehicleTracking
 import cz.kudladev.vehicletracking.app.rememberAppState
@@ -50,5 +51,6 @@ fun getAsyncImageLoader(
                 )
             )
         }
+        .crossfade(300)
         .logger(DebugLogger())
         .build()

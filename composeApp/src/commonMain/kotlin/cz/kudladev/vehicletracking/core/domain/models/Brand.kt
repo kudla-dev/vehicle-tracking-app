@@ -6,7 +6,11 @@ data class Brand(
     val id: Long,
     val name: String,
     val logoURL: String,
-)
+){
+    override fun toString(): String {
+        return name
+    }
+}
 
 fun Brand.toDTO(): BrandDTO {
     return BrandDTO(

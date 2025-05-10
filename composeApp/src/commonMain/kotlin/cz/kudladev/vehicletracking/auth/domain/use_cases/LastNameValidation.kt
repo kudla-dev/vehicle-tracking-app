@@ -1,6 +1,6 @@
 package cz.kudladev.vehicletracking.auth.domain.use_cases
 
-import cz.kudladev.vehicletracking.core.domain.ValidationResult
+import cz.kudladev.vehicletracking.core.domain.use_cases.ValidationResult
 
 class LastNameValidation {
 

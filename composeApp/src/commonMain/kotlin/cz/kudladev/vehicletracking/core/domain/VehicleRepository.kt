@@ -1,6 +1,7 @@
-package cz.kudladev.vehicletracking.core.domain.vehicle
+package cz.kudladev.vehicletracking.core.domain
 
-import cz.kudladev.vehicletracking.core.data.models.vehicle.VehicleBasic
+import cz.kudladev.vehicletracking.core.domain.models.Vehicle
+import cz.kudladev.vehicletracking.core.domain.models.VehicleScrape
 import cz.kudladev.vehicletracking.network.ErrorMessage
 import cz.kudladev.vehicletracking.network.Result
 
@@ -20,6 +21,10 @@ interface VehicleRepository {
         place: String? = null,
         page: Int = 0,
         size: Int = 10
-    ): Result<List<VehicleBasic>, ErrorMessage>
+    ): Result<List<Vehicle>, ErrorMessage>
+
+    suspend fun scrape(
+        url: String,
+    ): Result<VehicleScrape, ErrorMessage>
 
 }

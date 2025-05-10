@@ -7,8 +7,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.HomeWork
 import androidx.compose.material.icons.twotone.Mail
-import androidx.compose.material.icons.twotone.Notifications
-import androidx.compose.material.icons.twotone.Place
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -22,7 +20,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.kudladev.vehicletracking.core.presentation.components.basics.BackButton
-import cz.kudladev.vehicletracking.core.presentation.components.basics.TopAppBar
+import cz.kudladev.vehicletracking.core.presentation.components.basics.LargeTopBar
 import cz.kudladev.vehicletracking.menu.components.MenuSection
 import cz.kudladev.vehicletracking.menu.components.MenuSectionItem
 import org.koin.compose.viewmodel.koinViewModel
@@ -54,7 +52,7 @@ fun AdminSettingsScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         topBar = {
-            TopAppBar(
+            LargeTopBar(
                 title = {
                     Text("Admin Settings")
                 },

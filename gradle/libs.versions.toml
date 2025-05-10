@@ -13,6 +13,7 @@ androidx-material = "1.12.0"
 androidx-test-junit = "1.2.1"
 compose-multiplatform = "1.8.0"
 composeStackedSnackbar = "1.0.4"
+flexibleBottomsheetMaterial3 = "0.1.5"
 junit = "4.13.2"
 kotlin = "2.1.20"
 navigation-compose = "2.9.0-beta01"
@@ -24,12 +25,14 @@ ksp = "2.1.10-1.0.30"
 ktorfit = "2.5.0"
 dataStore = "1.1.4"
 atomicfu = "0.26.0"
+peekaboo = "0.5.2"
 
 paging = "3.3.0-alpha02-0.5.1"
 
 
 [libraries]
 compose-stacked-snackbar = { module = "io.github.rizmaulana:compose-stacked-snackbar", version.ref = "composeStackedSnackbar" }
+flexible-bottomsheet-material3 = { module = "com.github.skydoves:flexible-bottomsheet-material3", version.ref = "flexibleBottomsheetMaterial3" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -86,6 +89,9 @@ atomicfu = { module = "org.jetbrains.kotlinx:atomicfu", version.ref = "atomicfu"
 paging-common = { module = "app.cash.paging:paging-common", version.ref = "paging" }
 paging-compose-common = { module = "app.cash.paging:paging-compose-common", version.ref = "paging" }
 
+#Peekaboo
+peekaboo-ui = { module = "io.github.onseok:peekaboo-ui", version.ref = "peekaboo" }
+peekaboo-image-picker = { module = "io.github.onseok:peekaboo-image-picker", version.ref = "peekaboo" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -130,4 +136,8 @@ coil = [
 paging = [
     "paging-common",
     "paging-compose-common"
+]
+peekaboo = [
+    "peekaboo-ui",
+    "peekaboo-image-picker"
 ]
