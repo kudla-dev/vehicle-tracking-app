@@ -1,17 +1,17 @@
-package cz.kudladev.vehicletracking.app.core
+package cz.kudladev.vehicletracking.app.navigation.core
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import cz.kudladev.vehicletracking.app.AppState
-import cz.kudladev.vehicletracking.app.nested.MenuNavigation
-import cz.kudladev.vehicletracking.app.nested.VehicleNavigation
+import cz.kudladev.vehicletracking.app.navigation.nested.MenuNavigation
+import cz.kudladev.vehicletracking.app.navigation.nested.VehicleNavigation
 import cz.kudladev.vehicletracking.history.HistoryScreenRoot
 import cz.kudladev.vehicletracking.tracking.TrackingScreenRoot
-import cz.kudladev.vehicletracking.vehicle_list.VehicleListScreenRoot
-import cz.kudladev.vehicletracking.vehicle_list.VehicleListViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -39,25 +39,50 @@ fun NavGraphBuilder.coreNavigation(
     navigation<CoreRoot>(
         startDestination = VehicleList
     ) {
-        composable<VehicleList> {
+        composable<VehicleList>(
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = { ExitTransition.None },
+        ) {
             VehicleNavigation(appState)
         }
-        composable<Favourites> {
+        composable<Favourites>(
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = { ExitTransition.None },
+        ) {
 //            VehicleListScreenRoot(
 //                paddingValues = appState.paddingValues,
 //            )
         }
-        composable<Tracking> {
+        composable<Tracking>(
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = { ExitTransition.None },
+        ) {
             TrackingScreenRoot(
                 paddingValues = appState.paddingValues,
             )
         }
-        composable<History> {
+        composable<History>(
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = { ExitTransition.None },
+        ) {
             HistoryScreenRoot(
                 paddingValues = appState.paddingValues,
             )
         }
-        composable<Menu> {
+        composable<Menu>(
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = { ExitTransition.None },
+        ) {
             MenuNavigation(appState = appState)
         }
     }

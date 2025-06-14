@@ -1,7 +1,9 @@
 package cz.kudladev.vehicletracking.core.domain.models
 
 import cz.kudladev.vehicletracking.core.data.models.brand.BrandDTO
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Brand(
     val id: Long,
     val name: String,

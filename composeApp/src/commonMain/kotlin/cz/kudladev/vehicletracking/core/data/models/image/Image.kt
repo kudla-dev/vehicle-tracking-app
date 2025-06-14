@@ -7,11 +7,13 @@ interface Image {
 data class ImageWithUrl(
     val id: String? = null,
     val url: String? = null,
+    val position: Int
 ): Image
 
 data class ImageWithBytes(
     val id: String? = null,
     val bytes: ByteArray? = null,
+    val position: Int
 ): Image {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

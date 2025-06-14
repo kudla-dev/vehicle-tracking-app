@@ -59,7 +59,7 @@ fun VehicleHorizontalItem(
                     maxLines = 2,
                     softWrap = true,
                     overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Left
                 )
                 Row(
                     modifier = Modifier.fillMaxSize(),

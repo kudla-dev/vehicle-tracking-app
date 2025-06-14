@@ -3,32 +3,24 @@ package cz.kudladev.vehicletracking.menu.manage_vehicles.presentation.add_edit
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.kudladev.vehicletracking.core.data.image.ImageService
 import cz.kudladev.vehicletracking.core.data.models.image.Image
 import cz.kudladev.vehicletracking.core.data.models.image.ImageWithBytes
 import cz.kudladev.vehicletracking.core.data.models.image.ImageWithUrl
 import cz.kudladev.vehicletracking.core.domain.BrandRepository
 import cz.kudladev.vehicletracking.core.domain.VehicleRepository
-import cz.kudladev.vehicletracking.menu.manage_vehicles.domain.BrandValidator
-import cz.kudladev.vehicletracking.menu.manage_vehicles.domain.ColorValidator
-import cz.kudladev.vehicletracking.menu.manage_vehicles.domain.FullNameValidator
-import cz.kudladev.vehicletracking.menu.manage_vehicles.domain.ModelValidator
-import cz.kudladev.vehicletracking.menu.manage_vehicles.domain.NameValidator
-import cz.kudladev.vehicletracking.menu.manage_vehicles.domain.PlaceValidator
-import cz.kudladev.vehicletracking.menu.manage_vehicles.domain.SpzValidator
-import cz.kudladev.vehicletracking.menu.manage_vehicles.domain.YearValidator
+import cz.kudladev.vehicletracking.core.domain.models.Brand
+import cz.kudladev.vehicletracking.menu.manage_vehicles.domain.*
 import cz.kudladev.vehicletracking.network.onError
 import cz.kudladev.vehicletracking.network.onSuccess
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class AddEditVehicleViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val brandRepository: BrandRepository,
     private val vehicleRepository: VehicleRepository,
+    private val imageService: ImageService,
     private val fullNameValidator: FullNameValidator,
     private val nameValidator: NameValidator,
     private val modelValidator: ModelValidator,
@@ -42,10 +34,19 @@ class AddEditVehicleViewModel(
     private var hasLoadedInitialData = false
 
     private val _state = MutableStateFlow(AddEditVehicleState())
+
+    val uploadStatus = imageService.getUploadStatus()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000L),
+            initialValue = emptyList()
+        )
+
     val state = _state
         .onStart {
             if (!hasLoadedInitialData) {
                 getBrands()
+                imageService.clearUploadStatus()
                 hasLoadedInitialData = true
             }
         }
@@ -82,11 +83,6 @@ class AddEditVehicleViewModel(
                     model = action.model
                 ) }
             }
-            is AddEditVehicleAction.OnNameChange -> {
-                _state.update { it.copy(
-                    name = action.name
-                ) }
-            }
             is AddEditVehicleAction.OnPlaceChange -> {
                 _state.update { it.copy(
                     place = action.place
@@ -99,9 +95,12 @@ class AddEditVehicleViewModel(
                 val spz = _state.value.spz
                 val year = _state.value.year
                 val color = _state.value.color
+                val driverLicense = _state.value.driverLicense
                 val place = _state.value.place
                 val brand = _state.value.brand?.name ?: ""
                 val images = _state.value.images
+                val type = _state.value.type
+                val subType = _state.value.subType
 
                 if (validate(
                         fullName,
@@ -110,12 +109,26 @@ class AddEditVehicleViewModel(
                         spz,
                         year,
                         color,
+                        driverLicense,
                         place,
                         brand,
-                        images
+                        images,
                     )
                 ) {
-                    println("Validation successful")
+                    createVehicle(
+                        fullName = fullName,
+                        model = model,
+                        spz = spz,
+                        transferableSpz = _state.value.transferableSpz,
+                        year = year,
+                        color = color,
+                        place = place,
+                        brand = _state.value.brand ?: Brand(0, "", ""),
+                        driverLicense = _state.value.driverLicense,
+                        totalDistance = _state.value.totalDistance.toIntOrNull() ?: 0,
+                        maximumDistance = _state.value.maximumDistance.toIntOrNull() ?: 0,
+                        images = images,
+                    )
                 }
             }
             is AddEditVehicleAction.OnSpzChange -> {
@@ -153,7 +166,7 @@ class AddEditVehicleViewModel(
 
             is AddEditVehicleAction.OnNewImageAdd -> {
                 val newImages = _state.value.images.toMutableList()
-                newImages.add(ImageWithBytes(bytes = action.byteArray))
+                newImages.add(ImageWithBytes(bytes = action.byteArray, position = newImages.size))
                 _state.update { it.copy(
                     images = newImages
                 ) }
@@ -166,7 +179,13 @@ class AddEditVehicleViewModel(
                 val newImages = _state.value.images.toMutableList()
                 newImages.removeAt(action.index)
                 _state.update { it.copy(
-                    images = newImages
+                    images = newImages.mapIndexed { index, image ->
+                        when (image) {
+                            is ImageWithBytes -> image.copy(position = index)
+                            is ImageWithUrl -> image.copy(position = index)
+                            else -> image
+                        }
+                    }
                 ) }
             }
 
@@ -190,6 +209,27 @@ class AddEditVehicleViewModel(
                     selectingPlace = !_state.value.selectingPlace
                 ) }
             }
+            AddEditVehicleAction.ClearRecentUploads -> {
+                imageService.clearUploadStatus()
+            }
+
+            is AddEditVehicleAction.OnImagesReordered -> {
+                _state.update { it.copy(
+                    images = action.images.mapIndexed { index, image ->
+                        when (image) {
+                            is ImageWithBytes -> image.copy(position = index)
+                            is ImageWithUrl -> image.copy(position = index)
+                            else -> image
+                        }
+                    }
+                ) }
+            }
+
+            AddEditVehicleAction.ToggleDriverLicenseDialog -> {
+                _state.update { it.copy(
+                    selectingDriverLicense = !_state.value.selectingDriverLicense
+                ) }
+            }
         }
     }
 
@@ -200,12 +240,12 @@ class AddEditVehicleViewModel(
         spz: String,
         year: String,
         color: String,
+        driverLicense: String,
         place: String,
         brand: String,
         images: List<Image>,
     ): Boolean {
         val isFullNameValid = fullNameValidator.execute(fullName)
-        val isNameValid = nameValidator.execute(name)
         val isModelValid = modelValidator.execute(model)
         val isSpzValid = spzValidator.execute(spz)
         val isYearValid = yearValidator.execute(year)
@@ -215,7 +255,6 @@ class AddEditVehicleViewModel(
 
         val result = listOf(
             isFullNameValid,
-            isNameValid,
             isModelValid,
             isSpzValid,
             isYearValid,
@@ -226,7 +265,6 @@ class AddEditVehicleViewModel(
 
         _state.update { it.copy(
             fullNameError = if (isFullNameValid.isSuccessful) null else isFullNameValid.errorMessage,
-            nameError = if (isNameValid.isSuccessful) null else isNameValid.errorMessage,
             modelError = if (isModelValid.isSuccessful) null else isModelValid.errorMessage,
             spzError = if (isSpzValid.isSuccessful) null else isSpzValid.errorMessage,
             yearError = if (isYearValid.isSuccessful) null else isYearValid.errorMessage,
@@ -238,12 +276,16 @@ class AddEditVehicleViewModel(
                 imagesError = "Please select at least one image"
             ) }
             return false
+        } else if(driverLicense.isBlank()){
+            _state.update { it.copy(
+                driverLicenseError = "Please enter a valid driving license"
+            ) }
+            return false
         } else {
             _state.update { it.copy(
                 imagesError = null
             ) }
         }
-
         return result
     }
 
@@ -252,8 +294,8 @@ class AddEditVehicleViewModel(
             .scrape(url)
             .onSuccess { response ->
                 _state.update { it.copy(
-                    images = response.imageUrls.map { url ->
-                        ImageWithUrl(url = url)
+                    images = response.imageUrls.mapIndexed { index, url ->
+                        ImageWithUrl(url = url, position = index)
                     },
                     fullName = response.fullName,
                     driverLicense = response.drivingLicenses.joinToString(", ")
@@ -281,5 +323,63 @@ class AddEditVehicleViewModel(
                 ) }
             }
     }
+
+    private fun createVehicle(
+        fullName: String,
+        model: String,
+        spz: String,
+        transferableSpz: Boolean,
+        year: String,
+        color: String,
+        place: String,
+        brand: Brand,
+        driverLicense: String,
+        totalDistance: Int,
+        maximumDistance: Int,
+        images: List<Image>,
+    ) = viewModelScope.launch {
+        vehicleRepository
+            .createVehicle(
+                fullName = fullName,
+                brandId = brand.id,
+                model = model,
+                year = year,
+                color = color,
+                spz = spz,
+                transferableSpz = transferableSpz,
+                totalDistance = totalDistance,
+                maximumDistance = maximumDistance,
+                driverLicense = driverLicense,
+                place = place,
+            )
+            .onSuccess { response ->
+                images.forEach { image ->
+                    when (image) {
+                        is ImageWithBytes -> {
+                            imageService
+                                .enqueueBackgroundUpload(
+                                    image.bytes ?: ByteArray(0),
+                                    response.id?.toLong() ?: 0L,
+                                    position = image.position
+                                )
+                        }
+                        is ImageWithUrl -> {
+                            imageService
+                                .enqueueBackgroundUpload(
+                                    image.url ?: "",
+                                    response.id?.toLong() ?: 0L,
+                                    position = image.position
+                                )
+                        }
+                    }
+                }
+            }
+            .onError { error ->
+                _state.update { it.copy(
+                    resultState = AddEditResultState.Error(error),
+                ) }
+            }
+    }
+
 
 }

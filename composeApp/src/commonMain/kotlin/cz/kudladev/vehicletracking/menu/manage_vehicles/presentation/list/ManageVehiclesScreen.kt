@@ -97,7 +97,9 @@ fun ManageVehiclesScreen(
                 },
                 navigationIcon = {
                     BackButton(
-                        onClick = {}
+                        onClick = {
+                            onBack()
+                        }
                     )
                 },
                 actions = {

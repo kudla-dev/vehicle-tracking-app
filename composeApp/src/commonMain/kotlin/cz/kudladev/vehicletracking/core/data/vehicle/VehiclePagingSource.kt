@@ -3,7 +3,6 @@ package cz.kudladev.vehicletracking.core.data.vehicle
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import cz.kudladev.vehicletracking.core.domain.models.Vehicle
-import cz.kudladev.vehicletracking.core.domain.models.toDomain
 import cz.kudladev.vehicletracking.core.domain.VehicleRepository
 import cz.kudladev.vehicletracking.network.onError
 import cz.kudladev.vehicletracking.network.onSuccess

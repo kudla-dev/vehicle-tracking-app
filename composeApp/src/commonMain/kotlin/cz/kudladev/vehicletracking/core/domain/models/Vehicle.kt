@@ -2,7 +2,9 @@ package cz.kudladev.vehicletracking.core.domain.models
 
 import cz.kudladev.vehicletracking.core.data.models.vehicle.VehicleBasic
 import cz.kudladev.vehicletracking.core.data.models.vehicle.VehicleFromUrl
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Vehicle(
     val id: Int? = null,
     val brand: Brand,

@@ -1,4 +1,4 @@
-package cz.kudladev.vehicletracking.app.core
+package cz.kudladev.vehicletracking.app.navigation.core
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable

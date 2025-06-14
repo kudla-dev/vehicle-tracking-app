@@ -5,6 +5,8 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.draganddrop.dragAndDropTarget
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,9 +28,15 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -38,6 +46,10 @@ import cz.kudladev.vehicletracking.app.toImageBitmap
 import cz.kudladev.vehicletracking.core.data.models.image.Image
 import cz.kudladev.vehicletracking.core.data.models.image.ImageWithBytes
 import cz.kudladev.vehicletracking.core.data.models.image.ImageWithUrl
+import kotlin.compareTo
+import kotlin.text.compareTo
+import kotlin.text.get
+import kotlin.text.set
 
 @Composable
 fun VehicleImages(
@@ -45,9 +57,15 @@ fun VehicleImages(
     images: List<Image>,
     onImageClick: (String) -> Unit,
     onImageRemove: ((Int) -> Unit)? = null,
+    onImagesReordered: (List<Image>) -> Unit
 ) {
+    var imageList by remember { mutableStateOf(images) }
     val pagerState = rememberPagerState(pageCount = { images.size })
 
+
+    LaunchedEffect(images) {
+        imageList = images
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

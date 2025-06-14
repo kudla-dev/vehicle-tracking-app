@@ -1,4 +1,4 @@
-package cz.kudladev.vehicletracking.app.nested
+package cz.kudladev.vehicletracking.app.navigation.nested
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
@@ -6,14 +6,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import cz.kudladev.vehicletracking.app.AppState
-import cz.kudladev.vehicletracking.app.core.sharedKoinViewModel
+import cz.kudladev.vehicletracking.app.navigation.core.sharedKoinViewModel
 import cz.kudladev.vehicletracking.search.SearchScreenRoot
+import cz.kudladev.vehicletracking.vehicle_detail.VehicleDetailRoot
 import cz.kudladev.vehicletracking.vehicle_list.VehicleListScreenRoot
 import cz.kudladev.vehicletracking.vehicle_list.VehicleListViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class VehicleRoot(val searchQuery: String? = null)
+@Serializable
+data class VehicleDetails(val vehicleId: Int? = null)
 @Serializable
 data class Search(val type: String)
 
@@ -36,7 +39,21 @@ fun VehicleNavigation(
                 onSearch = { type ->
                     navController.navigate(Search(type))
                 },
-                searchQuery = searchQuery
+                searchQuery = searchQuery,
+                onVehicleClick = { vehicleId ->
+                    navController.navigate(
+                        VehicleDetails(vehicleId = vehicleId)
+                    ) {
+                        popUpTo(VehicleRoot()) {
+                            inclusive = false
+                        }
+                    }
+                }
+            )
+        }
+        composable<VehicleDetails> {
+            VehicleDetailRoot(
+                paddingValues = appState.paddingValues,
             )
         }
         composable<Search> { backStackEntry ->

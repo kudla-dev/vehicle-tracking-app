@@ -26,12 +26,11 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import cz.kudladev.vehicletracking.app.AppState
-import cz.kudladev.vehicletracking.app.core.CoreRoot
-import cz.kudladev.vehicletracking.app.core.Favourites
-import cz.kudladev.vehicletracking.app.core.History
-import cz.kudladev.vehicletracking.app.core.Menu
-import cz.kudladev.vehicletracking.app.core.Tracking
-import cz.kudladev.vehicletracking.app.core.VehicleList
+import cz.kudladev.vehicletracking.app.navigation.core.Favourites
+import cz.kudladev.vehicletracking.app.navigation.core.History
+import cz.kudladev.vehicletracking.app.navigation.core.Menu
+import cz.kudladev.vehicletracking.app.navigation.core.Tracking
+import cz.kudladev.vehicletracking.app.navigation.core.VehicleList
 import kotlinx.serialization.Serializable
 import kotlin.reflect.KClass
 

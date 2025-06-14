@@ -6,7 +6,9 @@ import androidx.compose.material.icons.filled.Shield
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.toUpperCase
 import cz.kudladev.vehicletracking.auth.data.models.UserResponse
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class User(
     val firstName: String,
     val lastName: String,

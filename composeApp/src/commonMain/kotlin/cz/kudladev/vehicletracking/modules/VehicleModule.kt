@@ -11,6 +11,7 @@ import cz.kudladev.vehicletracking.menu.manage_vehicles.domain.NameValidator
 import cz.kudladev.vehicletracking.menu.manage_vehicles.domain.PlaceValidator
 import cz.kudladev.vehicletracking.menu.manage_vehicles.domain.SpzValidator
 import cz.kudladev.vehicletracking.menu.manage_vehicles.domain.YearValidator
+import cz.kudladev.vehicletracking.vehicle_detail.VehicleDetailViewModel
 import cz.kudladev.vehicletracking.vehicle_list.VehicleListViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
@@ -20,6 +21,7 @@ import org.koin.dsl.bind
 val vehicleModule = module {
 
     viewModelOf(::VehicleListViewModel)
+    viewModelOf(::VehicleDetailViewModel)
     singleOf(::VehicleRepositoryImpl).bind<VehicleRepository>()
 
     singleOf(::FullNameValidator)

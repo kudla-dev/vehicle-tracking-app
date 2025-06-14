@@ -1,4 +1,4 @@
-package cz.kudladev.vehicletracking.app.nested
+package cz.kudladev.vehicletracking.app.navigation.nested
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost

@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.kudladev.vehicletracking.auth.domain.AuthRepository
+import cz.kudladev.vehicletracking.auth.domain.UserStateHolder
 import cz.kudladev.vehicletracking.auth.domain.use_cases.EmailValidation
 import cz.kudladev.vehicletracking.auth.domain.use_cases.FirstNameValidation
 import cz.kudladev.vehicletracking.auth.domain.use_cases.LastNameValidation
@@ -12,6 +13,7 @@ import cz.kudladev.vehicletracking.auth.domain.use_cases.PasswordValidation
 import cz.kudladev.vehicletracking.auth.domain.use_cases.PhoneNumberValidation
 import cz.kudladev.vehicletracking.auth.presentation.register.RegisterScreenAction
 import cz.kudladev.vehicletracking.auth.presentation.register.RegisterScreenState
+import cz.kudladev.vehicletracking.datastore.DataStoreRepository
 import cz.kudladev.vehicletracking.network.onError
 import cz.kudladev.vehicletracking.network.onSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,7 +28,9 @@ class RegisterScreenViewModel(
     private val passwordValidation: PasswordValidation,
     private val phoneNumberValidation: PhoneNumberValidation,
     private val passwordConfirmValidation: PasswordConfirmValidation,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val dataStoreRepository: DataStoreRepository,
+    private val userStateHolder: UserStateHolder
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(RegisterScreenState())
@@ -153,10 +157,35 @@ class RegisterScreenViewModel(
                 phoneNumber = phoneNumber
             )
             .onSuccess{ response ->
-                _state.update { it.copy(
-                    registrationProcess = RegistrationProcess.Success
-                ) }
-                println("Registration success: $response")
+                authRepository
+                    .login(
+                        email = email,
+                        password = password
+                    )
+                    .onSuccess { response ->
+                        dataStoreRepository.saveAccessToken(response.accessToken)
+                        dataStoreRepository.saveRefreshToken(response.refreshToken)
+                        authRepository
+                            .auth()
+                            .onSuccess { auth ->
+                                userStateHolder.updateUser(auth)
+                                _state.update { it.copy(
+                                    registrationProcess = RegistrationProcess.Success
+                                ) }
+                            }
+                            .onError { error ->
+                                _state.update { it.copy(
+                                    registrationProcess = RegistrationProcess.Error(error)
+                                ) }
+                                println("Auth error after registration: $error")
+                            }
+                    }
+                    .onError { error ->
+                        _state.update { it.copy(
+                            registrationProcess = RegistrationProcess.Error(error)
+                        ) }
+                        println("Login error after registration: $error")
+                    }
             }
             .onError { error ->
                 _state.update { it.copy(

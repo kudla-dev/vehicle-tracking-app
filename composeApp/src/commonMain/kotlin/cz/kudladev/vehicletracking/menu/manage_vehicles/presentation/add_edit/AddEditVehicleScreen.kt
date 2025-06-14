@@ -1,33 +1,12 @@
 package cz.kudladev.vehicletracking.menu.manage_vehicles.presentation.add_edit
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -44,12 +23,16 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.preat.peekaboo.image.picker.SelectionMode
 import com.preat.peekaboo.image.picker.rememberImagePickerLauncher
+import cz.kudladev.vehicletracking.core.data.image.UploadState
+import cz.kudladev.vehicletracking.core.data.image.UploadStatus
 import cz.kudladev.vehicletracking.core.domain.models.Brand
 import cz.kudladev.vehicletracking.core.presentation.components.basics.BackButton
 import cz.kudladev.vehicletracking.core.presentation.components.basics.ChoiceTextField
 import cz.kudladev.vehicletracking.core.presentation.components.basics.MediumTopBar
 import cz.kudladev.vehicletracking.core.presentation.components.basics.TextField
+import cz.kudladev.vehicletracking.core.presentation.components.image.UploadDialog
 import cz.kudladev.vehicletracking.core.presentation.components.vehicle.VehicleImages
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -59,9 +42,18 @@ fun AddEditVehicleRoot(
     onBack: () -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val uploadStatus by viewModel.uploadStatus.collectAsStateWithLifecycle()
 
+    LaunchedEffect(uploadStatus, state.resultState) {
+        println("Upload status changed: $uploadStatus and result state: ${state.resultState}")
+        if (uploadStatus.isNotEmpty() && uploadStatus.size == state.images.size && uploadStatus.all { status -> status.state == UploadState.COMPLETED } && state.resultState !is AddEditResultState.Error) {
+            viewModel.onAction(AddEditVehicleAction.ClearRecentUploads)
+            onBack()
+        }
+    }
     AddEditVehicleScreen(
         state = state,
+        uploadStatus = uploadStatus,
         onAction = viewModel::onAction,
         paddingValues = paddingValues,
         onBack = onBack
@@ -72,6 +64,7 @@ fun AddEditVehicleRoot(
 @Composable
 fun AddEditVehicleScreen(
     state: AddEditVehicleState,
+    uploadStatus: List<UploadStatus>,
     onAction: (AddEditVehicleAction) -> Unit,
     paddingValues: PaddingValues,
     onBack: () -> Unit,
@@ -92,6 +85,9 @@ fun AddEditVehicleScreen(
         }
     )
 
+    LaunchedEffect(state.images){
+        println("Images changed: ${state.images}")
+    }
 
     Scaffold(
         modifier = Modifier
@@ -132,6 +128,9 @@ fun AddEditVehicleScreen(
                     },
                     onImageRemove = { index ->
                         onAction(AddEditVehicleAction.OnImageRemove(index))
+                    },
+                    onImagesReordered = { images ->
+                        onAction(AddEditVehicleAction.OnImagesReordered(images))
                     }
                 )
                 OutlinedButton(
@@ -184,29 +183,6 @@ fun AddEditVehicleScreen(
                     error = state.fullNameError,
                     label = {
                         Text("Full name")
-                    },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        autoCorrectEnabled = false,
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = {
-                            focusManager.moveFocus(focusDirection = FocusDirection.Next)
-                        }
-                    )
-                )
-                TextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    value = state.name,
-                    onValueChange = {
-                        onAction(AddEditVehicleAction.OnNameChange(it))
-                    },
-                    error = state.nameError,
-                    label = {
-                        Text("Name")
                     },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
@@ -288,6 +264,19 @@ fun AddEditVehicleScreen(
                             focusManager.moveFocus(focusDirection = FocusDirection.Next)
                         }
                     )
+                )
+                ChoiceTextField(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    value = state.driverLicense,
+                    onValueChange = {
+                        onAction(AddEditVehicleAction.OnDriverLicenseChange(it))
+                    },
+                    label = "Driver license",
+                    expanded = state.selectingDriverLicense,
+                    onExpandedChange = {
+                        onAction(AddEditVehicleAction.ToggleDriverLicenseDialog)
+                    },
+                    options = listOf("A1", "A2", "A", "AM")
                 )
                 TextField(
                     modifier = Modifier
@@ -490,4 +479,24 @@ fun AddEditVehicleScreen(
             }
         }
     }
+
+
+    if (uploadStatus.isNotEmpty()) {
+        UploadDialog(
+            images = uploadStatus.size,
+            uploadedImages = uploadStatus.count { it.state == UploadState.COMPLETED }.toFloat(),
+        )
+    }
+}
+
+@Preview
+@Composable
+fun AddEditVehicleScreenPreview() {
+    AddEditVehicleScreen(
+        state = AddEditVehicleState(),
+        uploadStatus = emptyList(),
+        onAction = {},
+        paddingValues = PaddingValues(0.dp),
+        onBack = {}
+    )
 }

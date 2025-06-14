@@ -17,7 +17,7 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -28,15 +28,16 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     sourceSets {
-        
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
 
             implementation(libs.bundles.koin.android)
             implementation(libs.ktor.client.android)
+            implementation(libs.androidx.work.runtime)
         }
         commonMain.dependencies {
             plugins.apply(libs.plugins.jetbrains.kotlin.serialization.get().pluginId)
@@ -49,6 +50,7 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
             implementation(libs.androidx.lifecycle.runtime.compose)
 
             implementation(libs.bundles.koin)
@@ -65,6 +67,11 @@ kotlin {
             implementation(libs.bundles.peekaboo)
 
             implementation(libs.flexible.bottomsheet.material3)
+
+            implementation("com.github.GIGAMOLE:ComposeScrollbars:1.0.4")
+
+            implementation("com.valentinilk.shimmer:compose-shimmer:1.3.2")
+
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -109,4 +116,3 @@ android {
 dependencies {
     debugImplementation(compose.uiTooling)
 }
-
