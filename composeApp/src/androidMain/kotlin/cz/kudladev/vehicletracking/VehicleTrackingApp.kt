@@ -1,33 +1,22 @@
 package cz.kudladev.vehicletracking
 
 import android.app.Application
-import cz.kudladev.vehicletracking.app.AppContext
-import cz.kudladev.vehicletracking.modules.authModule
-import cz.kudladev.vehicletracking.modules.brandModule
-import cz.kudladev.vehicletracking.modules.menuModule
-import cz.kudladev.vehicletracking.modules.networkModule
-import cz.kudladev.vehicletracking.modules.platformModule
-import cz.kudladev.vehicletracking.modules.searchModule
-import cz.kudladev.vehicletracking.modules.validationModule
-import cz.kudladev.vehicletracking.modules.vehicleModule
+import cz.kudladev.vehicletracking.di.appModules
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
 class VehicleTrackingApp: Application() {
-    override fun onCreate() {
-        super.onCreate()
+
+    init {
         startKoin {
             modules(
-                platformModule,
-                networkModule,
-                authModule,
-                validationModule,
-                menuModule,
-                vehicleModule,
-                searchModule,
-                brandModule
+                appModules
             )
             androidContext(this@VehicleTrackingApp)
         }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
     }
 }

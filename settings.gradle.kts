@@ -31,3 +31,18 @@ dependencyResolutionManagement {
 }
 
 include(":composeApp")
+include(":core:ui")
+include(":core:data")
+include(":core:datastore")
+include(":core:domain")
+include(":core:network")
+include(":core:designsystem")
+include(":feature:onboarding")
+include(":feature:favourite")
+include(":feature:history")
+include(":feature:vehicles")
+include(":feature:vehicle_detail")
+include(":feature:tracking")
+include(":feature:search")
+include(":feature:menu:main")
+include(":model")

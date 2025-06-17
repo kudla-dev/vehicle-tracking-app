@@ -5,10 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import cz.kudladev.vehicletracking.app.AppState
-import cz.kudladev.vehicletracking.menu.admin_settings.AdminSettingsRoot
-import cz.kudladev.vehicletracking.menu.manage_vehicles.presentation.add_edit.AddEditVehicleRoot
-import cz.kudladev.vehicletracking.menu.manage_vehicles.presentation.list.ManageVehiclesScreenRoot
-import cz.kudladev.vehicletracking.menu.root.MenuScreenRoot
+import cz.kudladev.vehicletracking.feature.menu.main.MenuScreenRoot
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -46,42 +43,42 @@ fun MenuNavigation(
                 },
             )
         }
-        composable<AdminSettings> {
-            AdminSettingsRoot(
-                paddingValues = appState.paddingValues,
-                onBack = {
-                    navController.navigateUp()
-                }
-            )
-        }
-        composable<ManageVehicles>{
-            ManageVehiclesScreenRoot(
-                paddingValues = appState.paddingValues,
-                onBack = {
-                    navController.navigateUp()
-                },
-                onEdit = {
-
-                },
-                onCreate = {
-                    navController.navigate(ManageVehiclesAddEdit) {
-                        popUpTo(ManageVehicles) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
-            )
-        }
-        composable<ManageVehiclesAddEdit> {
-            AddEditVehicleRoot(
-                paddingValues = appState.paddingValues,
-                onBack = {
-                    navController.navigateUp()
-                }
-            )
-        }
+//        composable<AdminSettings> {
+//            AdminSettingsRoot(
+//                paddingValues = appState.paddingValues,
+//                onBack = {
+//                    navController.navigateUp()
+//                }
+//            )
+//        }
+//        composable<ManageVehicles>{
+//            ManageVehiclesScreenRoot(
+//                paddingValues = appState.paddingValues,
+//                onBack = {
+//                    navController.navigateUp()
+//                },
+//                onEdit = {
+//
+//                },
+//                onCreate = {
+//                    navController.navigate(ManageVehiclesAddEdit) {
+//                        popUpTo(ManageVehicles) {
+//                            saveState = true
+//                        }
+//                        launchSingleTop = true
+//                        restoreState = true
+//                    }
+//                }
+//            )
+//        }
+//        composable<ManageVehiclesAddEdit> {
+//            AddEditVehicleRoot(
+//                paddingValues = appState.paddingValues,
+//                onBack = {
+//                    navController.navigateUp()
+//                }
+//            )
+//        }
 
     }
 }

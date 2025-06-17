@@ -4,10 +4,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import cz.kudladev.vehicletracking.app.AppState
-import cz.kudladev.vehicletracking.auth.presentation.loading.LoadingScreenRoot
-import cz.kudladev.vehicletracking.auth.presentation.login.LoginScreenRoot
-import cz.kudladev.vehicletracking.auth.presentation.register.RegisterScreenRoot
-import cz.kudladev.vehicletracking.auth.presentation.welcome.WelcomeScreenRoot
+import cz.kudladev.vehicletracking.feature.onboarding.loading.LoadingScreenRoot
+import cz.kudladev.vehicletracking.feature.onboarding.login.LoginScreenRoot
+import cz.kudladev.vehicletracking.feature.onboarding.register.RegisterScreenRoot
+import cz.kudladev.vehicletracking.feature.onboarding.welcome.WelcomeScreenRoot
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -7,10 +7,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import cz.kudladev.vehicletracking.app.AppState
 import cz.kudladev.vehicletracking.app.navigation.core.sharedKoinViewModel
-import cz.kudladev.vehicletracking.search.SearchScreenRoot
-import cz.kudladev.vehicletracking.vehicle_detail.VehicleDetailRoot
-import cz.kudladev.vehicletracking.vehicle_list.VehicleListScreenRoot
-import cz.kudladev.vehicletracking.vehicle_list.VehicleListViewModel
+import cz.kudladev.vehicletracking.feature.search.SearchScreenRoot
+import cz.kudladev.vehicletracking.feature.vehicledetail.VehicleDetailRoot
+import cz.kudladev.vehicletracking.feature.vehicles.VehicleListScreenRoot
+import cz.kudladev.vehicletracking.feature.vehicles.VehicleListViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable

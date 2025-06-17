@@ -1,7 +1,6 @@
 package cz.kudladev.vehicletracking
 
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.runtime.Composable
 import coil3.ImageLoader
 import coil3.PlatformContext
@@ -13,7 +12,8 @@ import coil3.request.crossfade
 import coil3.util.DebugLogger
 import cz.kudladev.vehicletracking.app.navigation.core.VehicleTracking
 import cz.kudladev.vehicletracking.app.rememberAppState
-import io.ktor.client.HttpClient
+import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
+import io.ktor.client.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 
@@ -28,7 +28,7 @@ fun App() {
 
     val appState = rememberAppState()
 
-    MaterialExpressiveTheme {
+    AppTheme {
         VehicleTracking(appState)
     }
 }

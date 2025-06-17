@@ -52,10 +52,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
             implementation(libs.androidx.lifecycle.runtime.compose)
-
             implementation(libs.bundles.koin)
             implementation(libs.bundles.ktor)
-            implementation(libs.bundles.datastore)
             implementation(libs.bundles.coil)
 
             implementation(libs.navigation.compose)
@@ -71,6 +69,21 @@ kotlin {
             implementation("com.github.GIGAMOLE:ComposeScrollbars:1.0.4")
 
             implementation("com.valentinilk.shimmer:compose-shimmer:1.3.2")
+
+            implementation(projects.core.ui)
+            implementation(projects.core.datastore)
+            implementation(projects.core.designsystem)
+            implementation(projects.core.data)
+            implementation(projects.core.domain)
+            implementation(projects.core.network)
+            implementation(projects.feature.onboarding)
+            implementation(projects.feature.vehicles)
+            implementation(projects.feature.vehicleDetail)
+            implementation(projects.feature.favourite)
+            implementation(projects.feature.tracking)
+            implementation(projects.feature.history)
+            implementation(projects.feature.menu.main)
+            implementation(projects.feature.search)
 
         }
         iosMain.dependencies {

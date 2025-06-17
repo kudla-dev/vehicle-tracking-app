@@ -16,7 +16,7 @@ import cz.kudladev.vehicletracking.app.navigation.core.navigateToHistory
 import cz.kudladev.vehicletracking.app.navigation.core.navigateToSettings
 import cz.kudladev.vehicletracking.app.navigation.core.navigateToTracking
 import cz.kudladev.vehicletracking.app.navigation.core.navigateToVehicleList
-import cz.kudladev.vehicletracking.auth.domain.UserStateHolder
+import cz.kudladev.vehicletracking.core.domain.auth.UserStateHolder
 import cz.kudladev.vehicletracking.core.presentation.components.basics.BottomBarDestinations
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

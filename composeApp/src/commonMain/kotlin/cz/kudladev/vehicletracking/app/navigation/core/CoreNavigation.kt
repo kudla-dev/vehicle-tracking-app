@@ -10,8 +10,8 @@ import androidx.navigation.navigation
 import cz.kudladev.vehicletracking.app.AppState
 import cz.kudladev.vehicletracking.app.navigation.nested.MenuNavigation
 import cz.kudladev.vehicletracking.app.navigation.nested.VehicleNavigation
-import cz.kudladev.vehicletracking.history.HistoryScreenRoot
-import cz.kudladev.vehicletracking.tracking.TrackingScreenRoot
+import cz.kudladev.vehicletracking.feature.history.HistoryScreenRoot
+import cz.kudladev.vehicletracking.feature.tracking.TrackingScreenRoot
 import kotlinx.serialization.Serializable
 
 @Serializable
