@@ -39,6 +39,8 @@ kotlin {
 
             implementation(libs.bundles.paging)
 
+            implementation(libs.kotlinx.datetime)
+
             implementation(projects.model)
             implementation(libs.bundles.koin)
 

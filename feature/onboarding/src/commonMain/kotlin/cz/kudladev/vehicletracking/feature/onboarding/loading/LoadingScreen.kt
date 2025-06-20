@@ -11,8 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.kudladev.vehicletracking.core.domain.auth.UserStateHolder
 import cz.kudladev.vehicletracking.model.User
+import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 
+@Serializable
+data object Loading
 
 @Composable
 fun LoadingScreenRoot(

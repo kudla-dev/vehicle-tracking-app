@@ -110,4 +110,8 @@ class AppState(
         }
     }
 
+    fun navigateToVehicleDetails(vehicleId: Int?) {
+
+    }
+
 }

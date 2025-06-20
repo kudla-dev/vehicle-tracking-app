@@ -45,11 +45,13 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
 
+            implementation(libs.bundles.coil)
             implementation(libs.bundles.koin)
 
+            implementation(projects.model)
             implementation(projects.core.domain)
-
             implementation(projects.core.designsystem)
+            implementation(projects.core.ui)
         }
     }
 

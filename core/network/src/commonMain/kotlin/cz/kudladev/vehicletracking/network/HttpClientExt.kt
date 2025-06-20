@@ -63,38 +63,43 @@ suspend inline fun <reified T> responseToResult(
     return when(response.status.value) {
         in 200..299 -> {
             try {
-                val message = response.body<T>()
-                Result.Success(message)
-            } catch (e: Exception) {
-                val error = try {
-                    response.body<ErrorMessage>()
-                } catch (e: NoTransformationFoundException) {
-                    ErrorMessage(
-                        error = "NoTransformationFoundException",
-                        message = "An unknown error occurred. Please try again.",
-                        path = "",
-                        status = 500,
-                        timestamp = Clock.System.now().toString()
-                    )
+                // Special handling for 204 No Content
+                if (response.status.value == 204) {
+                    Result.Success(null as T)
+                } else {
+                    val message = response.body<T>()
+                    Result.Success(message)
                 }
-                Result.Error(error)
+            } catch (e: Exception) {
+                println("Error parsing response body: ${e.message}")
+                println("In response from `${response.request.url}`")
+                println("Response status `${response.status} `")
+                println("Response header `ContentType: ${response.headers["Content-Type"]}` ")
+                println("Request header `Accept: ${response.request.headers["Accept"]}`")
+                parseErrorMessage(response)
             }
         }
         else -> {
-            val error = try {
-                response.body<ErrorMessage>()
-            } catch (e: NoTransformationFoundException) {
-                ErrorMessage(
-                    error = "NoTransformationFoundException",
-                    message = "An unknown error occurred. Please try again.",
-                    path = "",
-                    status = 500,
-                    timestamp = Clock.System.now().toString()
-                )
-            }
-            Result.Error(error)
+            println("Error response: ${response.status.value} - ${response.status.description}")
+            parseErrorMessage(response)
         }
     }
+}
+
+@OptIn(ExperimentalTime::class)
+suspend fun parseErrorMessage(response: HttpResponse): Result.Error {
+    val error = try {
+        response.body<ErrorMessage>()
+    } catch (e: NoTransformationFoundException) {
+        ErrorMessage(
+            error = "NoTransformationFoundException",
+            message = "An unknown error occurred. Please try again.",
+            path = "",
+            status = 500,
+            timestamp = Clock.System.now().toString()
+        )
+    }
+    return Result.Error(error)
 }
 
 inline fun <T, R> Result<T, ErrorMessage>.mapSuccess(transform: (T) -> R): Result<R, ErrorMessage> {

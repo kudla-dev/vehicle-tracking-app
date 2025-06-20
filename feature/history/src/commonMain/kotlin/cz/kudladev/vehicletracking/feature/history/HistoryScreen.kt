@@ -11,6 +11,10 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import kotlinx.serialization.Serializable
+
+@Serializable
+data object History
 
 @Composable
 fun HistoryScreenRoot(

@@ -70,6 +70,7 @@ kotlin {
 
             implementation("com.valentinilk.shimmer:compose-shimmer:1.3.2")
 
+            implementation(projects.model)
             implementation(projects.core.ui)
             implementation(projects.core.datastore)
             implementation(projects.core.designsystem)
@@ -83,6 +84,8 @@ kotlin {
             implementation(projects.feature.tracking)
             implementation(projects.feature.history)
             implementation(projects.feature.menu.main)
+            implementation(projects.feature.menu.adminSettings)
+            implementation(projects.feature.menu.manageVehicles)
             implementation(projects.feature.search)
 
         }

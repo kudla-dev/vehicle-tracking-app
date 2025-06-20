@@ -43,3 +43,7 @@ fun String.toRole(): Role {
     }
 }
 
+fun User.isAdmin(): Boolean {
+    return this.role == Role.ADMIN
+}
+

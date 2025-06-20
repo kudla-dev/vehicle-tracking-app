@@ -10,20 +10,18 @@ import androidx.navigation.navigation
 import cz.kudladev.vehicletracking.app.AppState
 import cz.kudladev.vehicletracking.app.navigation.nested.MenuNavigation
 import cz.kudladev.vehicletracking.app.navigation.nested.VehicleNavigation
+import cz.kudladev.vehicletracking.feature.favourite.FavouritesScreenRoot
+import cz.kudladev.vehicletracking.feature.favourite.Favourites
+import cz.kudladev.vehicletracking.feature.history.History
 import cz.kudladev.vehicletracking.feature.history.HistoryScreenRoot
+import cz.kudladev.vehicletracking.feature.tracking.Tracking
 import cz.kudladev.vehicletracking.feature.tracking.TrackingScreenRoot
+import cz.kudladev.vehicletracking.feature.vehicles.VehicleList
 import kotlinx.serialization.Serializable
 
 @Serializable
 data object CoreRoot
-@Serializable
-data object VehicleList
-@Serializable
-data object Favourites
-@Serializable
-data object Tracking
-@Serializable
-data object History
+
 @Serializable
 data object Menu
 
@@ -53,9 +51,9 @@ fun NavGraphBuilder.coreNavigation(
             popEnterTransition = { EnterTransition.None },
             popExitTransition = { ExitTransition.None },
         ) {
-//            VehicleListScreenRoot(
-//                paddingValues = appState.paddingValues,
-//            )
+            FavouritesScreenRoot(
+                paddingValues = appState.paddingValues,
+            )
         }
         composable<Tracking>(
             enterTransition = { EnterTransition.None },
@@ -65,6 +63,9 @@ fun NavGraphBuilder.coreNavigation(
         ) {
             TrackingScreenRoot(
                 paddingValues = appState.paddingValues,
+                onVehicleClick = { vehicle ->
+                    //Navigate to vehicle navigation to vehicle details destination
+                }
             )
         }
         composable<History>(

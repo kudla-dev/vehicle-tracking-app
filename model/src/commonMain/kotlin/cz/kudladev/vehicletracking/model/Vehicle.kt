@@ -16,7 +16,7 @@ data class Vehicle(
     val totalDistance: Int = 0,
     val place: String = "",
     val driverLicense: String = "",
-    val images: List<String> = emptyList()
+    val images: List<ImageWithUrl> = emptyList()
 )
 
 //fun Vehicle.toBasic(): VehicleBasic {

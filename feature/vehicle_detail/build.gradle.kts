@@ -49,7 +49,7 @@ kotlin {
 
             implementation(libs.bundles.koin)
 
-
+            implementation(libs.kotlinx.datetime)
 
             implementation(projects.model)
             implementation(projects.core.domain)

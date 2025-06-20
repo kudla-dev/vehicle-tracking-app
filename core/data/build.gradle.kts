@@ -41,6 +41,8 @@ kotlin {
 
             implementation(libs.bundles.ktor)
             implementation(libs.bundles.koin)
+
+            implementation(libs.kotlinx.datetime)
             implementation(projects.core.datastore)
             implementation(projects.core.network)
             implementation(projects.core.domain)

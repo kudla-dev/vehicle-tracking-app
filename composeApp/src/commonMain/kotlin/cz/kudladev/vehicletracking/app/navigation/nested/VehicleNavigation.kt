@@ -9,14 +9,13 @@ import cz.kudladev.vehicletracking.app.AppState
 import cz.kudladev.vehicletracking.app.navigation.core.sharedKoinViewModel
 import cz.kudladev.vehicletracking.feature.search.SearchScreenRoot
 import cz.kudladev.vehicletracking.feature.vehicledetail.VehicleDetailRoot
+import cz.kudladev.vehicletracking.feature.vehicledetail.VehicleDetails
 import cz.kudladev.vehicletracking.feature.vehicles.VehicleListScreenRoot
 import cz.kudladev.vehicletracking.feature.vehicles.VehicleListViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class VehicleRoot(val searchQuery: String? = null)
-@Serializable
-data class VehicleDetails(val vehicleId: Int? = null)
 @Serializable
 data class Search(val type: String)
 

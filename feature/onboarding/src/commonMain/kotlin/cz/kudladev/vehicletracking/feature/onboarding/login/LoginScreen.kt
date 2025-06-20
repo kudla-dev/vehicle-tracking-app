@@ -29,8 +29,12 @@ import cz.kudladev.vehicletracking.core.designsystem.BackButton
 import cz.kudladev.vehicletracking.core.designsystem.KeyboardClearFocus
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
 import cz.kudladev.vehicletracking.core.designsystem.OutlinedTextField
+import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 import rememberStackedSnackbarHostState
+
+@Serializable
+data object Login
 
 @Composable
 fun LoginScreenRoot(

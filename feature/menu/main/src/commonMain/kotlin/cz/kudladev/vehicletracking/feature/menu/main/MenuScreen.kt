@@ -1,24 +1,14 @@
 package cz.kudladev.vehicletracking.feature.menu.main
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.twotone.Logout
 import androidx.compose.material.icons.filled.TrackChanges
-import androidx.compose.material.icons.twotone.AdminPanelSettings
-import androidx.compose.material.icons.twotone.DirectionsCar
-import androidx.compose.material.icons.twotone.Groups
-import androidx.compose.material.icons.twotone.Lock
-import androidx.compose.material.icons.twotone.ManageAccounts
-import androidx.compose.material.icons.twotone.MarkunreadMailbox
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.material.icons.twotone.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -82,94 +72,129 @@ private fun MenuScreen(
             top = innerPadding.calculateTopPadding() + 16.dp,
             bottom = paddingValues.calculateBottomPadding() + 16.dp,
         )
-        if (user == null) {
+        AnimatedVisibility(
+            visible = user == null,
+        ){
             UserNotLoggedIn(modifier = Modifier.padding(padding))
-            return@Scaffold
+            return@AnimatedVisibility
         }
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize(),
-            contentPadding = padding,
-        ) {
-            item {
-                UserCard(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    user = user,
-                    onClick = {
-
-                    }
-                )
-            }
-            if (user.role == Role.ADMIN){
+        AnimatedVisibility(
+            visible = user != null,
+        ){
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentPadding = padding,
+            ) {
                 item {
-                    MenuSection(
-                        title = "Admin"
-                    ) {
-                        MenuSectionItem(
-                            icon = Icons.TwoTone.Groups,
-                            title = "Manage users",
-                            onClick = {
-
-                            }
-                        )
-                        MenuSectionItem(
-                            icon = Icons.TwoTone.DirectionsCar,
-                            title = "Manage vehicles",
-                            onClick = {
-                                onManageVehicles()
-                            },
-                        )
-                        MenuSectionItem(
-                            icon = Icons.Default.TrackChanges,
-                            title = "Tracking history",
-                            onClick = {
-
-                            },
-                        )
-                        MenuSectionItem(
-                            icon = Icons.TwoTone.MarkunreadMailbox,
-                            title = "New requests",
-                            onClick = {
-
-                            },
-                        )
-                        MenuSectionItem(
-                            icon = Icons.TwoTone.AdminPanelSettings,
-                            title = "Admin settings",
-                            onClick = onAdminSettings,
-                            isLast = true
-                        )
-                    }
-                }
-            }
-            item {
-                MenuSection(
-                    title = "Account"
-                ) {
-                    MenuSectionItem(
-                        icon = Icons.TwoTone.ManageAccounts,
-                        title = "Personal data",
+                    UserCard(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        user = user!!,
                         onClick = {
 
                         }
                     )
-                    MenuSectionItem(
-                        icon = Icons.TwoTone.Lock,
-                        title = "Change password",
-                        onClick = {
-
-                        },
-                        isLast = true
-                    )
                 }
-            }
-            item {
-                Version(
-                    version = "1.0.0",
-                    versionDate = "6.5.2025"
-                )
+                if (user!!.role == Role.ADMIN){
+                    adminSection(onManageVehicles, onAdminSettings)
+                }
+                accountSection()
+                versionSection()
             }
         }
     }
-
 }
+
+private fun LazyListScope.versionSection() {
+    item {
+        Version(
+            version = "1.0.0",
+            versionDate = "6.5.2025"
+        )
+    }
+}
+
+private fun LazyListScope.accountSection() {
+    item {
+        MenuSection(
+            title = "Account"
+        ) {
+            MenuSectionItem(
+                icon = Icons.TwoTone.ManageAccounts,
+                title = "Personal data",
+                onClick = {
+
+                }
+            )
+            MenuSectionItem(
+                icon = Icons.TwoTone.Lock,
+                title = "Change password",
+                onClick = {
+
+                }
+            )
+            MenuSectionItem(
+                icon = Icons.AutoMirrored.TwoTone.Logout,
+                title = "Logout",
+                onClick = {
+                    // Handle logout
+                },
+                isLast = true
+            )
+        }
+    }
+}
+
+private fun LazyListScope.adminSection(
+    onManageVehicles: () -> Unit,
+    onAdminSettings: () -> Unit
+) {
+    item {
+        MenuSection(
+            title = "Admin"
+        ) {
+            MenuSectionItem(
+                icon = Icons.TwoTone.Groups,
+                title = "Manage users",
+                onClick = {
+
+                }
+            )
+            MenuSectionItem(
+                icon = Icons.TwoTone.DirectionsCar,
+                title = "Manage vehicles",
+                onClick = {
+                    onManageVehicles()
+                },
+            )
+            MenuSectionItem(
+                icon = Icons.Default.TrackChanges,
+                title = "Tracking history",
+                onClick = {
+
+                },
+            )
+            MenuSectionItem(
+                icon = Icons.TwoTone.Motorcycle,
+                title = "Running trackings",
+                onClick = {
+
+                },
+            )
+            MenuSectionItem(
+                icon = Icons.TwoTone.MarkunreadMailbox,
+                title = "New requests",
+                onClick = {
+
+                },
+            )
+            MenuSectionItem(
+                icon = Icons.TwoTone.AdminPanelSettings,
+                title = "Admin settings",
+                onClick = onAdminSettings,
+                isLast = true
+            )
+        }
+    }
+}
+

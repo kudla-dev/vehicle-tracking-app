@@ -2,6 +2,7 @@ package cz.kudladev.vehicletracking.core.data.vehicles.models
 
 import cz.kudladev.vehicletracking.core.data.brands.models.BrandDTO
 import cz.kudladev.vehicletracking.core.data.brands.models.toDomain
+import cz.kudladev.vehicletracking.model.ImageWithUrl
 import cz.kudladev.vehicletracking.model.Vehicle
 import kotlinx.serialization.Serializable
 
@@ -19,7 +20,7 @@ data class VehicleBasic(
     val totalDistance: Int,
     val place: String,
     val driverLicense: String,
-    val images: List<String>
+    val images: List<ImageWithUrl>
 )
 
 fun VehicleBasic.toDomain(): Vehicle {

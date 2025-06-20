@@ -8,6 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import cz.kudladev.vehicletracking.feature.onboarding.welcome.components.AuthSection
+import kotlinx.serialization.Serializable
+
+@Serializable
+data object Welcome
 
 @Composable
 fun WelcomeScreenRoot(

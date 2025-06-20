@@ -25,6 +25,7 @@ import cz.kudladev.vehicletracking.core.ui.util.toImageBitmap
 import cz.kudladev.vehicletracking.model.Image
 import cz.kudladev.vehicletracking.model.ImageWithBytes
 import cz.kudladev.vehicletracking.model.ImageWithUrl
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun VehicleImages(
@@ -69,12 +70,6 @@ fun VehicleImages(
                     state = pagerState,
                     modifier = Modifier.weight(1f),
                     pageSpacing = 8.dp,
-                    contentPadding = PaddingValues(
-                        start = 16.dp,
-                        end = 16.dp,
-                        top = 0.dp,
-                        bottom = 0.dp
-                    ),
                     userScrollEnabled = true,
                     flingBehavior = PagerDefaults.flingBehavior(
                         state = pagerState,
@@ -165,7 +160,22 @@ fun VehicleImages(
             }
         }
     }
+}
 
+@Composable
+@Preview
+private fun VehicleImagesPreview() {
+    val images = listOf(
+        ImageWithUrl(url = "https://cdn.motopark.cz/images/0/bedc811d0cdcea9a/2/yamaha-tenere-700-2025-icon-blue.png?hash=488245943", position = 0),
+        ImageWithUrl(url = "https://cdn.motopark.cz/images/0/bedc811d0cdcea9a/2/yamaha-tenere-700-2025-icon-blue.png?hash=488245943", position = 1),
+        ImageWithUrl(url = "https://cdn.motopark.cz/images/0/bedc811d0cdcea9a/2/yamaha-tenere-700-2025-icon-blue.png?hash=488245943", position = 2),
+    )
 
-
+    VehicleImages(
+        modifier = Modifier.height(300.dp),
+        images = images,
+        onImageClick = {},
+        onImageRemove = null,
+        onImagesReordered = {}
+    )
 }

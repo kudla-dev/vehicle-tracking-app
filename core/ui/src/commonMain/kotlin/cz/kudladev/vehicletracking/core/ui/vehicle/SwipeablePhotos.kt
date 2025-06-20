@@ -20,13 +20,16 @@ import coil3.compose.AsyncImage
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.*
+import cz.kudladev.vehicletracking.model.Image
+import cz.kudladev.vehicletracking.model.ImageWithBytes
+import cz.kudladev.vehicletracking.model.ImageWithUrl
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SwipeablePhotos(
     modifier: Modifier = Modifier,
-    images: List<String> = emptyList(),
+    images: List<Image> = emptyList(),
 ) {
     val pagerState = rememberPagerState(pageCount = { images.size })
     var showIndicator by remember { mutableStateOf(false) }
@@ -57,14 +60,18 @@ fun SwipeablePhotos(
                     stiffness = Spring.StiffnessLow
                 )
             ),
-            key = { index -> images.getOrNull(index) ?: index }
+            key = { index -> index }
         ) { index ->
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 AsyncImage(
-                    model = images[index],
+                    model = when (val image = images.getOrNull(index)) {
+                        is ImageWithUrl -> image.url
+                        is ImageWithBytes -> image.bytes
+                        else -> null
+                    },
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop

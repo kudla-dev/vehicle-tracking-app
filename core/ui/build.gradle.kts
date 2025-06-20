@@ -55,8 +55,12 @@ kotlin {
 
             implementation("com.valentinilk.shimmer:compose-shimmer:1.3.2")
 
-            implementation(projects.model)
+            implementation("io.github.pushpalroy:jetlime:3.0.1")
 
+            implementation(projects.model)
+            implementation(projects.core.designsystem)
+
+            implementation(libs.kotlinx.datetime)
         }
     }
 
