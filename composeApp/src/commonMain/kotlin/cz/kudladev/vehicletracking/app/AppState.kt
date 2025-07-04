@@ -1,6 +1,7 @@
 package cz.kudladev.vehicletracking.app
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -17,7 +18,7 @@ import cz.kudladev.vehicletracking.app.navigation.core.navigateToSettings
 import cz.kudladev.vehicletracking.app.navigation.core.navigateToTracking
 import cz.kudladev.vehicletracking.app.navigation.core.navigateToVehicleList
 import cz.kudladev.vehicletracking.core.domain.auth.UserStateHolder
-import cz.kudladev.vehicletracking.core.presentation.components.basics.BottomBarDestinations
+import cz.kudladev.vehicletracking.app.navigation.BottomBarDestinations
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.compose.koinInject
@@ -30,24 +31,29 @@ fun rememberAppState(
 ): AppState {
     val coreNavController = navController
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
     return remember(
         coreNavController,
         userStateHolder
     ) {
         AppState(
             coreNavController = coreNavController,
-            userStateHolder = userStateHolder
+            userStateHolder = userStateHolder,
+            snackbarHostState = snackbarHostState
         )
     }
 }
 
 class AppState(
     val coreNavController: NavHostController,
-    val userStateHolder: UserStateHolder
+    val userStateHolder: UserStateHolder,
+    val snackbarHostState: SnackbarHostState,
 ) {
     private val _isInCoreGraph = MutableStateFlow(false)
     val isInCoreGraph: StateFlow<Boolean> = _isInCoreGraph
     private val previousDestination = mutableStateOf<NavDestination?>(null)
+
 
     var paddingValues = PaddingValues()
 
@@ -110,8 +116,6 @@ class AppState(
         }
     }
 
-    fun navigateToVehicleDetails(vehicleId: Int?) {
 
-    }
 
 }

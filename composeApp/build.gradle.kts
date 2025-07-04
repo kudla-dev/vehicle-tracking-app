@@ -58,7 +58,6 @@ kotlin {
 
             implementation(libs.navigation.compose)
 
-            implementation(libs.compose.stacked.snackbar)
 
             implementation(libs.bundles.paging)
 

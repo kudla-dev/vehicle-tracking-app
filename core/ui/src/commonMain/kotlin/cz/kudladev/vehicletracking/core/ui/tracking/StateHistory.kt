@@ -4,6 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -14,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.pushpal.jetlime.EventPointAnimation
 import com.pushpal.jetlime.EventPointType
+import com.pushpal.jetlime.EventPosition
 import com.pushpal.jetlime.ItemsList
 import com.pushpal.jetlime.JetLimeColumn
 import com.pushpal.jetlime.JetLimeDefaults
@@ -48,43 +52,17 @@ fun StateHistory(
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.SemiBold
         )
-        JetLimeColumn(
-            itemsList = ItemsList(temp),
-            key = { _, item -> item.state },
-            style = JetLimeDefaults.columnStyle(contentDistance = 24.dp),
-        ) { index, item, position ->
-            JetLimeExtendedEvent(
-                style = JetLimeEventDefaults.eventStyle(
-                    position = position,
-                    pointAnimation = if (temp.size-1 == index) {
-                        JetLimeEventDefaults.pointAnimation()
-                    } else null
-                ),
-                additionalContent = {
-                    Text(
-                        text = item.assignedAt?.toFormattedString() ?: "",
-                        modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                },
-                additionalContentMaxWidth = 100.dp
-            ) {
-                Column {
-                    Text(
-                        text = item.state.displayName,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text = item.message ?: "No message provided",
-                    )
-                }
-            }
+        temp.forEachIndexed { index, log ->
+            StateHistoryItem(
+                trackingLog = log,
+                number = index + 1,
+                isLast = index == temp.lastIndex,
+            )
         }
     }
 }
 
-private val items = listOf(
+internal val items = listOf(
     TrackingLog(
         trackingId = "f66c288c-eb50-4743-8f5a-cfb4eb08344d",
         state = TrackingState.PENDING,

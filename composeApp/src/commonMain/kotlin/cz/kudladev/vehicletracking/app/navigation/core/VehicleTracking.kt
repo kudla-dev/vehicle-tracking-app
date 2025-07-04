@@ -2,6 +2,7 @@ package cz.kudladev.vehicletracking.app.navigation.core
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
@@ -11,7 +12,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import cz.kudladev.vehicletracking.app.AppState
-import cz.kudladev.vehicletracking.core.presentation.components.basics.BottomBar
+import cz.kudladev.vehicletracking.app.navigation.BottomBar
 import org.koin.compose.viewmodel.koinViewModel
 
 
@@ -27,7 +28,8 @@ fun VehicleTracking(
             if (appState.isInCoreGraph.collectAsState(initial = false).value) {
                 BottomBar(appState)
             }
-        }
+        },
+        snackbarHost = { SnackbarHost(appState.snackbarHostState) },
     ) {
         appState.paddingValues = it
         NavHost(

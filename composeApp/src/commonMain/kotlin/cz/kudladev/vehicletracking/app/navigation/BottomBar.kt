@@ -1,4 +1,4 @@
-package cz.kudladev.vehicletracking.core.presentation.components.basics
+package cz.kudladev.vehicletracking.app.navigation
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
