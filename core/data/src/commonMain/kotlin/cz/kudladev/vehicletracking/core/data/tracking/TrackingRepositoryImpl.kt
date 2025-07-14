@@ -7,6 +7,7 @@ import cz.kudladev.vehicletracking.core.domain.tracking.TrackingRepository
 import cz.kudladev.vehicletracking.model.ErrorMessage
 import cz.kudladev.vehicletracking.model.Result
 import cz.kudladev.vehicletracking.model.Tracking
+import cz.kudladev.vehicletracking.model.TrackingState
 import cz.kudladev.vehicletracking.network.mapSuccess
 import cz.kudladev.vehicletracking.network.safeCall
 import io.ktor.client.HttpClient
@@ -17,7 +18,6 @@ import io.ktor.client.request.setBody
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
-import kotlin.text.get
 
 class TrackingRepositoryImpl(
     private val httpClient: HttpClient
@@ -51,13 +51,13 @@ class TrackingRepositoryImpl(
     }
 
     override suspend fun getTrackings(
-        states: List<String>,
+        states: List<TrackingState>,
         page: Int,
         pageSize: Int
     ): Result<List<Tracking>, ErrorMessage> {
         return safeCall<List<TrackingResponse>> {
             httpClient.get("/trackings") {
-                parameter("states", states.joinToString(","))
+                parameter("states", states.joinToString(",") { it.state })
                 parameter("page", page)
                 parameter("pageSize", pageSize)
             }

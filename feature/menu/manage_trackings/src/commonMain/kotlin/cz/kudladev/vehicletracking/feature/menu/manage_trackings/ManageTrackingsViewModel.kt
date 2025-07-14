@@ -1,7 +1,9 @@
 package cz.kudladev.vehicletracking.feature.menu.manage_trackings
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import app.cash.paging.*
 import cz.kudladev.vehicletracking.core.domain.tracking.TrackingPagingSource
 import cz.kudladev.vehicletracking.core.domain.tracking.TrackingRepository
@@ -11,8 +13,11 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 
 class ManageTrackingsViewModel(
-    private val trackingRepository: TrackingRepository
+    private val trackingRepository: TrackingRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    val trackingType = savedStateHandle.toRoute<ManageTrackings>().type
 
     val trackings = Pager(
         config = PagingConfig(
@@ -22,7 +27,7 @@ class ManageTrackingsViewModel(
     ) {
         TrackingPagingSource(
             trackingRepository = trackingRepository,
-            states = emptyList()
+            states = trackingType.states
         )
     }.flow.cachedIn(viewModelScope)
 

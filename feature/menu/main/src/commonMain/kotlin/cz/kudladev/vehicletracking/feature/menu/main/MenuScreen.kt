@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.Logout
+import androidx.compose.material.icons.filled.SportsScore
 import androidx.compose.material.icons.filled.TrackChanges
 import androidx.compose.material.icons.twotone.*
 import androidx.compose.material3.*
@@ -32,7 +33,10 @@ fun MenuScreenRoot(
     userStateHolder: UserStateHolder = koinInject(),
     onAdminSettings: () -> Unit,
     onManageVehicles: () -> Unit,
-    onActiveTrackings: () -> Unit
+    onActiveTrackings: () -> Unit,
+    onNonStartedTrackings: () -> Unit,
+    onNewRequestsTrackings: () -> Unit,
+    onTrackingHistory: () -> Unit,
 ) {
     val user = userStateHolder.user.collectAsStateWithLifecycle().value
 
@@ -41,7 +45,10 @@ fun MenuScreenRoot(
         user = user,
         onAdminSettings = onAdminSettings,
         onManageVehicles = onManageVehicles,
-        onActiveTrackings = onActiveTrackings
+        onActiveTrackings = onActiveTrackings,
+        onNonStartedTrackings = onNonStartedTrackings,
+        onNewRequestsTrackings = onNewRequestsTrackings,
+        onTrackingHistory = onTrackingHistory,
     )
 }
 
@@ -52,7 +59,10 @@ private fun MenuScreen(
     user: User?,
     onAdminSettings: () -> Unit,
     onManageVehicles: () -> Unit,
-    onActiveTrackings: () -> Unit
+    onActiveTrackings: () -> Unit,
+    onNonStartedTrackings: () -> Unit,
+    onNewRequestsTrackings: () -> Unit,
+    onTrackingHistory: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
@@ -102,7 +112,10 @@ private fun MenuScreen(
                     adminSection(
                         onManageVehicles,
                         onAdminSettings,
-                        onActiveTrackings
+                        onActiveTrackings,
+                        onNonStartedTrackings,
+                        onNewRequestsTrackings,
+                        onTrackingHistory
                     )
                 }
                 accountSection()
@@ -155,7 +168,10 @@ private fun LazyListScope.accountSection() {
 private fun LazyListScope.adminSection(
     onManageVehicles: () -> Unit,
     onAdminSettings: () -> Unit,
-    onActiveTrackings: () -> Unit
+    onActiveTrackings: () -> Unit,
+    onNonStartedTrackings: () -> Unit,
+    onNewRequestsTrackings: () -> Unit,
+    onTrackingHistory: () -> Unit,
 ) {
     item {
         MenuSection(
@@ -176,10 +192,10 @@ private fun LazyListScope.adminSection(
                 },
             )
             MenuSectionItem(
-                icon = Icons.Default.TrackChanges,
+                icon = Icons.TwoTone.TrackChanges,
                 title = "Tracking history",
                 onClick = {
-
+                    onTrackingHistory()
                 },
             )
             MenuSectionItem(
@@ -190,10 +206,17 @@ private fun LazyListScope.adminSection(
                 },
             )
             MenuSectionItem(
+                icon = Icons.TwoTone.SportsScore,
+                title = "Ready to start trackings",
+                onClick = {
+                    onNonStartedTrackings()
+                }
+            )
+            MenuSectionItem(
                 icon = Icons.TwoTone.MarkunreadMailbox,
                 title = "New requests",
                 onClick = {
-
+                    onNewRequestsTrackings()
                 },
             )
             MenuSectionItem(

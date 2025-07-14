@@ -48,6 +48,8 @@ kotlin {
             implementation(libs.bundles.coil)
             implementation(libs.bundles.koin)
 
+            implementation(libs.navigation.compose)
+
             implementation(projects.model)
             implementation(projects.core.domain)
             implementation(projects.core.designsystem)

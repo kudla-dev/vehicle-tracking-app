@@ -1,31 +1,17 @@
 package cz.kudladev.vehicletracking.feature.menu.manage_trackings
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
@@ -35,18 +21,54 @@ import cz.kudladev.vehicletracking.core.designsystem.BackButton
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
 import cz.kudladev.vehicletracking.core.ui.tracking.TrackingItem
 import cz.kudladev.vehicletracking.model.Tracking
+import cz.kudladev.vehicletracking.model.TrackingState
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
-data object ManageTrackings
+data class ManageTrackings(
+    val type: ManageTrackingsTypes
+)
+
+@Serializable
+enum class ManageTrackingsTypes(val states: List<TrackingState>, val title: String){
+    ACTIVE(
+        states =listOf(
+            TrackingState.ACTIVE
+        ),
+        title = "Active Trackings"
+    ),
+    NOT_STARTED(
+        states = listOf(
+            TrackingState.APPROVED
+        ),
+        title = "Ready to Start Trackings"
+    ),
+    REQUESTED(
+        states = listOf(
+            TrackingState.PENDING
+        ),
+        title = "Requested Trackings"
+    ),
+    HISTORY(
+        states = listOf(
+            TrackingState.COMPLETED,
+            TrackingState.REJECTED,
+            TrackingState.RETURNED,
+            TrackingState.FAILED,
+            TrackingState.ERROR
+        ),
+        title = "Tracking History"
+    )
+}
 
 @Composable
 fun ManageTrackingsRoot(
     viewModel: ManageTrackingsViewModel = koinViewModel(),
     paddingValues: PaddingValues,
     onBack: () -> Unit,
-    onTrackingClicked: (tracking: Tracking) -> Unit
+    onTrackingClicked: (tracking: Tracking) -> Unit,
+    type: ManageTrackingsTypes
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -55,6 +77,7 @@ fun ManageTrackingsRoot(
     ManageTrackingsScreen(
         paddingValues = paddingValues,
         state = state,
+        type = type,
         trackings = trackings,
         onAction = viewModel::onAction,
         onBack = onBack,
@@ -67,6 +90,7 @@ fun ManageTrackingsRoot(
 private fun ManageTrackingsScreen(
     paddingValues: PaddingValues,
     state: ManageTrackingsState,
+    type: ManageTrackingsTypes,
     trackings: LazyPagingItems<Tracking>,
     onAction: (ManageTrackingsAction) -> Unit,
     onBack: () -> Unit,
@@ -79,7 +103,7 @@ private fun ManageTrackingsScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        "Active Trackings"
+                        type.title
                     )
                 },
                 navigationIcon = {

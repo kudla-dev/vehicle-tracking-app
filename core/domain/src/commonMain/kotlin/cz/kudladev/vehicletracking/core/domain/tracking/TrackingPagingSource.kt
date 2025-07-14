@@ -3,12 +3,13 @@ package cz.kudladev.vehicletracking.core.domain.tracking
 import androidx.paging.PagingSource
 import app.cash.paging.PagingState
 import cz.kudladev.vehicletracking.model.Tracking
+import cz.kudladev.vehicletracking.model.TrackingState
 import cz.kudladev.vehicletracking.model.onError
 import cz.kudladev.vehicletracking.model.onSuccess
 
 class TrackingPagingSource(
     private val trackingRepository: TrackingRepository,
-    private val states: List<String>,
+    private val states: List<TrackingState>,
 ): PagingSource<Int, Tracking>() {
 
     override fun getRefreshKey(state: PagingState<Int, Tracking>): Int? {

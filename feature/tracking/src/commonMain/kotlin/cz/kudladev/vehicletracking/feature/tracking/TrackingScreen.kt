@@ -120,8 +120,7 @@ private fun TrackingScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(combinedPadding)
-                            .verticalScroll(rememberScrollState()),
+                            .padding(combinedPadding),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {

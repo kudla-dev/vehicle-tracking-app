@@ -1,7 +1,9 @@
 package cz.kudladev.vehicletracking.feature.tracking
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import cz.kudladev.vehicletracking.core.domain.tracking.TrackingRepository
 import cz.kudladev.vehicletracking.model.onError
 import cz.kudladev.vehicletracking.model.onSuccess
@@ -13,8 +15,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class TrackingScreenViewModel(
-    private val trackingRepository: TrackingRepository
+    private val trackingRepository: TrackingRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
 
     private var hasLoadedInitialData = false
 

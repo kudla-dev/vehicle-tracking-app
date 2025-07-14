@@ -4,15 +4,16 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import cz.kudladev.vehicletracking.app.AppState
 import cz.kudladev.vehicletracking.feature.menu.admin_settings.AdminSettings
 import cz.kudladev.vehicletracking.feature.menu.admin_settings.AdminSettingsRoot
 import cz.kudladev.vehicletracking.feature.menu.main.MenuScreenRoot
 import cz.kudladev.vehicletracking.feature.menu.manage_trackings.ManageTrackings
 import cz.kudladev.vehicletracking.feature.menu.manage_trackings.ManageTrackingsRoot
+import cz.kudladev.vehicletracking.feature.menu.manage_trackings.ManageTrackingsTypes
 import cz.kudladev.vehicletracking.feature.menu.manage_vehicles.AddEditVehicleRoot
 import cz.kudladev.vehicletracking.feature.menu.manage_vehicles.ManageVehiclesAddEdit
-import cz.kudladev.vehicletracking.feature.vehicles.ManageVehicles
 import cz.kudladev.vehicletracking.feature.vehicles.VehicleList
 import cz.kudladev.vehicletracking.feature.vehicles.VehicleListScreenRoot
 import kotlinx.serialization.Serializable
@@ -33,25 +34,22 @@ fun MenuNavigation(
             MenuScreenRoot(
                 paddingValues = appState.paddingValues,
                 onAdminSettings = {
-                    navController.navigate(AdminSettings) {
-                        popUpTo(MenuRoot) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+                    navController.navigate(AdminSettings)
                 },
                 onManageVehicles = {
                     navController.navigate(VehicleList)
                 },
                 onActiveTrackings = {
-                    navController.navigate(ManageTrackings) {
-                        popUpTo(MenuRoot) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+                    navController.navigate(ManageTrackings(ManageTrackingsTypes.ACTIVE))
+                },
+                onNonStartedTrackings = {
+                    navController.navigate(ManageTrackings(ManageTrackingsTypes.NOT_STARTED))
+                },
+                onNewRequestsTrackings = {
+                    navController.navigate(ManageTrackings(ManageTrackingsTypes.REQUESTED))
+                },
+                onTrackingHistory = {
+                    navController.navigate(ManageTrackings(ManageTrackingsTypes.HISTORY))
                 }
             )
         }
@@ -92,8 +90,10 @@ fun MenuNavigation(
             )
         }
         composable<ManageTrackings> {
+            val type = it.toRoute<ManageTrackings>().type
             ManageTrackingsRoot(
                 paddingValues = appState.paddingValues,
+                type = type,
                 onBack = {
                     navController.navigateUp()
                 },
