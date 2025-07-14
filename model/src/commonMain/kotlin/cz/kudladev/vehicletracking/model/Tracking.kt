@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class Tracking(
         val id: String,
         val vehicle: Vehicle,
-        val userId: String,
+        val user: User,
         val startTime: LocalDateTime,
         val endTime: LocalDateTime,
         val startTachometer: Int?,

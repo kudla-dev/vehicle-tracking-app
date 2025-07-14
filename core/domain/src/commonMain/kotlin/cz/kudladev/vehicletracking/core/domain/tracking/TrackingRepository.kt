@@ -15,4 +15,10 @@ interface TrackingRepository {
 
     suspend fun getCurrentTracking(): Result<Tracking?, ErrorMessage>
 
+    suspend fun getTrackings(
+        states: List<String> = emptyList(),
+        page: Int = 0,
+        pageSize: Int = 10,
+    ): Result<List<Tracking>, ErrorMessage>
+
 }

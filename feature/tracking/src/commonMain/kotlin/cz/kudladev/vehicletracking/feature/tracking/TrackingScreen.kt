@@ -1,27 +1,24 @@
 package cz.kudladev.vehicletracking.feature.tracking
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ErrorOutline
+import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
@@ -87,24 +84,61 @@ private fun TrackingScreen(
                 start = innerPadding.calculateStartPadding(LocalLayoutDirection.current) + 16.dp,
                 end = innerPadding.calculateEndPadding(LocalLayoutDirection.current) + 16.dp,
             )
-            LazyColumn(
-                modifier = Modifier,
-                contentPadding = combinedPadding,
-            ) {
-                when (state.currentTracking){
-                    is CurrentTrackingState.Error -> {
-
+            when (state.currentTracking){
+                is CurrentTrackingState.Error -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(combinedPadding)
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.ErrorOutline,
+                            contentDescription = "Error",
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(64.dp)
+                        )
+                        Text(
+                            text = "Error loading vehicles",
+                            modifier = Modifier.padding(top = 8.dp),
+                            style = MaterialTheme.typography.titleSmall,
+                        )
+                        Text(
+                            modifier = Modifier.widthIn(max = 300.dp),
+                            text = "${state.currentTracking.message}",
+                            style = MaterialTheme.typography.labelSmall,
+                            maxLines = 3,
+                            softWrap = true,
+                            overflow = TextOverflow.Ellipsis,
+                            textAlign = TextAlign.Center
+                        )
                     }
-                    CurrentTrackingState.Loading -> {
-                        item {
-                            Text(
-                                text = "Loading current tracking...",
-                                modifier = Modifier.padding(combinedPadding)
-                            )
-                        }
+                }
+                CurrentTrackingState.Loading -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(combinedPadding)
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator()
+                        Text(
+                            text = "Loading current tracking...",
+                            modifier = Modifier.padding(top = 8.dp),
+                            style = MaterialTheme.typography.titleSmall,
+                        )
                     }
-                    is CurrentTrackingState.Success -> {
-                        if (state.currentTracking.data != null){
+                }
+                is CurrentTrackingState.Success -> {
+                    if (state.currentTracking.data != null){
+                        LazyColumn(
+                            modifier = Modifier,
+                            contentPadding = combinedPadding,
+                        ) {
                             item {
                                 VehicleHeader(
                                     modifier = Modifier.fillMaxWidth(),
@@ -132,6 +166,7 @@ private fun TrackingScreen(
                     }
                 }
             }
+
         }
     }
 

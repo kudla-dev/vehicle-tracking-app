@@ -2,11 +2,6 @@ package cz.kudladev.vehicletracking.core.ui.tracking
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -15,16 +10,7 @@ import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.pushpal.jetlime.EventPointAnimation
-import com.pushpal.jetlime.EventPointType
-import com.pushpal.jetlime.EventPosition
-import com.pushpal.jetlime.ItemsList
-import com.pushpal.jetlime.JetLimeColumn
-import com.pushpal.jetlime.JetLimeDefaults
-import com.pushpal.jetlime.JetLimeEventDefaults
-import com.pushpal.jetlime.JetLimeExtendedEvent
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
-import cz.kudladev.vehicletracking.core.ui.util.toFormattedString
 import cz.kudladev.vehicletracking.model.Role
 import cz.kudladev.vehicletracking.model.TrackingLog
 import cz.kudladev.vehicletracking.model.TrackingState
@@ -62,7 +48,7 @@ fun StateHistory(
     }
 }
 
-internal val items = listOf(
+internal val trackingLogs = listOf(
     TrackingLog(
         trackingId = "f66c288c-eb50-4743-8f5a-cfb4eb08344d",
         state = TrackingState.PENDING,
@@ -156,7 +142,7 @@ fun StateHistoryPreview() {
     AppTheme {
         Surface {
             StateHistory(
-                logs = items
+                logs = trackingLogs
             )
         }
     }

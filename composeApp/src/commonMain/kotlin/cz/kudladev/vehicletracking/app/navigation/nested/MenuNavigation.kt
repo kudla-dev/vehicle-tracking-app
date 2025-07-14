@@ -8,6 +8,8 @@ import cz.kudladev.vehicletracking.app.AppState
 import cz.kudladev.vehicletracking.feature.menu.admin_settings.AdminSettings
 import cz.kudladev.vehicletracking.feature.menu.admin_settings.AdminSettingsRoot
 import cz.kudladev.vehicletracking.feature.menu.main.MenuScreenRoot
+import cz.kudladev.vehicletracking.feature.menu.manage_trackings.ManageTrackings
+import cz.kudladev.vehicletracking.feature.menu.manage_trackings.ManageTrackingsRoot
 import cz.kudladev.vehicletracking.feature.menu.manage_vehicles.AddEditVehicleRoot
 import cz.kudladev.vehicletracking.feature.menu.manage_vehicles.ManageVehiclesAddEdit
 import cz.kudladev.vehicletracking.feature.vehicles.ManageVehicles
@@ -42,6 +44,15 @@ fun MenuNavigation(
                 onManageVehicles = {
                     navController.navigate(VehicleList)
                 },
+                onActiveTrackings = {
+                    navController.navigate(ManageTrackings) {
+                        popUpTo(MenuRoot) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
             )
         }
         composable<AdminSettings> {
@@ -77,6 +88,17 @@ fun MenuNavigation(
                 paddingValues = appState.paddingValues,
                 onBack = {
                     navController.navigateUp()
+                }
+            )
+        }
+        composable<ManageTrackings> {
+            ManageTrackingsRoot(
+                paddingValues = appState.paddingValues,
+                onBack = {
+                    navController.navigateUp()
+                },
+                onTrackingClicked = { tracking ->
+                    // Handle tracking click
                 }
             )
         }

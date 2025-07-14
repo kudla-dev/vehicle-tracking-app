@@ -90,7 +90,7 @@ fun VehicleSpecificationSection(
     }
 }
 
-private val testVehicle = Vehicle(
+internal val testVehicle = Vehicle(
     brand = Brand(
         id = 1,
         name = "Test Brand",

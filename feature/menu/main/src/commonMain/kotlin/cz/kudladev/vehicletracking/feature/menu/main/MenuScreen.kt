@@ -32,6 +32,7 @@ fun MenuScreenRoot(
     userStateHolder: UserStateHolder = koinInject(),
     onAdminSettings: () -> Unit,
     onManageVehicles: () -> Unit,
+    onActiveTrackings: () -> Unit
 ) {
     val user = userStateHolder.user.collectAsStateWithLifecycle().value
 
@@ -40,6 +41,7 @@ fun MenuScreenRoot(
         user = user,
         onAdminSettings = onAdminSettings,
         onManageVehicles = onManageVehicles,
+        onActiveTrackings = onActiveTrackings
     )
 }
 
@@ -50,6 +52,7 @@ private fun MenuScreen(
     user: User?,
     onAdminSettings: () -> Unit,
     onManageVehicles: () -> Unit,
+    onActiveTrackings: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
@@ -96,7 +99,11 @@ private fun MenuScreen(
                     )
                 }
                 if (user!!.role == Role.ADMIN){
-                    adminSection(onManageVehicles, onAdminSettings)
+                    adminSection(
+                        onManageVehicles,
+                        onAdminSettings,
+                        onActiveTrackings
+                    )
                 }
                 accountSection()
                 versionSection()
@@ -147,7 +154,8 @@ private fun LazyListScope.accountSection() {
 
 private fun LazyListScope.adminSection(
     onManageVehicles: () -> Unit,
-    onAdminSettings: () -> Unit
+    onAdminSettings: () -> Unit,
+    onActiveTrackings: () -> Unit
 ) {
     item {
         MenuSection(
@@ -176,9 +184,9 @@ private fun LazyListScope.adminSection(
             )
             MenuSectionItem(
                 icon = Icons.TwoTone.Motorcycle,
-                title = "Running trackings",
+                title = "Active trackings",
                 onClick = {
-
+                    onActiveTrackings()
                 },
             )
             MenuSectionItem(

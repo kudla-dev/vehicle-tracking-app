@@ -70,24 +70,6 @@ fun VehicleHeader(
     }
 }
 
-private val testVehicle = Vehicle(
-    brand = Brand(
-        id = 1,
-        name = "Test Brand",
-        logoURL = ""
-    ),
-    fullName = "Test Vehicle",
-    color = "Red",
-    year = "2023",
-    model = "Model X",
-    spz = "1234 ABC",
-    transferableSpz = false,
-    maximumDistance = 0,
-    totalDistance = 0,
-    place = "Ostrava",
-    driverLicense = "A1",
-    images = emptyList()
-)
 
 @Preview
 @Composable

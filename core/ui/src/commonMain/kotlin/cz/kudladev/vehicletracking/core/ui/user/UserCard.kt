@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import cz.kudladev.vehicletracking.model.Role
 import cz.kudladev.vehicletracking.model.User
 
 @Composable
@@ -44,3 +45,14 @@ fun UserCard(
         }
     }
 }
+
+internal val testUser = User(
+    firstName = "John",
+    lastName = "Doe",
+    fullName = "John Doe",
+    email = "john.doe@gmail.com",
+    phoneNumber = "1234567890",
+    role = Role.USER,
+    maximumDistance = 0,
+    overallDistance = 0
+)

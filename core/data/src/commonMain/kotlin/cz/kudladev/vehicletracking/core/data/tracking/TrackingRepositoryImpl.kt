@@ -11,6 +11,7 @@ import cz.kudladev.vehicletracking.network.mapSuccess
 import cz.kudladev.vehicletracking.network.safeCall
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import kotlinx.datetime.LocalDateTime
@@ -46,6 +47,22 @@ class TrackingRepositoryImpl(
             httpClient.get("/trackings/user/current")
         }.mapSuccess { response ->
             response?.toDomain()
+        }
+    }
+
+    override suspend fun getTrackings(
+        states: List<String>,
+        page: Int,
+        pageSize: Int
+    ): Result<List<Tracking>, ErrorMessage> {
+        return safeCall<List<TrackingResponse>> {
+            httpClient.get("/trackings") {
+                parameter("states", states.joinToString(","))
+                parameter("page", page)
+                parameter("pageSize", pageSize)
+            }
+        }.mapSuccess { response ->
+            response.map { it.toDomain() }
         }
     }
 

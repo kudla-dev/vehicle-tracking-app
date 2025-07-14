@@ -1,5 +1,7 @@
 package cz.kudladev.vehicletracking.app.navigation.core
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -7,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
@@ -30,6 +33,7 @@ fun VehicleTracking(
             }
         },
         snackbarHost = { SnackbarHost(appState.snackbarHostState) },
+        contentWindowInsets = WindowInsets()
     ) {
         appState.paddingValues = it
         NavHost(
