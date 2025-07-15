@@ -10,8 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
 import cz.kudladev.vehicletracking.model.Role
 import cz.kudladev.vehicletracking.model.User
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun UserCard(
@@ -47,6 +49,7 @@ fun UserCard(
 }
 
 internal val testUser = User(
+    id = "12345678-1234-5678-1234-567812345678",
     firstName = "John",
     lastName = "Doe",
     fullName = "John Doe",
@@ -56,3 +59,14 @@ internal val testUser = User(
     maximumDistance = 0,
     overallDistance = 0
 )
+
+@Preview
+@Composable
+fun UserCardPreview() {
+    AppTheme {
+        UserCard(
+            user = testUser,
+            onClick = {}
+        )
+    }
+}

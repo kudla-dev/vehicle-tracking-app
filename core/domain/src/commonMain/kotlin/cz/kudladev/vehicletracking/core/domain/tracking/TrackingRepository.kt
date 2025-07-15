@@ -22,4 +22,13 @@ interface TrackingRepository {
         pageSize: Int = 10,
     ): Result<List<Tracking>, ErrorMessage>
 
+    suspend fun getTracking(id: String): Result<Tracking, ErrorMessage>
+
+    suspend fun getUserTrackingHistory(
+        userId: String,
+        page: Int = 0,
+        pageSize: Int = 10,
+        includeActive: Boolean = false,
+    ): Result<List<Tracking>, ErrorMessage>
+
 }

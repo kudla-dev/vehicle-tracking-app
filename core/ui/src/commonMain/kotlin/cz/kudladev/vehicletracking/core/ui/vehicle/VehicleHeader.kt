@@ -1,6 +1,7 @@
 package cz.kudladev.vehicletracking.core.ui.vehicle
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,7 +34,8 @@ fun VehicleHeader(
             .clip(MaterialTheme.shapes.medium)
             .clickable(
                 onClick = onClick,
-            )
+            ),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Column(
             modifier = Modifier
@@ -65,7 +67,6 @@ fun VehicleHeader(
             modifier = Modifier
                 .width(150.dp)
                 .clip(MaterialTheme.shapes.medium)
-                .padding(start = 16.dp),
         )
     }
 }

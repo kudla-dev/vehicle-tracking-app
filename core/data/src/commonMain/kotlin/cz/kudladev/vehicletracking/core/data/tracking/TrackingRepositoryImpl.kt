@@ -66,4 +66,29 @@ class TrackingRepositoryImpl(
         }
     }
 
+    override suspend fun getTracking(id: String): Result<Tracking, ErrorMessage> {
+        return safeCall<TrackingResponse> {
+            httpClient.get("/trackings/$id")
+        }.mapSuccess { response ->
+            response.toDomain()
+        }
+    }
+
+    override suspend fun getUserTrackingHistory(
+        userId: String,
+        page: Int,
+        pageSize: Int,
+        includeActive: Boolean
+    ): Result<List<Tracking>, ErrorMessage> {
+        return safeCall<List<TrackingResponse>> {
+            httpClient.get("/users/$userId/tracking") {
+                parameter("page", page)
+                parameter("pageSize", pageSize)
+                parameter("includeActive", includeActive)
+            }
+        }.mapSuccess { response ->
+            response.map { it.toDomain() }
+        }
+    }
+
 }

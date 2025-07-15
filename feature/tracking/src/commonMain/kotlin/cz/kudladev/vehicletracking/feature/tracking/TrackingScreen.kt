@@ -24,6 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
 import cz.kudladev.vehicletracking.core.ui.tracking.CurrentState
 import cz.kudladev.vehicletracking.core.ui.tracking.StateHistory
+import cz.kudladev.vehicletracking.core.ui.tracking.TimeRemaining
 import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleHeader
 import cz.kudladev.vehicletracking.model.Vehicle
 import kotlinx.serialization.Serializable
@@ -137,6 +138,7 @@ private fun TrackingScreen(
                         LazyColumn(
                             modifier = Modifier,
                             contentPadding = combinedPadding,
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             item {
                                 VehicleHeader(
@@ -146,14 +148,19 @@ private fun TrackingScreen(
                                         onVehicleClick(state.currentTracking.data.vehicle)
                                     }
                                 )
-                                Spacer(modifier = Modifier.padding(vertical = 16.dp))
+                            }
+                            item {
+                                TimeRemaining(
+                                    startTime = state.currentTracking.data.startTime,
+                                    endTime = state.currentTracking.data.endTime,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
                             }
                             item {
                                 CurrentState(
                                     modifier = Modifier.fillMaxWidth(),
                                     currentTracking = state.currentTracking.data.stateLogs.last(),
                                 )
-                                Spacer(modifier = Modifier.padding(vertical = 16.dp))
                             }
                             item {
                                 StateHistory(

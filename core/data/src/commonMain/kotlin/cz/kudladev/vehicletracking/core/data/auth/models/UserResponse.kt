@@ -18,6 +18,7 @@ data class UserResponse(
 
 fun UserResponse.toDomain(): User {
     return User(
+        id = id,
         firstName = firstName,
         lastName = lastName,
         email = email,

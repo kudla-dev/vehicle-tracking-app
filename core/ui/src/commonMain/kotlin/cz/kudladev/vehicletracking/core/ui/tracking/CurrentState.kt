@@ -68,6 +68,7 @@ fun CurrentStatePreview() {
                     state = TrackingState.PENDING,
                     message = "Reservation for vehicle has been created",
                     assignedBy = User(
+                        id = "123",
                         firstName = "John",
                         lastName = "Doe",
                         fullName = "John Doe",

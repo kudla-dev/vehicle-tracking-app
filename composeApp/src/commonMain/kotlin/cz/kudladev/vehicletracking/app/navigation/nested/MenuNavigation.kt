@@ -14,6 +14,8 @@ import cz.kudladev.vehicletracking.feature.menu.manage_trackings.ManageTrackings
 import cz.kudladev.vehicletracking.feature.menu.manage_trackings.ManageTrackingsTypes
 import cz.kudladev.vehicletracking.feature.menu.manage_vehicles.AddEditVehicleRoot
 import cz.kudladev.vehicletracking.feature.menu.manage_vehicles.ManageVehiclesAddEdit
+import cz.kudladev.vehicletracking.feature.menu.tracking_detail.TrackingDetail
+import cz.kudladev.vehicletracking.feature.menu.tracking_detail.TrackingDetailRoot
 import cz.kudladev.vehicletracking.feature.vehicles.VehicleList
 import cz.kudladev.vehicletracking.feature.vehicles.VehicleListScreenRoot
 import kotlinx.serialization.Serializable
@@ -30,7 +32,7 @@ fun MenuNavigation(
         navController = navController,
         startDestination = MenuRoot
     ){
-        composable<MenuRoot>{
+         composable<MenuRoot>{
             MenuScreenRoot(
                 paddingValues = appState.paddingValues,
                 onAdminSettings = {
@@ -98,7 +100,15 @@ fun MenuNavigation(
                     navController.navigateUp()
                 },
                 onTrackingClicked = { tracking ->
-                    // Handle tracking click
+                    navController.navigate(TrackingDetail(trackingId = tracking.id))
+                }
+            )
+        }
+        composable<TrackingDetail> {
+            TrackingDetailRoot(
+                paddingValues = appState.paddingValues,
+                onBack = {
+                    navController.navigateUp()
                 }
             )
         }

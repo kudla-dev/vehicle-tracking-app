@@ -4,6 +4,7 @@ import cz.kudladev.vehicletracking.core.data.di.dataModule
 import cz.kudladev.vehicletracking.feature.menu.admin_settings.di.adminSettingsModule
 import cz.kudladev.vehicletracking.feature.menu.manage_trackings.di.manageTrackingsModule
 import cz.kudladev.vehicletracking.feature.menu.manage_vehicles.di.addEditVehicleModule
+import cz.kudladev.vehicletracking.feature.menu.tracking_detail.di.trackingDetailModule
 import cz.kudladev.vehicletracking.feature.onboarding.di.onBoardingModule
 import cz.kudladev.vehicletracking.feature.search.di.searchModule
 import cz.kudladev.vehicletracking.feature.tracking.di.trackingModule
@@ -22,6 +23,7 @@ val featureModule = module {
     includes(addEditVehicleModule)
     includes(trackingModule)
     includes(manageTrackingsModule)
+    includes(trackingDetailModule)
 }
 val appModules = listOf(
     dataModule,

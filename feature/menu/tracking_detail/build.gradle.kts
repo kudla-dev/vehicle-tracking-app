@@ -4,10 +4,9 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.androidLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
-    alias(libs.plugins.googleKsp)
 }
 
 kotlin {
@@ -24,7 +23,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "ComposeApp"
+            baseName = "FeatureMenuTrackingDetail"
             isStatic = true
         }
     }
@@ -34,10 +33,6 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-
-            implementation(libs.bundles.koin.android)
-            implementation(libs.ktor.client.android)
-            implementation(libs.androidx.work.runtime)
         }
         commonMain.dependencies {
             plugins.apply(libs.plugins.jetbrains.kotlin.serialization.get().pluginId)
@@ -49,49 +44,22 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.lifecycle.viewmodel.compose)
-            implementation(libs.androidx.lifecycle.runtime.compose)
+
             implementation(libs.bundles.koin)
-            implementation(libs.bundles.ktor)
-            implementation(libs.bundles.coil)
-
-            implementation(libs.navigation.compose)
-
-
-            implementation(libs.bundles.paging)
 
             implementation(libs.bundles.peekaboo)
 
-            implementation(libs.flexible.bottomsheet.material3)
+            implementation(libs.bundles.paging)
 
-            implementation("com.github.GIGAMOLE:ComposeScrollbars:1.0.4")
+            implementation(libs.navigation.compose)
 
-            implementation("com.valentinilk.shimmer:compose-shimmer:1.3.2")
+            implementation(libs.kotlinx.datetime)
 
-            implementation(projects.model)
-            implementation(projects.core.ui)
-            implementation(projects.core.datastore)
-            implementation(projects.core.designsystem)
-            implementation(projects.core.data)
             implementation(projects.core.domain)
-            implementation(projects.core.network)
-            implementation(projects.feature.onboarding)
-            implementation(projects.feature.vehicles)
-            implementation(projects.feature.vehicleDetail)
-            implementation(projects.feature.favourite)
-            implementation(projects.feature.tracking)
-            implementation(projects.feature.history)
-            implementation(projects.feature.menu.main)
-            implementation(projects.feature.menu.adminSettings)
-            implementation(projects.feature.menu.manageVehicles)
-            implementation(projects.feature.menu.manageTrackings)
-            implementation(projects.feature.menu.trackingDetail)
-            implementation(projects.feature.search)
+            implementation(projects.core.ui)
+            implementation(projects.core.designsystem)
+            implementation(projects.model)
 
-        }
-        iosMain.dependencies {
-            implementation(libs.ktor.client.darwin)
         }
     }
 
@@ -104,15 +72,11 @@ kotlin {
 }
 
 android {
-    namespace = "cz.kudladev.vehicletracking"
+    namespace = "cz.kudladev.vehicletracking.feature.menu.manage_vehicles"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "cz.kudladev.vehicletracking"
         minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
     }
     packaging {
         resources {
