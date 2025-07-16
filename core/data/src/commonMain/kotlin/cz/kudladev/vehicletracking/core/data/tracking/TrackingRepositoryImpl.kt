@@ -1,6 +1,7 @@
 package cz.kudladev.vehicletracking.core.data.tracking
 
 import cz.kudladev.vehicletracking.core.data.tracking.models.TrackingCreate
+import cz.kudladev.vehicletracking.core.data.tracking.models.TrackingLogRequest
 import cz.kudladev.vehicletracking.core.data.tracking.models.TrackingResponse
 import cz.kudladev.vehicletracking.core.data.tracking.models.toDomain
 import cz.kudladev.vehicletracking.core.domain.tracking.TrackingRepository
@@ -36,6 +37,26 @@ class TrackingRepositoryImpl(
         return safeCall<TrackingResponse>{
             httpClient.post("/trackings"){
                 setBody(request)
+            }
+        }.mapSuccess { response ->
+            response.toDomain()
+        }
+    }
+
+    override suspend fun updateTracking(
+        trackingId: String,
+        state: TrackingState,
+        message: String?,
+        tachometer: Int?
+    ): Result<Tracking, ErrorMessage> {
+        val tracking = TrackingLogRequest(
+            state = state.state,
+            message = message,
+            tachometer = tachometer
+        )
+        return safeCall<TrackingResponse>{
+            httpClient.post("/trackings/$trackingId/logs") {
+                setBody(tracking)
             }
         }.mapSuccess { response ->
             response.toDomain()

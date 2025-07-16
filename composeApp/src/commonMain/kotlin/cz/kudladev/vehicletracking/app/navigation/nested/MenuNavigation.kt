@@ -14,6 +14,9 @@ import cz.kudladev.vehicletracking.feature.menu.manage_trackings.ManageTrackings
 import cz.kudladev.vehicletracking.feature.menu.manage_trackings.ManageTrackingsTypes
 import cz.kudladev.vehicletracking.feature.menu.manage_vehicles.AddEditVehicleRoot
 import cz.kudladev.vehicletracking.feature.menu.manage_vehicles.ManageVehiclesAddEdit
+import cz.kudladev.vehicletracking.feature.menu.protocols.Protocols
+import cz.kudladev.vehicletracking.feature.menu.protocols.ProtocolsRoot
+import cz.kudladev.vehicletracking.feature.menu.protocols.ProtocolsType
 import cz.kudladev.vehicletracking.feature.menu.tracking_detail.TrackingDetail
 import cz.kudladev.vehicletracking.feature.menu.tracking_detail.TrackingDetailRoot
 import cz.kudladev.vehicletracking.feature.vehicles.VehicleList
@@ -106,6 +109,22 @@ fun MenuNavigation(
         }
         composable<TrackingDetail> {
             TrackingDetailRoot(
+                paddingValues = appState.paddingValues,
+                onBack = {
+                    navController.navigateUp()
+                },
+                onPickUpProtocol = {
+                    navController.navigate(Protocols(type = ProtocolsType.PICKUP, trackingId = it))
+                },
+                onReturnProtocol = {
+                    navController.navigate(Protocols(type = ProtocolsType.RETURN, trackingId = it))
+                }
+            )
+        }
+        composable<Protocols> {
+            val type = it.toRoute<Protocols>().type
+            ProtocolsRoot(
+                type = type,
                 paddingValues = appState.paddingValues,
                 onBack = {
                     navController.navigateUp()

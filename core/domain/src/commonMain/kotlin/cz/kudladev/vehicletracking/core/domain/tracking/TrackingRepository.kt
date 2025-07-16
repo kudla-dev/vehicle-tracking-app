@@ -14,6 +14,13 @@ interface TrackingRepository {
         endTime: LocalDateTime,
     ): Result<Tracking, ErrorMessage>
 
+    suspend fun updateTracking(
+        trackingId: String,
+        state: TrackingState,
+        message: String? = null,
+        tachometer: Int? = null,
+    ): Result<Tracking, ErrorMessage>
+
     suspend fun getCurrentTracking(): Result<Tracking?, ErrorMessage>
 
     suspend fun getTrackings(

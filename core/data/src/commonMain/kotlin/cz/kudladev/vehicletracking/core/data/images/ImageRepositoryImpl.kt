@@ -6,6 +6,7 @@ import cz.kudladev.vehicletracking.model.ImageUploadState
 import cz.kudladev.vehicletracking.model.ImageUploadStatus
 import cz.kudladev.vehicletracking.model.ImageWithBytes
 import cz.kudladev.vehicletracking.model.ImageWithUrl
+import cz.kudladev.vehicletracking.model.TrackingState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -29,6 +30,14 @@ class ImageRepositoryImpl(
                 )
             }
         }
+    }
+
+    override suspend fun uploadImageToTracking(
+        image: Image,
+        trackingId: String,
+        state: TrackingState
+    ) {
+        TODO("Not yet implemented")
     }
 
     override fun cancelUpload(id: String) {

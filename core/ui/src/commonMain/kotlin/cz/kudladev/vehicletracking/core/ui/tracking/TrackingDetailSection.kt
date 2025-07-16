@@ -32,8 +32,8 @@ fun TrackingDetailSection(
     ) {
         Text(
             text = "Details",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.SemiBold
         )
         Spacer(modifier = Modifier.height(24.dp))
         TrackingDetailSectionItem("Tracking\nID", trackingId)

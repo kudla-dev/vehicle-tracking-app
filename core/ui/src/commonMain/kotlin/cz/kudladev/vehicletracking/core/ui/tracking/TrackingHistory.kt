@@ -37,8 +37,8 @@ fun TrackingHistory(
     ) {
         Text(
             text = "History",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.SemiBold
         )
         Spacer(modifier = Modifier.height(16.dp))
         if (trackingHistory.isEmpty()) {
