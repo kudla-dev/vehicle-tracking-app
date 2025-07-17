@@ -1,9 +1,11 @@
 package cz.kudladev.vehicletracking.core.domain.tracking
 
+import cz.kudladev.vehicletracking.core.domain.vehicles.ProgressUpdate
 import cz.kudladev.vehicletracking.model.ErrorMessage
 import cz.kudladev.vehicletracking.model.Result
 import cz.kudladev.vehicletracking.model.Tracking
 import cz.kudladev.vehicletracking.model.TrackingState
+import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDateTime
 
 interface TrackingRepository {
@@ -20,6 +22,12 @@ interface TrackingRepository {
         message: String? = null,
         tachometer: Int? = null,
     ): Result<Tracking, ErrorMessage>
+
+    suspend fun uploadImage(
+        imageData: ByteArray,
+        trackingId: String,
+        state: String
+    ): Flow<Result<ProgressUpdate, ErrorMessage>>
 
     suspend fun getCurrentTracking(): Result<Tracking?, ErrorMessage>
 

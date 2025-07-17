@@ -113,11 +113,11 @@ fun MenuNavigation(
                 onBack = {
                     navController.navigateUp()
                 },
-                onPickUpProtocol = {
-                    navController.navigate(Protocols(type = ProtocolsType.PICKUP, trackingId = it))
+                onPickUpProtocol = { trackingId, trackingState ->
+                    navController.navigate(Protocols(type = ProtocolsType.PICKUP, trackingId = trackingId, trackingState = trackingState))
                 },
-                onReturnProtocol = {
-                    navController.navigate(Protocols(type = ProtocolsType.RETURN, trackingId = it))
+                onReturnProtocol = { trackingId, trackingState ->
+                    navController.navigate(Protocols(type = ProtocolsType.RETURN, trackingId = trackingId, trackingState = trackingState))
                 }
             )
         }

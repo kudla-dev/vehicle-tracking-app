@@ -4,36 +4,42 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import cz.kudladev.vehicletracking.core.domain.tracking.TrackingRepository
 import cz.kudladev.vehicletracking.core.domain.vehicles.VehicleRepository
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import java.io.File
 
-class ImageWorker(
+class TrackingImageWorker(
     context: Context,
     workerParams: WorkerParameters
 ) : CoroutineWorker(context, workerParams), KoinComponent {
 
-    private val vehicleRepository: VehicleRepository by inject()
+    private val trackingRepository: TrackingRepository by inject()
 
     override suspend fun doWork(): Result {
         val imagePath = inputData.getString("imagePath")
-        val vehicleId = inputData.getLong("vehicleId", -1)
-        val position = inputData.getInt("position", -1)
+        val vehicleId = inputData.getString("trackingId") ?: ""
+        val state = inputData.getString("state") ?: "UNKNOWN"
 
-        if (imagePath == null || vehicleId == -1L) {
+        if (imagePath == null || vehicleId.isEmpty()) {
             return Result.failure(workDataOf("error" to "Missing image path or vehicle ID"))
         }
 
         try {
             // Read image data from the file
-            val file = java.io.File(imagePath)
+            val file = File(imagePath)
             if (!file.exists()) {
                 return Result.failure(workDataOf("error" to "Image file not found: $imagePath"))
             }
 
             val imageData = file.readBytes()
 
-            vehicleRepository.uploadImage(imageData, vehicleId, position).collect { result ->
+            trackingRepository.uploadImage(
+                imageData = imageData,
+                trackingId = vehicleId,
+                state = state
+            ).collect { result ->
                 when (result) {
                     is cz.kudladev.vehicletracking.model.Result.Success -> {
                         val progressUpdate = result.data

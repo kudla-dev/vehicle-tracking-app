@@ -11,6 +11,11 @@ expect class ImageService {
      * @return ID of the background work
      */
     suspend fun enqueueBackgroundUpload(imageData: ByteArray, vehicleId: Long, position: Int)
+    suspend fun enqueueBackgroundUpload(
+        imageData: ByteArray,
+        trackingId: String,
+        state: String
+    )
 
     suspend fun enqueueBackgroundUpload(
         imageData: String,

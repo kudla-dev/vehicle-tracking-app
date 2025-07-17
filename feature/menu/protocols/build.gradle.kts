@@ -55,6 +55,8 @@ kotlin {
 
             implementation(libs.kotlinx.datetime)
 
+            implementation(libs.bundles.coil)
+
             implementation(projects.core.domain)
             implementation(projects.core.ui)
             implementation(projects.core.designsystem)

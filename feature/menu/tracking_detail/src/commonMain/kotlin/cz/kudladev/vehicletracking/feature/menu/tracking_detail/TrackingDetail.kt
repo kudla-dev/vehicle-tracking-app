@@ -3,6 +3,7 @@ package cz.kudladev.vehicletracking.feature.menu.tracking_detail
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.LargeFloatingActionButton
@@ -18,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.kudladev.vehicletracking.core.designsystem.BackButton
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
+import cz.kudladev.vehicletracking.core.ui.image.SummaryImage
 import cz.kudladev.vehicletracking.core.ui.tracking.CurrentState
 import cz.kudladev.vehicletracking.core.ui.tracking.StateHistory
 import cz.kudladev.vehicletracking.core.ui.tracking.TimeRemaining
@@ -38,8 +40,8 @@ fun TrackingDetailRoot(
     viewModel: TrackingDetailViewModel = koinViewModel(),
     paddingValues: PaddingValues,
     onBack: () -> Unit,
-    onPickUpProtocol: (String) -> Unit,
-    onReturnProtocol: (String) -> Unit,
+    onPickUpProtocol: (String, TrackingState) -> Unit,
+    onReturnProtocol: (String, TrackingState) -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -60,8 +62,8 @@ private fun TrackingDetailScreen(
     state: TrackingDetailState,
     onAction: (TrackingDetailAction) -> Unit,
     onBack: () -> Unit,
-    onPickUpProtocol: (String) -> Unit,
-    onReturnProtocol: (String) -> Unit,
+    onPickUpProtocol: (String, TrackingState) -> Unit,
+    onReturnProtocol: (String, TrackingState) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -83,8 +85,8 @@ private fun TrackingDetailScreen(
                     when (state.tracking) {
                         is UiState.Success -> {
                             when (state.tracking.data.stateLogs.last().state) {
-                                TrackingState.APPROVED -> onPickUpProtocol(state.tracking.data.id)
-                                TrackingState.ACTIVE -> onReturnProtocol(state.tracking.data.id)
+                                TrackingState.APPROVED -> onPickUpProtocol(state.tracking.data.id, TrackingState.ACTIVE)
+                                TrackingState.ACTIVE -> onReturnProtocol(state.tracking.data.id, TrackingState.RETURNED)
                                 else -> {}
                             }
                         }
@@ -159,24 +161,49 @@ private fun TrackingDetailScreen(
                                 logs = it.data.stateLogs
                             )
                         }
-                        item {
-                            when (state.userTrackingHistory){
-                                is UiState.Error -> {
+                        when (it.data.stateLogs.last().state) {
+                            TrackingState.PENDING -> {
+                                when (state.userTrackingHistory){
+                                    is UiState.Error -> {
 
-                                }
-                                is UiState.Success<List<Tracking>> -> {
-                                    TrackingHistory(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        trackingHistory = state.userTrackingHistory.data,
-                                        onTrackingClick = {
+                                    }
+                                    is UiState.Success<List<Tracking>> -> {
+                                        item {
+                                            TrackingHistory(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                trackingHistory = state.userTrackingHistory.data,
+                                                onTrackingClick = {
 
+                                                }
+                                            )
                                         }
-                                    )
-                                }
-                                else -> {
+                                    }
+                                    else -> {
 
+                                    }
                                 }
                             }
+                            TrackingState.ACTIVE -> {
+                                when (state.tracking) {
+                                    is UiState.Error -> {
+
+                                    }
+                                    is UiState.Success -> {
+                                        items(state.tracking.data.stateLogs.last().images ?: emptyList()){
+                                            SummaryImage(
+                                                image = it,
+                                            )
+                                        }
+                                    }
+                                    else -> {}
+                                }
+                            }
+                            TrackingState.RETURNED -> TODO()
+                            TrackingState.REJECTED -> TODO()
+                            TrackingState.FAILED -> TODO()
+                            TrackingState.COMPLETED -> TODO()
+                            TrackingState.ERROR -> TODO()
+                            else -> {}
                         }
                     }
                 }

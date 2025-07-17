@@ -23,4 +23,6 @@ sealed interface ProtocolsAction {
         val notes: String
     ): ProtocolsAction
 
+    data object SubmitTracking : ProtocolsAction
+
 }

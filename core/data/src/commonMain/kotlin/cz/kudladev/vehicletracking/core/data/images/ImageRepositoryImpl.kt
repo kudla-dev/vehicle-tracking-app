@@ -37,7 +37,15 @@ class ImageRepositoryImpl(
         trackingId: String,
         state: TrackingState
     ) {
-        TODO("Not yet implemented")
+        when (image) {
+            is ImageWithBytes -> {
+                imageService.enqueueBackgroundUpload(
+                    imageData = image.bytes ?: ByteArray(0),
+                    trackingId = trackingId,
+                    state = state.state,
+                )
+            }
+        }
     }
 
     override fun cancelUpload(id: String) {

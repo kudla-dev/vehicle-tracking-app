@@ -6,8 +6,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import cz.kudladev.vehicletracking.core.domain.images.ImageRepository
 import cz.kudladev.vehicletracking.core.domain.tracking.TrackingRepository
+import cz.kudladev.vehicletracking.model.Image
+import cz.kudladev.vehicletracking.model.ImageWithBytes
 import cz.kudladev.vehicletracking.model.TrackingState
 import cz.kudladev.vehicletracking.model.UiState
+import cz.kudladev.vehicletracking.model.onError
+import cz.kudladev.vehicletracking.model.onSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
@@ -23,6 +27,7 @@ class ProtocolsViewModel(
 
     val type = savedStateHandle.toRoute<Protocols>().type
     val trackingId = savedStateHandle.toRoute<Protocols>().trackingId
+    val trackingState = savedStateHandle.toRoute<Protocols>().trackingState
 
     private var hasLoadedInitialData = false
 
@@ -44,7 +49,7 @@ class ProtocolsViewModel(
         when (action) {
             is ProtocolsAction.AddImage -> {
                 _state.update { it.copy(
-                    images = it.images + (action.page to action.image)
+                    images = it.images + (action.page to ImageWithBytes(bytes = action.image))
                 ) }
             }
             is ProtocolsAction.NextPage -> {
@@ -71,12 +76,22 @@ class ProtocolsViewModel(
                     tachometerReading = action.reading
                 ) }
             }
+            ProtocolsAction.SubmitTracking -> {
+                updateTracking(
+                    trackingId = trackingId,
+                    trackingState = trackingState,
+                    images = _state.value.images,
+                    tachometerReading = _state.value.tachometerReading,
+                    additionalNotes = _state.value.additionalNotes
+                )
+            }
         }
     }
 
     private fun updateTracking(
+        trackingId: String,
         trackingState: TrackingState,
-        images: Map<ProtocolsScreenPage, ByteArray>,
+        images: Map<ProtocolsScreenPage, Image>,
         tachometerReading: String,
         additionalNotes: String
     ) = viewModelScope.launch {
@@ -84,6 +99,33 @@ class ProtocolsViewModel(
             tracking = UiState.Loading
         ) }
         trackingRepository
+            .updateTracking(
+                trackingId = trackingId,
+                state = trackingState,
+                message = additionalNotes.ifEmpty { null },
+                tachometer = tachometerReading.toIntOrNull()
+            )
+            .onSuccess { tracking ->
+                _state.update { it.copy(
+                    tracking = UiState.Success(tracking)
+                ) }
+                println("Tracking updated successfully: $tracking")
+                images.forEach { (page, image) ->
+                    imageRepository
+                        .uploadImageToTracking(
+                            image = image,
+                            trackingId = trackingId,
+                            state = trackingState
+                        )
+                }
+
+            }
+            .onError { error ->
+                _state.update { it.copy(
+                    tracking = UiState.Error(error.message)
+                ) }
+                println("Error updating tracking: ${error.message}")
+            }
 
     }
 

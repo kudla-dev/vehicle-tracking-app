@@ -11,7 +11,6 @@ import androidx.work.workDataOf
 import cz.kudladev.vehicletracking.core.domain.vehicles.VehicleRepository
 import cz.kudladev.vehicletracking.model.ErrorMessage
 import cz.kudladev.vehicletracking.model.onError
-import cz.kudladev.vehicletracking.model.Result
 import cz.kudladev.vehicletracking.model.onSuccess
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -47,7 +46,7 @@ actual class ImageService(
             outputStream.write(imageData)
         }
 
-        val workRequest = OneTimeWorkRequestBuilder<ImageWorker>()
+        val workRequest = OneTimeWorkRequestBuilder<VehicleImageWorker>()
             .setConstraints(constraints)
             .setInputData(
                 workDataOf(
@@ -177,6 +176,35 @@ actual class ImageService(
         directUploadStatuses.value = emptyList()
     }
 
+    actual suspend fun enqueueBackgroundUpload(imageData: ByteArray, trackingId: String, state: String) {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        // Save image data to a temporary file
+        val fileName = "temp_image_${System.currentTimeMillis()}.jpg"
+        val file = context.getFileStreamPath(fileName)
+
+        context.openFileOutput(fileName, Context.MODE_PRIVATE).use { outputStream ->
+            outputStream.write(imageData)
+        }
+
+        val workRequest = OneTimeWorkRequestBuilder<TrackingImageWorker>()
+            .setConstraints(constraints)
+            .setInputData(
+                workDataOf(
+                    "imagePath" to file.absolutePath,
+                    "trackingId" to trackingId,
+                    "state" to state,
+                )
+            )
+            .addTag("image_upload")
+            .build()
+
+        WorkManager
+            .getInstance(context)
+            .enqueue(workRequest)
+    }
 
 
 }

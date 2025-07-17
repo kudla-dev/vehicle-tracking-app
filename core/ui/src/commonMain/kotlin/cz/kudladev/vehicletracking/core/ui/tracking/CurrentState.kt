@@ -47,6 +47,7 @@ fun CurrentState(
             Text(
                 text = currentTracking.state.displayName,
                 style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold
             )
             Text(
                 text = currentTracking.assignedAt?.toFormattedString() ?: "N/A",

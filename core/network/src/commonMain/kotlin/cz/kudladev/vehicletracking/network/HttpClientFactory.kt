@@ -41,7 +41,7 @@ class HttpClientFactory(
                         println(message)
                     }
                 }
-                level = LogLevel.ALL
+                level = LogLevel.INFO
             }
             install(Auth){
                 bearer {

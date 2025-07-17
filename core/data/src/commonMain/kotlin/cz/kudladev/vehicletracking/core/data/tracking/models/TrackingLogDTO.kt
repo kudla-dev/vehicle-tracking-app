@@ -2,6 +2,7 @@ package cz.kudladev.vehicletracking.core.data.tracking.models
 
 import cz.kudladev.vehicletracking.core.data.auth.models.UserResponse
 import cz.kudladev.vehicletracking.core.data.auth.models.toDomain
+import cz.kudladev.vehicletracking.model.ImageWithUrl
 import cz.kudladev.vehicletracking.model.TrackingLog
 import cz.kudladev.vehicletracking.model.toTrackingState
 import kotlinx.datetime.Instant
@@ -13,12 +14,12 @@ import kotlin.time.ExperimentalTime
 
 @Serializable
 data class TrackingLogDTO(
-        val trackingId: String,
-        val state: String,
-        val message: String? = null,
-        val assignedBy: UserResponse,
-        val assignedAt: String,
-        val images: List<String>? = null,
+    val trackingId: String,
+    val state: String,
+    val message: String? = null,
+    val assignedBy: UserResponse,
+    val assignedAt: String,
+    val images: List<ImageWithUrl>? = null,
 )
 
 fun TrackingLogDTO.toDomain(): TrackingLog {

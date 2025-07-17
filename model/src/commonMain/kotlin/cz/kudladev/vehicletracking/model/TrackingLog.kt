@@ -5,12 +5,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TrackingLog(
-        val trackingId: String? = null,
-        val state: TrackingState,
-        val message: String? = null,
-        val assignedBy: User? = null,
-        val assignedAt: LocalDateTime? = null,
-        val images: List<String>? = null,
+    val trackingId: String? = null,
+    val state: TrackingState,
+    val message: String? = null,
+    val assignedBy: User? = null,
+    val assignedAt: LocalDateTime? = null,
+    val images: List<Image>? = null,
 )
 
 

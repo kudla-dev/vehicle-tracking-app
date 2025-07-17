@@ -1,14 +1,15 @@
 package cz.kudladev.vehicletracking.feature.menu.protocols
 
+import cz.kudladev.vehicletracking.model.Image
 import cz.kudladev.vehicletracking.model.Tracking
 import cz.kudladev.vehicletracking.model.UiState
 
 data class ProtocolsState(
     val page: ProtocolsScreenPage = ProtocolsScreenPage.FRONT,
-    val images: Map<ProtocolsScreenPage, ByteArray> = emptyMap(),
+    val images: Map<ProtocolsScreenPage, Image> = emptyMap(),
     val tachometerReading: String = "",
     val additionalNotes: String = "",
-    val tracking: UiState<Tracking> = UiState.Idle
+    val tracking: UiState<Tracking> = UiState.Idle,
 )
 
 enum class ProtocolsScreenPage(val instruction: String,val title: String) {

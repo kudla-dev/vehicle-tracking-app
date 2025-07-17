@@ -5,34 +5,13 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -53,10 +32,17 @@ import com.preat.peekaboo.ui.camera.CameraMode
 import com.preat.peekaboo.ui.camera.PeekabooCamera
 import com.preat.peekaboo.ui.camera.PeekabooCameraState
 import com.preat.peekaboo.ui.camera.rememberPeekabooCameraState
+import com.skydoves.landscapist.ImageOptions
+import com.skydoves.landscapist.coil3.CoilImage
 import cz.kudladev.vehicletracking.core.designsystem.BackButton
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
 import cz.kudladev.vehicletracking.core.designsystem.OutlinedTextField
+import cz.kudladev.vehicletracking.core.ui.image.SummaryImage
 import cz.kudladev.vehicletracking.core.ui.util.toImageBitmap
+import cz.kudladev.vehicletracking.model.Image
+import cz.kudladev.vehicletracking.model.ImageWithBytes
+import cz.kudladev.vehicletracking.model.ImageWithUrl
+import cz.kudladev.vehicletracking.model.TrackingState
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -64,6 +50,7 @@ import org.koin.compose.viewmodel.koinViewModel
 data class Protocols(
     val type: ProtocolsType,
     val trackingId: String,
+    val trackingState: TrackingState,
 )
 
 @Serializable
@@ -239,7 +226,7 @@ fun ProtocolsScreen(
                                 onAction(ProtocolsAction.PreviousPage(it))
                             },
                             onSubmit = {
-                                // TODO: Handle submission logic here
+                                onAction(ProtocolsAction.SubmitTracking)
                             }
                         )
                     }
@@ -253,7 +240,7 @@ fun ProtocolsScreen(
 fun ProtocolsCapture(
     cameraState: PeekabooCameraState,
     page: ProtocolsScreenPage,
-    capturedImage: ByteArray?,
+    capturedImage: Image?,
     onRetake: () -> Unit,
     action: (ProtocolsAction) -> Unit,
     onBack: () -> Unit,
@@ -297,15 +284,31 @@ fun ProtocolsCapture(
                 }
                 else -> {
                     capturedImage?.let { capturedImage ->
-                        Image(
-                            bitmap = capturedImage.toImageBitmap(),
-                            contentDescription = page.instruction,
-                            modifier = Modifier
-                                .fillMaxWidth(0.9f)
-                                .aspectRatio(16f/9f)
-                                .clip(MaterialTheme.shapes.medium),
-                            contentScale = ContentScale.Crop,
-                        )
+                        val imageModifier = Modifier
+                            .fillMaxWidth(0.9f)
+                            .aspectRatio(16f/9f)
+                            .clip(MaterialTheme.shapes.medium)
+                        when (capturedImage) {
+                            is ImageWithUrl -> {
+                                CoilImage(
+                                    imageModel = {
+                                        capturedImage.url
+                                    },
+                                    modifier = imageModifier,
+                                    imageOptions = ImageOptions(
+                                        contentScale = ContentScale.Crop,
+                                    )
+                                )
+                            }
+                            is ImageWithBytes -> {
+                                Image(
+                                    bitmap = capturedImage.bytes?.toImageBitmap() ?: return@Crossfade,
+                                    contentDescription = null,
+                                    modifier = imageModifier,
+                                    contentScale = ContentScale.Crop,
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -372,7 +375,7 @@ fun SummaryProtocol(
     onAction: (ProtocolsAction) -> Unit,
     onBack: () -> Unit,
     onSubmit: () -> Unit
-){
+) {
     val focusManager = LocalFocusManager.current
 
     LazyColumn(
@@ -381,17 +384,17 @@ fun SummaryProtocol(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        items(ProtocolsScreenPage.viewPages()){ page ->
+        items(ProtocolsScreenPage.viewPages()) { page ->
             SummaryImage(
-                byteArray = state.images[page] ?: ByteArray(0),
-                page = page,
+                image = state.images[page],
+                title = page.title,
             )
         }
         item {
             OutlinedTextField(
                 value = state.tachometerReading,
                 onValueChange = {
-                    if (it.lastOrNull()?.isDigit() ?: true){
+                    if (it.lastOrNull()?.isDigit() ?: true) {
                         onAction(ProtocolsAction.SetTachometerReading(it))
                     }
                 },
@@ -445,41 +448,17 @@ fun SummaryProtocol(
             Box(
                 modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 32.dp),
                 contentAlignment = Alignment.Center
-            ){
+            ) {
                 Button(
                     onClick = {
-
+                        onSubmit()
                     }
-                ){
+                ) {
                     Text(
                         text = "Submit",
                     )
                 }
             }
         }
-    }
-}
-
-@Composable
-fun SummaryImage(
-    byteArray: ByteArray,
-    page: ProtocolsScreenPage,
-){
-    Column {
-        Text(
-            text = page.title,
-            style = MaterialTheme.typography.titleMedium,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Image(
-            bitmap = byteArray.toImageBitmap(),
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .aspectRatio(16f/9f)
-                .clip(MaterialTheme.shapes.medium),
-            contentScale = ContentScale.Crop,
-        )
-        Spacer(modifier = Modifier.height(16.dp))
     }
 }

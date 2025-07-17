@@ -4,7 +4,9 @@ import cz.kudladev.vehicletracking.core.data.tracking.models.TrackingCreate
 import cz.kudladev.vehicletracking.core.data.tracking.models.TrackingLogRequest
 import cz.kudladev.vehicletracking.core.data.tracking.models.TrackingResponse
 import cz.kudladev.vehicletracking.core.data.tracking.models.toDomain
+import cz.kudladev.vehicletracking.core.data.vehicles.models.VehicleBasic
 import cz.kudladev.vehicletracking.core.domain.tracking.TrackingRepository
+import cz.kudladev.vehicletracking.core.domain.vehicles.ProgressUpdate
 import cz.kudladev.vehicletracking.model.ErrorMessage
 import cz.kudladev.vehicletracking.model.Result
 import cz.kudladev.vehicletracking.model.Tracking
@@ -12,10 +14,17 @@ import cz.kudladev.vehicletracking.model.TrackingState
 import cz.kudladev.vehicletracking.network.mapSuccess
 import cz.kudladev.vehicletracking.network.safeCall
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.onUpload
+import io.ktor.client.request.forms.formData
+import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
@@ -60,6 +69,30 @@ class TrackingRepositoryImpl(
             }
         }.mapSuccess { response ->
             response.toDomain()
+        }
+    }
+
+    override suspend fun uploadImage(
+        imageData: ByteArray,
+        trackingId: String,
+        state: String
+    ): Flow<Result<ProgressUpdate, ErrorMessage>> = channelFlow {
+        safeCall<TrackingResponse> {
+            httpClient.submitFormWithBinaryData(
+                url = "/trackings/$trackingId/logs/$state/images",
+                formData = formData {
+                    append("file", imageData, Headers.build {
+                        append(HttpHeaders.ContentType, "image/jpeg")
+                        append(HttpHeaders.ContentDisposition, "filename=\"image.png\"")
+                    })
+                }
+            ) {
+                onUpload { bytesSentTotal, totalBytes ->
+                    if ((totalBytes ?: 0L) > 0L) {
+                        send(Result.Success(ProgressUpdate(bytesSentTotal, totalBytes ?: 0L)))
+                    }
+                }
+            }
         }
     }
 
