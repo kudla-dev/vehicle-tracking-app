@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -32,7 +33,7 @@ fun CurrentState(
 ){
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         Text(
             text = "Current State",
@@ -47,13 +48,42 @@ fun CurrentState(
             Text(
                 text = currentTracking.state.displayName,
                 style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.ExtraBold
             )
             Text(
                 text = currentTracking.assignedAt?.toFormattedString() ?: "N/A",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
             )
+        }
+        when (currentTracking.state){
+            TrackingState.PENDING -> {
+
+            }
+            TrackingState.APPROVED -> {
+
+            }
+            TrackingState.ACTIVE -> {
+
+            }
+            TrackingState.RETURNED -> {
+
+            }
+            TrackingState.REJECTED -> {
+
+            }
+            TrackingState.FAILED -> {
+
+            }
+            TrackingState.COMPLETED -> {
+
+            }
+            TrackingState.ERROR -> {
+
+            }
+            else -> {
+
+            }
         }
     }
 }

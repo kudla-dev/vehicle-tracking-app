@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import cz.kudladev.vehicletracking.app.AppState
 import cz.kudladev.vehicletracking.app.navigation.nested.MenuNavigation
+import cz.kudladev.vehicletracking.app.navigation.nested.MenuRoot
 import cz.kudladev.vehicletracking.app.navigation.nested.VehicleNavigation
 import cz.kudladev.vehicletracking.feature.favourite.FavouritesScreenRoot
 import cz.kudladev.vehicletracking.feature.favourite.Favourites
@@ -61,11 +62,9 @@ fun NavGraphBuilder.coreNavigation(
             popEnterTransition = { EnterTransition.None },
             popExitTransition = { ExitTransition.None },
         ) {
-            TrackingScreenRoot(
-                paddingValues = appState.paddingValues,
-                onVehicleClick = { vehicle ->
-                    //Navigate to vehicle navigation to vehicle details destination
-                }
+            MenuNavigation(
+                appState = appState,
+                startDestination = Tracking::class
             )
         }
         composable<History>(
@@ -84,7 +83,10 @@ fun NavGraphBuilder.coreNavigation(
             popEnterTransition = { EnterTransition.None },
             popExitTransition = { ExitTransition.None },
         ) {
-            MenuNavigation(appState = appState)
+            MenuNavigation(
+                appState = appState,
+                startDestination = MenuRoot::class
+            )
         }
     }
 }

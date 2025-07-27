@@ -53,6 +53,7 @@ fun VehicleNavigation(
         composable<VehicleDetails> {
             VehicleDetailRoot(
                 paddingValues = appState.paddingValues,
+                onBack = { navController.navigateUp() },
             )
         }
         composable<Search> { backStackEntry ->

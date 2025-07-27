@@ -23,6 +23,7 @@ import cz.kudladev.vehicletracking.model.ImageWithUrl
 @Composable
 fun SummaryImage(
     image: Image? = null,
+    nextImage: Image? = null,
     title: String? = null,
 ){
     Column {
@@ -37,6 +38,40 @@ fun SummaryImage(
             .fillMaxWidth(0.9f)
             .aspectRatio(16f/9f)
             .clip(MaterialTheme.shapes.medium)
+        nextImage?.let {
+            Text(
+                text = "After",
+                style = MaterialTheme.typography.titleMedium,
+            )
+            when (it) {
+                is ImageWithUrl -> {
+                    CoilImage(
+                        imageModel = {
+                            it.url
+                        },
+                        modifier = imageModifier,
+                        imageOptions = ImageOptions(
+                            contentScale = ContentScale.Crop,
+                        )
+                    )
+                }
+                is ImageWithBytes -> {
+                    Image(
+                        bitmap = it.bytes?.toImageBitmap() ?: return@let,
+                        contentDescription = null,
+                        modifier = imageModifier,
+                        contentScale = ContentScale.Crop,
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+        nextImage?.let {
+            Text(
+                text = "Before",
+                style = MaterialTheme.typography.titleMedium,
+            )
+        }
         when (image) {
             is ImageWithUrl -> {
                 CoilImage(
@@ -58,6 +93,7 @@ fun SummaryImage(
                 )
             }
         }
+
 
         Spacer(modifier = Modifier.height(16.dp))
     }

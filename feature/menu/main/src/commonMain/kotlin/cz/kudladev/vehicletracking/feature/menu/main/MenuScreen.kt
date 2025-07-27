@@ -110,12 +110,16 @@ private fun MenuScreen(
                 }
                 if (user!!.role == Role.ADMIN){
                     adminSection(
-                        onManageVehicles,
-                        onAdminSettings,
-                        onActiveTrackings,
-                        onNonStartedTrackings,
-                        onNewRequestsTrackings,
-                        onTrackingHistory
+                        onManageVehicles = onManageVehicles,
+                        onAdminSettings = onAdminSettings,
+                        onTrackingHistory = onTrackingHistory,
+                    )
+                }
+                if (user!!.role == Role.ADMIN){
+                    trackingSection(
+                        onActiveTrackings = onActiveTrackings,
+                        onNonStartedTrackings= onNonStartedTrackings,
+                        onNewRequestsTrackings = onNewRequestsTrackings
                     )
                 }
                 accountSection()
@@ -168,9 +172,6 @@ private fun LazyListScope.accountSection() {
 private fun LazyListScope.adminSection(
     onManageVehicles: () -> Unit,
     onAdminSettings: () -> Unit,
-    onActiveTrackings: () -> Unit,
-    onNonStartedTrackings: () -> Unit,
-    onNewRequestsTrackings: () -> Unit,
     onTrackingHistory: () -> Unit,
 ) {
     item {
@@ -199,10 +200,29 @@ private fun LazyListScope.adminSection(
                 },
             )
             MenuSectionItem(
-                icon = Icons.TwoTone.Motorcycle,
-                title = "Active trackings",
+                icon = Icons.TwoTone.AdminPanelSettings,
+                title = "Admin settings",
+                onClick = onAdminSettings,
+                isLast = true
+            )
+        }
+    }
+}
+
+private fun LazyListScope.trackingSection(
+    onActiveTrackings: () -> Unit,
+    onNonStartedTrackings: () -> Unit,
+    onNewRequestsTrackings: () -> Unit,
+) {
+    item {
+        MenuSection(
+            title = "Trackings"
+        ) {
+            MenuSectionItem(
+                icon = Icons.TwoTone.MarkunreadMailbox,
+                title = "New requests",
                 onClick = {
-                    onActiveTrackings()
+                    onNewRequestsTrackings()
                 },
             )
             MenuSectionItem(
@@ -213,16 +233,11 @@ private fun LazyListScope.adminSection(
                 }
             )
             MenuSectionItem(
-                icon = Icons.TwoTone.MarkunreadMailbox,
-                title = "New requests",
+                icon = Icons.TwoTone.Motorcycle,
+                title = "Active trackings",
                 onClick = {
-                    onNewRequestsTrackings()
+                    onActiveTrackings()
                 },
-            )
-            MenuSectionItem(
-                icon = Icons.TwoTone.AdminPanelSettings,
-                title = "Admin settings",
-                onClick = onAdminSettings,
                 isLast = true
             )
         }

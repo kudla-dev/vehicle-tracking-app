@@ -24,5 +24,6 @@ sealed interface ProtocolsAction {
     ): ProtocolsAction
 
     data object SubmitTracking : ProtocolsAction
+    data object ClearRecentUploads : ProtocolsAction
 
 }

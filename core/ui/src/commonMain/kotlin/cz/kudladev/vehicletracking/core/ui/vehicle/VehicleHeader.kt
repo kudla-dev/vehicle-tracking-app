@@ -56,7 +56,7 @@ fun VehicleHeader(
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                text = "License Plate: ${vehicle.spz}",
+                text = vehicle.spz,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis

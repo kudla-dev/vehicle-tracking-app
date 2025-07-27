@@ -7,13 +7,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,11 +37,9 @@ import cz.kudladev.vehicletracking.core.designsystem.BackButton
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
 import cz.kudladev.vehicletracking.core.designsystem.OutlinedTextField
 import cz.kudladev.vehicletracking.core.ui.image.SummaryImage
+import cz.kudladev.vehicletracking.core.ui.image.UploadDialog
 import cz.kudladev.vehicletracking.core.ui.util.toImageBitmap
-import cz.kudladev.vehicletracking.model.Image
-import cz.kudladev.vehicletracking.model.ImageWithBytes
-import cz.kudladev.vehicletracking.model.ImageWithUrl
-import cz.kudladev.vehicletracking.model.TrackingState
+import cz.kudladev.vehicletracking.model.*
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -67,13 +64,23 @@ fun ProtocolsRoot(
     onBack: () -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val uploadStatus by viewModel.uploadStatus.collectAsStateWithLifecycle()
+
+    LaunchedEffect(uploadStatus, state.tracking) {
+        println("Upload status changed: $uploadStatus and result state: ${state.tracking}")
+        if (uploadStatus.isNotEmpty() && uploadStatus.size == state.images.size && uploadStatus.all { status -> status.state == ImageUploadState.COMPLETED } && state.tracking !is UiState.Error) {
+            viewModel.onAction(ProtocolsAction.ClearRecentUploads)
+            onBack()
+        }
+    }
 
     ProtocolsScreen(
         state = state,
         onAction = viewModel::onAction,
         type = type,
         paddingValues = paddingValues,
-        onBack = onBack
+        onBack = onBack,
+        uploadStatus = uploadStatus,
     )
 }
 
@@ -85,6 +92,7 @@ fun ProtocolsScreen(
     type: ProtocolsType,
     paddingValues: PaddingValues,
     onBack: () -> Unit,
+    uploadStatus: List<ImageUploadStatus>,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -234,6 +242,13 @@ fun ProtocolsScreen(
             }
         }
     }
+
+    if (uploadStatus.isNotEmpty()) {
+        UploadDialog(
+            images = uploadStatus.size,
+            uploadedImages = uploadStatus.count { it.state == ImageUploadState.COMPLETED }.toFloat(),
+        )
+    }
 }
 
 @Composable
@@ -378,15 +393,29 @@ fun SummaryProtocol(
 ) {
     val focusManager = LocalFocusManager.current
 
+    val nextImages by remember{
+        mutableStateOf(
+            when (state.tracking) {
+                is UiState.Success -> {
+                    state.tracking.data.stateLogs.firstOrNull() { it.state == TrackingState.ACTIVE }
+                        ?.images
+                }
+                else -> emptyList()
+            }
+        )
+    }
+
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        items(ProtocolsScreenPage.viewPages()) { page ->
+        itemsIndexed(ProtocolsScreenPage.viewPages()) { index,page ->
             SummaryImage(
                 image = state.images[page],
+                nextImage = nextImages?.getOrElse(index) { null },
                 title = page.title,
             )
         }

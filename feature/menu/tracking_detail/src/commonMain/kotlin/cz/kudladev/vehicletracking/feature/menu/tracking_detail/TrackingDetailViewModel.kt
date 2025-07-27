@@ -26,13 +26,6 @@ class TrackingDetailViewModel(
 
     private val _state = MutableStateFlow(TrackingDetailState())
     val state = _state
-        .onStart {
-            if (!hasLoadedInitialData) {
-                /** Load initial data here **/
-                getTrackingDetail(trackingId)
-                hasLoadedInitialData = true
-            }
-        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000L),
@@ -45,7 +38,15 @@ class TrackingDetailViewModel(
         }
     }
 
+    fun refresh() = viewModelScope.launch {
+        getTrackingDetail(trackingId)
+    }
+
     private fun getTrackingDetail(trackingId: String) = viewModelScope.launch {
+        _state.update { it.copy(
+            tracking = UiState.Loading,
+            userTrackingHistory = UiState.Loading
+        ) }
         trackingRepository
             .getTracking(trackingId)
             .onSuccess { tracking ->

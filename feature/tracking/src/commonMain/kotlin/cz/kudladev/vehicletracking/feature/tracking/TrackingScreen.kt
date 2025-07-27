@@ -80,7 +80,7 @@ private fun TrackingScreen(
             },
         ) { innerPadding ->
             val combinedPadding = PaddingValues(
-                bottom = paddingValues.calculateBottomPadding(),
+                bottom = paddingValues.calculateBottomPadding() + 16.dp,
                 top = innerPadding.calculateTopPadding(),
                 start = innerPadding.calculateStartPadding(LocalLayoutDirection.current) + 16.dp,
                 end = innerPadding.calculateEndPadding(LocalLayoutDirection.current) + 16.dp,
@@ -138,7 +138,7 @@ private fun TrackingScreen(
                         LazyColumn(
                             modifier = Modifier,
                             contentPadding = combinedPadding,
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                            verticalArrangement = Arrangement.spacedBy(32.dp)
                         ) {
                             item {
                                 VehicleHeader(
@@ -147,13 +147,6 @@ private fun TrackingScreen(
                                     onClick = {
                                         onVehicleClick(state.currentTracking.data.vehicle)
                                     }
-                                )
-                            }
-                            item {
-                                TimeRemaining(
-                                    startTime = state.currentTracking.data.startTime,
-                                    endTime = state.currentTracking.data.endTime,
-                                    modifier = Modifier.fillMaxWidth()
                                 )
                             }
                             item {

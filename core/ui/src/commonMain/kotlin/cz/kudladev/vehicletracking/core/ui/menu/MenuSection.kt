@@ -23,9 +23,9 @@ fun MenuSection(
     ) {
         title?.let {
             Text(
-                modifier = Modifier.padding(top = 8.dp),
+                modifier = Modifier.padding(top = 16.dp, bottom = 4.dp),
                 text = title,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleMedium
             )
         }
         Card(

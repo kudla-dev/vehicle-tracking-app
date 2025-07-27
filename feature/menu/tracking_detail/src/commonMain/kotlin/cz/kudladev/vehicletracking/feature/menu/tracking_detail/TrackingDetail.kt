@@ -5,12 +5,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.LargeFloatingActionButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumExtendedFloatingActionButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallExtendedFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -45,6 +51,10 @@ fun TrackingDetailRoot(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) {
+        viewModel.refresh()
+    }
+
     TrackingDetailScreen(
         paddingValues = paddingValues,
         state = state,
@@ -55,7 +65,7 @@ fun TrackingDetailRoot(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun TrackingDetailScreen(
     paddingValues: PaddingValues,
@@ -80,7 +90,7 @@ private fun TrackingDetailScreen(
             )
         },
         floatingActionButton = {
-            LargeFloatingActionButton(
+            SmallExtendedFloatingActionButton(
                 onClick = {
                     when (state.tracking) {
                         is UiState.Success -> {
@@ -98,7 +108,9 @@ private fun TrackingDetailScreen(
                     is UiState.Success -> {
                         when (state.tracking.data.stateLogs.last().state){
                             TrackingState.APPROVED -> {
-                                Text("Pick-Up")
+                                Text(
+                                    "Pick-Up",
+                                )
                             }
                             TrackingState.ACTIVE -> {
                                 Text("Return")
@@ -189,6 +201,12 @@ private fun TrackingDetailScreen(
 
                                     }
                                     is UiState.Success -> {
+                                        item {
+                                            Text(
+                                                "Images from pick-up",
+                                                style = MaterialTheme.typography.titleLarge
+                                            )
+                                        }
                                         items(state.tracking.data.stateLogs.last().images ?: emptyList()){
                                             SummaryImage(
                                                 image = it,

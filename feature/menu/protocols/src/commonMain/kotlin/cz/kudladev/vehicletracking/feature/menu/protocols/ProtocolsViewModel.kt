@@ -6,17 +6,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import cz.kudladev.vehicletracking.core.domain.images.ImageRepository
 import cz.kudladev.vehicletracking.core.domain.tracking.TrackingRepository
-import cz.kudladev.vehicletracking.model.Image
-import cz.kudladev.vehicletracking.model.ImageWithBytes
-import cz.kudladev.vehicletracking.model.TrackingState
-import cz.kudladev.vehicletracking.model.UiState
-import cz.kudladev.vehicletracking.model.onError
-import cz.kudladev.vehicletracking.model.onSuccess
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import cz.kudladev.vehicletracking.model.*
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class ProtocolsViewModel(
@@ -29,6 +20,13 @@ class ProtocolsViewModel(
     val trackingId = savedStateHandle.toRoute<Protocols>().trackingId
     val trackingState = savedStateHandle.toRoute<Protocols>().trackingState
 
+    val uploadStatus = imageRepository.getUploadStatus()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000L),
+            initialValue = emptyList()
+        )
+
     private var hasLoadedInitialData = false
 
     private val _state = MutableStateFlow(ProtocolsState())
@@ -36,6 +34,8 @@ class ProtocolsViewModel(
         .onStart {
             if (!hasLoadedInitialData) {
                 /** Load initial data here **/
+                imageRepository.clearUploadStatus()
+                getTracking(trackingId)
                 hasLoadedInitialData = true
             }
         }
@@ -85,6 +85,9 @@ class ProtocolsViewModel(
                     additionalNotes = _state.value.additionalNotes
                 )
             }
+            ProtocolsAction.ClearRecentUploads -> {
+                imageRepository.clearUploadStatus()
+            }
         }
     }
 
@@ -126,7 +129,24 @@ class ProtocolsViewModel(
                 ) }
                 println("Error updating tracking: ${error.message}")
             }
+    }
 
+    private fun getTracking(trackingId: String) = viewModelScope.launch {
+        _state.update { it.copy(
+            tracking = UiState.Loading
+        ) }
+        trackingRepository
+            .getTracking(trackingId)
+            .onSuccess { tracking ->
+                _state.update { it.copy(
+                    tracking = UiState.Success(tracking)
+                ) }
+            }
+            .onError { error ->
+                _state.update { it.copy(
+                    tracking = UiState.Error(error.message ?: "Unknown error")
+                ) }
+            }
     }
 
 

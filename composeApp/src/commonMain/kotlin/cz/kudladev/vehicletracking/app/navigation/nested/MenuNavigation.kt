@@ -19,21 +19,25 @@ import cz.kudladev.vehicletracking.feature.menu.protocols.ProtocolsRoot
 import cz.kudladev.vehicletracking.feature.menu.protocols.ProtocolsType
 import cz.kudladev.vehicletracking.feature.menu.tracking_detail.TrackingDetail
 import cz.kudladev.vehicletracking.feature.menu.tracking_detail.TrackingDetailRoot
+import cz.kudladev.vehicletracking.feature.tracking.Tracking
+import cz.kudladev.vehicletracking.feature.tracking.TrackingScreenRoot
 import cz.kudladev.vehicletracking.feature.vehicles.VehicleList
 import cz.kudladev.vehicletracking.feature.vehicles.VehicleListScreenRoot
 import kotlinx.serialization.Serializable
+import kotlin.reflect.KClass
 
 @Serializable
 data object MenuRoot
 
 @Composable
 fun MenuNavigation(
-    appState: AppState
+    appState: AppState,
+    startDestination: KClass<*>
 ){
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = MenuRoot
+        startDestination = startDestination
     ){
          composable<MenuRoot>{
             MenuScreenRoot(
@@ -55,6 +59,14 @@ fun MenuNavigation(
                 },
                 onTrackingHistory = {
                     navController.navigate(ManageTrackings(ManageTrackingsTypes.HISTORY))
+                }
+            )
+        }
+        composable<Tracking> {
+            TrackingScreenRoot(
+                appState.paddingValues,
+                onVehicleClick = {
+
                 }
             )
         }

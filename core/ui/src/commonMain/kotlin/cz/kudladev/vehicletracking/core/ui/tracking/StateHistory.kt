@@ -2,6 +2,7 @@ package cz.kudladev.vehicletracking.core.ui.tracking
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,6 +35,7 @@ fun StateHistory(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
+            modifier = Modifier.padding(bottom = 8.dp),
             text = "State History",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.SemiBold

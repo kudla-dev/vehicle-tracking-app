@@ -52,11 +52,13 @@ fun StateHistoryItem(
                             overflow = TextOverflow.Ellipsis,
                             fontWeight = if (isLast) FontWeight.Bold else FontWeight.Normal,
                         )
-                        Text(
-                            modifier = Modifier.padding(start = 16.dp),
-                            text = trackingLog.assignedAt?.toFormattedString() ?: "",
-                            style = MaterialTheme.typography.labelSmall
-                        )
+                        trackingLog.assignedAt?.toFormattedString()?.let {
+                            Text(
+                                modifier = Modifier.padding(start = 16.dp),
+                                text = it,
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
                     }
                 }
             }
@@ -67,11 +69,6 @@ fun StateHistoryItem(
                 overflow = TextOverflow.Ellipsis
             )
         }
-        Icon(
-            modifier = Modifier.padding(16.dp),
-            imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-            contentDescription = null,
-        )
     }
 }
 

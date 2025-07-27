@@ -46,6 +46,7 @@ fun VehicleDetailRoot(
     vehicleDetailViewModel: VehicleDetailViewModel = koinViewModel(),
     paddingValues: PaddingValues,
     onCreate: (() -> Unit)? = null,
+    onBack: (() -> Unit),
 ){
     val state by vehicleDetailViewModel.state.collectAsStateWithLifecycle()
 
@@ -62,7 +63,7 @@ fun VehicleDetailRoot(
 
     VehicleDetailScreen(
         paddingValues = paddingValues,
-        onBackClick = {},
+        onBackClick = onBack,
         state = state,
         onAction = vehicleDetailViewModel::onAction,
     )
