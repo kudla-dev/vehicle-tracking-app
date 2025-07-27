@@ -7,17 +7,22 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
 import cz.kudladev.vehicletracking.core.ui.util.toFormattedString
 import cz.kudladev.vehicletracking.model.TrackingLog
+import cz.kudladev.vehicletracking.model.TrackingState
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -27,7 +32,25 @@ fun StateHistoryItem(
     number: Int,
     isLast: Boolean = false,
 ){
+    val lineColor = MaterialTheme.colorScheme.outline
+
     Row(
+        modifier = Modifier
+            .drawBehind{
+                if (!isLast) {
+                    val circleRadius = 28.dp.toPx()
+                    val linePadding = circleRadius / 2
+                    val lineStart = circleRadius + 8.dp.toPx()
+                    drawLine(
+                        color = lineColor,
+                        start = Offset(linePadding, lineStart),
+                        end = Offset(linePadding, size.height),
+                        strokeWidth = 2.dp.toPx(),
+                        cap = StrokeCap.Square
+                    )
+                }
+            }
+            .then(modifier),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
@@ -41,7 +64,10 @@ fun StateHistoryItem(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    StateHistoryItemNumber(number,isLast)
+                    StateIcon(
+                        state = trackingLog.state,
+                        isLast = isLast
+                    )
                     Column {
                         Text(
                             modifier = Modifier.padding(start = 16.dp),
@@ -63,10 +89,11 @@ fun StateHistoryItem(
                 }
             }
             Text(
-                modifier = Modifier.padding(start = 64.dp),
+                modifier = Modifier.padding(start = 44.dp, top = 4.dp),
                 text = trackingLog.message ?: "No message provided...",
                 maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
     }
@@ -108,14 +135,29 @@ private fun StateHistoryItemNumber(
     }
 }
 
+@Composable
+private fun StateIcon(
+    isLast: Boolean,
+    state: TrackingState
+){
+    Icon(
+        imageVector = if (isLast) state.activeIcon else state.inactiveIcon,
+        contentDescription = state.displayName,
+        tint = MaterialTheme.colorScheme.onBackground,
+        modifier = Modifier.size(28.dp)
+    )
+}
+
 @Preview
 @Composable
 fun StateHistoryItemPreview() {
     AppTheme {
-        StateHistoryItem(
-            trackingLog = trackingLogs.first(),
-            number = 1,
-            isLast = true
-        )
+        Surface {
+            StateHistoryItem(
+                trackingLog = trackingLogs.first(),
+                number = 1,
+                isLast = false
+            )
+        }
     }
 }

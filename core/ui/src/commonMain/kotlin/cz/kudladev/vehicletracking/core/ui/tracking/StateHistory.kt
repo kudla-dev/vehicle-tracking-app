@@ -32,7 +32,6 @@ fun StateHistory(
     val temp = if (last != null) { logs + TrackingLog(state = last, message = last.message) } else { logs }
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
             modifier = Modifier.padding(bottom = 8.dp),
@@ -42,6 +41,7 @@ fun StateHistory(
         )
         temp.forEachIndexed { index, log ->
             StateHistoryItem(
+                modifier = Modifier.padding(bottom = 8.dp),
                 trackingLog = log,
                 number = index + 1,
                 isLast = index == temp.lastIndex,
