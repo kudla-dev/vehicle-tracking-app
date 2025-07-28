@@ -1,6 +1,5 @@
 package cz.kudladev.vehicletracking.core.data.images
 
-import cz.kudladev.vehicletracking.core.data.image.UploadStatus
 import kotlinx.coroutines.flow.Flow
 
 actual class ImageService {
@@ -18,6 +17,9 @@ actual class ImageService {
     }
 
     actual fun clearUploadStatus() {
+    }
+
+    actual suspend fun enqueueBackgroundUpload(imageData: ByteArray, trackingId: String, state: String) {
     }
 
 

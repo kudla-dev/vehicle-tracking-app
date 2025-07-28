@@ -1,9 +1,8 @@
 package cz.kudladev.vehicletracking.feature.tracking
 
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -13,6 +12,8 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -22,10 +23,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
+import cz.kudladev.vehicletracking.core.ui.image.SummaryImage
 import cz.kudladev.vehicletracking.core.ui.tracking.CurrentState
 import cz.kudladev.vehicletracking.core.ui.tracking.StateHistory
-import cz.kudladev.vehicletracking.core.ui.tracking.TimeRemaining
 import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleHeader
+import cz.kudladev.vehicletracking.model.TrackingState
 import cz.kudladev.vehicletracking.model.Vehicle
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
@@ -135,14 +137,26 @@ private fun TrackingScreen(
                 }
                 is CurrentTrackingState.Success -> {
                     if (state.currentTracking.data != null){
+                        val summaryImageTitles = listOf(
+                            "Front View",
+                            "Back View",
+                            "Left Side View",
+                            "Right Side View",
+                            "Tachometer Reading",
+                        )
+                        val nextImages by remember{
+                            mutableStateOf(
+                                state.currentTracking.data.stateLogs.firstOrNull() { it.state == TrackingState.ACTIVE }
+                                    ?.images
+                            )
+                        }
                         LazyColumn(
                             modifier = Modifier,
                             contentPadding = combinedPadding,
-                            verticalArrangement = Arrangement.spacedBy(32.dp)
                         ) {
                             item {
                                 VehicleHeader(
-                                    modifier = Modifier.fillMaxWidth(),
+                                    modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
                                     vehicle = state.currentTracking.data.vehicle,
                                     onClick = {
                                         onVehicleClick(state.currentTracking.data.vehicle)
@@ -151,7 +165,7 @@ private fun TrackingScreen(
                             }
                             item {
                                 CurrentState(
-                                    modifier = Modifier.fillMaxWidth(),
+                                    modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
                                     currentTracking = state.currentTracking.data.stateLogs.last(),
                                 )
                             }
@@ -161,12 +175,19 @@ private fun TrackingScreen(
                                     logs = state.currentTracking.data.stateLogs,
                                 )
                             }
+                            if (state.currentTracking.data.stateLogs.last().state == TrackingState.RETURNED){
+                                itemsIndexed(summaryImageTitles) { index,page ->
+                                    SummaryImage(
+                                        image = state.currentTracking.data.stateLogs.last().images?.getOrNull(index),
+                                        nextImage = nextImages?.getOrElse(index) { null },
+                                        title = page,
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             }
-
         }
     }
-
 }

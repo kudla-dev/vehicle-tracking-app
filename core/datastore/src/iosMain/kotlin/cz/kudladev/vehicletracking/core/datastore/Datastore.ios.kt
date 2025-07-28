@@ -2,7 +2,6 @@ package cz.kudladev.vehicletracking.core.datastore
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import cz.kudladev.vehicletracking.datastore.AppSetting
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSDocumentationDirectory
 import platform.Foundation.NSFileManager
