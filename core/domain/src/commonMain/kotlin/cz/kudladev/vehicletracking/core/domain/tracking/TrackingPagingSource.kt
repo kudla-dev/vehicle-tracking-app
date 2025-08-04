@@ -10,6 +10,8 @@ import cz.kudladev.vehicletracking.model.onSuccess
 class TrackingPagingSource(
     private val trackingRepository: TrackingRepository,
     private val states: List<TrackingState>,
+    private val userId: String? = null,
+    private val vehicleId: Long? = null
 ): PagingSource<Int, Tracking>() {
 
     override fun getRefreshKey(state: PagingState<Int, Tracking>): Int? {
@@ -23,11 +25,17 @@ class TrackingPagingSource(
         val nextPage = params.key ?: 0
 
         trackingRepository
-            .getTrackings(states = states, page = nextPage, pageSize = params.loadSize)
+            .getTrackings(
+                states = states,
+                userId = userId,
+                vehicleId = vehicleId,
+                page = nextPage,
+                pageSize = params.loadSize
+            )
             .onSuccess { response ->
                 return LoadResult.Page(
                     data = response,
-                    prevKey = if (nextPage == 1) null else nextPage - 1,
+                    prevKey = if (nextPage <= 0) null else nextPage - 1,
                     nextKey = if (response.isEmpty()) null else nextPage + 1
                 )
             }

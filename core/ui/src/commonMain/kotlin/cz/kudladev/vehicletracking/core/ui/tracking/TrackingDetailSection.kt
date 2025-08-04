@@ -13,6 +13,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
@@ -33,7 +34,8 @@ fun TrackingDetailSection(
         Text(
             text = "Details",
             style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            fontStyle = FontStyle.Italic,
         )
         Spacer(modifier = Modifier.height(24.dp))
         TrackingDetailSectionItem("Tracking\nID", trackingId)
@@ -50,7 +52,7 @@ private fun TrackingDetailSectionItem(
     HorizontalDivider(
         modifier = Modifier.fillMaxWidth(),
         thickness = 1.dp,
-        color = MaterialTheme.colorScheme.outline,
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
     )
     Row(
         modifier = Modifier.padding(vertical = 16.dp),
@@ -60,7 +62,7 @@ private fun TrackingDetailSectionItem(
             modifier = Modifier.weight(1f),
             text = title,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.outline,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
         )
         Text(
             modifier = Modifier.weight(3f),

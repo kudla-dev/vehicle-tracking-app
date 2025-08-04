@@ -4,7 +4,6 @@ import cz.kudladev.vehicletracking.core.data.tracking.models.TrackingCreate
 import cz.kudladev.vehicletracking.core.data.tracking.models.TrackingLogRequest
 import cz.kudladev.vehicletracking.core.data.tracking.models.TrackingResponse
 import cz.kudladev.vehicletracking.core.data.tracking.models.toDomain
-import cz.kudladev.vehicletracking.core.data.vehicles.models.VehicleBasic
 import cz.kudladev.vehicletracking.core.domain.tracking.TrackingRepository
 import cz.kudladev.vehicletracking.core.domain.vehicles.ProgressUpdate
 import cz.kudladev.vehicletracking.model.ErrorMessage
@@ -106,12 +105,16 @@ class TrackingRepositoryImpl(
 
     override suspend fun getTrackings(
         states: List<TrackingState>,
+        userId: String?,
+        vehicleId: Long?,
         page: Int,
         pageSize: Int
     ): Result<List<Tracking>, ErrorMessage> {
         return safeCall<List<TrackingResponse>> {
             httpClient.get("/trackings") {
                 parameter("states", states.joinToString(",") { it.state })
+                userId?.let { parameter("userId", it) }
+                vehicleId?.let { parameter("vehicleId", it) }
                 parameter("page", page)
                 parameter("pageSize", pageSize)
             }

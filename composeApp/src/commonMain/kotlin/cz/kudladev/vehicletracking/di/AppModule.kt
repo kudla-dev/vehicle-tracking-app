@@ -1,6 +1,7 @@
 package cz.kudladev.vehicletracking.di
 
 import cz.kudladev.vehicletracking.core.data.di.dataModule
+import cz.kudladev.vehicletracking.feature.history.di.historyModule
 import cz.kudladev.vehicletracking.feature.menu.admin_settings.di.adminSettingsModule
 import cz.kudladev.vehicletracking.feature.menu.manage_trackings.di.manageTrackingsModule
 import cz.kudladev.vehicletracking.feature.menu.manage_vehicles.di.addEditVehicleModule
@@ -18,6 +19,7 @@ import org.koin.dsl.module
 val featureModule = module {
     includes(onBoardingModule)
     includes(vehiclesModule)
+    includes(historyModule)
     includes(vehicleDetailModule)
     includes(searchModule)
     includes(adminSettingsModule)

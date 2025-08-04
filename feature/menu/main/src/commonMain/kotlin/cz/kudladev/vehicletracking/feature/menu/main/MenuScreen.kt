@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
@@ -73,7 +74,11 @@ private fun MenuScreen(
         topBar = {
             LargeTopAppBar(
                 title = {
-                    Text("Menu")
+                    Text(
+                        "Menu",
+                        fontStyle = FontStyle.Italic
+
+                    )
                 },
                 scrollBehavior = scrollBehavior,
             )

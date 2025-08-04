@@ -1,6 +1,7 @@
 package cz.kudladev.vehicletracking.feature.vehicles
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -14,7 +15,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -25,7 +28,9 @@ import cz.kudladev.vehicletracking.core.designsystem.IconFloatingActionButton
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
 import cz.kudladev.vehicletracking.core.domain.auth.UserStateHolder
 import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleGridItem
+import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleGridItemSkeleton
 import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleHorizontalItem
+import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleHorizontalItemSkeleton
 import cz.kudladev.vehicletracking.model.User
 import cz.kudladev.vehicletracking.model.Vehicle
 import cz.kudladev.vehicletracking.model.isAdmin
@@ -102,6 +107,7 @@ private fun VehicleListScreen(
                                 onCreate != null -> "Manage Vehicles"
                                 else -> "Vehicles"
                             },
+                            fontStyle = FontStyle.Italic
                         )
                     },
                     actions = {
@@ -113,6 +119,7 @@ private fun VehicleListScreen(
                             Icon(
                                 imageVector = Icons.Outlined.Search,
                                 contentDescription = "Search",
+                                tint = MaterialTheme.colorScheme.onBackground
                             )
                         }
                         IconButton(
@@ -126,6 +133,7 @@ private fun VehicleListScreen(
                                     VehicleListView.List -> Icons.Outlined.ViewAgenda
                                 },
                                 contentDescription = "Change view",
+                                tint = MaterialTheme.colorScheme.onBackground
                             )
                         }
                     },
@@ -157,19 +165,36 @@ private fun VehicleListScreen(
             ){
                 when (vehicles.loadState.refresh) {
                     is LoadState.Loading -> {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(combinedPadding),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
+                        LazyVerticalGrid(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = combinedPadding,
+                            columns = when(state.selectedView){
+                                VehicleListView.Grid -> GridCells.Adaptive(150.dp)
+                                VehicleListView.List -> GridCells.Fixed(1)
+                            },
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
-                            CircularProgressIndicator()
-                            Text(
-                                text = "Loading vehicles...",
-                                modifier = Modifier.padding(top = 8.dp),
-                                style = MaterialTheme.typography.titleSmall,
-                            )
+                            items(6){
+                                when (state.selectedView) {
+                                    VehicleListView.Grid -> {
+                                        VehicleGridItemSkeleton(
+                                            modifier = Modifier
+                                                .animateItem()
+                                                .heightIn(min = 225.dp, max = 270.dp)
+                                                .fillMaxWidth()
+                                        )
+                                    }
+                                    VehicleListView.List -> {
+                                        VehicleHorizontalItemSkeleton(
+                                            modifier = Modifier
+                                                .animateItem()
+                                                .heightIn(min = 100.dp, max = 130.dp)
+                                                .fillMaxWidth()
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                     is LoadState.Error -> {
@@ -243,6 +268,7 @@ private fun VehicleListScreen(
                                                 VehicleListView.Grid -> {
                                                     VehicleGridItem(
                                                         modifier = Modifier
+                                                            .animateItem()
                                                             .heightIn(min = 225.dp, max = 270.dp)
                                                             .fillMaxWidth(),
                                                         vehicle = vehicle,
@@ -254,6 +280,7 @@ private fun VehicleListScreen(
                                                 VehicleListView.List -> {
                                                     VehicleHorizontalItem(
                                                         modifier = Modifier
+                                                            .animateItem()
                                                             .heightIn(min = 100.dp, max = 130.dp)
                                                             .fillMaxWidth(),
                                                         vehicle = vehicle,

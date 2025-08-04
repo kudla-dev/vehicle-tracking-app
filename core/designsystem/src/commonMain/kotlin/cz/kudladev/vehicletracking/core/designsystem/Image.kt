@@ -31,7 +31,7 @@ fun Image(
             }
         },
         failure = {
-            Box(modifier = Modifier.matchParentSize()) {
+            Box(modifier = Modifier.matchParentSize(), contentAlignment = Alignment.Center) {
                 Icon(
                     imageVector = Icons.TwoTone.HideImage,
                     contentDescription = "Image not available",

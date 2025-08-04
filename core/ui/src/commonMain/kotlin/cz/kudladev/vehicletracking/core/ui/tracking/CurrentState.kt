@@ -1,18 +1,27 @@
 package cz.kudladev.vehicletracking.core.ui.tracking
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.valentinilk.shimmer.shimmer
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
 import cz.kudladev.vehicletracking.core.ui.util.toFormattedString
 import cz.kudladev.vehicletracking.model.Role
@@ -38,7 +47,8 @@ fun CurrentState(
         Text(
             text = "Current State",
             style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            fontStyle = FontStyle.Italic,
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -53,7 +63,7 @@ fun CurrentState(
             Text(
                 text = currentTracking.assignedAt?.toFormattedString() ?: "N/A",
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
             )
         }
         when (currentTracking.state){
@@ -88,30 +98,78 @@ fun CurrentState(
     }
 }
 
+@Composable
+fun CurrentStateSkeleton(
+    modifier: Modifier = Modifier
+) {
+    val titleHeight = with(LocalDensity.current) {
+        MaterialTheme.typography.titleLarge.lineHeight.toDp()
+    }
+    val bodyHeight = with(LocalDensity.current) {
+        MaterialTheme.typography.bodyLarge.lineHeight.toDp()
+    }
+
+    Column(
+        modifier = modifier.shimmer(),
+        verticalArrangement = Arrangement.spacedBy(24.dp)
+    ) {
+        // Title placeholder
+        Box(
+            modifier = Modifier
+                .width(150.dp)
+                .height(titleHeight)
+                .clip(MaterialTheme.shapes.medium)
+                .background(Color.Gray)
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            // State name placeholder
+            Box(
+                modifier = Modifier
+                    .width(120.dp)
+                    .height(bodyHeight)
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(Color.Gray)
+            )
+
+            // Date placeholder
+            Box(
+                modifier = Modifier
+                    .width(100.dp)
+                    .height(bodyHeight)
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(Color.Gray)
+            )
+        }
+
+        // We don't need placeholders for the when statement content
+        // as it appears to be empty in the original implementation
+    }
+}
+
+@Preview
+@Composable
+fun CurrentStateSkeletonPreview() {
+    AppTheme {
+        Surface {
+            CurrentStateSkeleton(
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
 @Preview
 @Composable
 fun CurrentStatePreview() {
     AppTheme {
         Surface {
             CurrentState(
-                currentTracking = TrackingLog(
-                    trackingId = "f66c288c-eb50-4743-8f5a-cfb4eb08344d",
-                    state = TrackingState.PENDING,
-                    message = "Reservation for vehicle has been created",
-                    assignedBy = User(
-                        id = "123",
-                        firstName = "John",
-                        lastName = "Doe",
-                        fullName = "John Doe",
-                        email = "john.doe@seznam.cz",
-                        phoneNumber = "+420123456789",
-                        role = Role.ADMIN,
-                        maximumDistance = 100,
-                        overallDistance = 0
-                    ),
-                    assignedAt = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
-                    images = emptyList(),
-                )
+                currentTracking = testTracking.stateLogs.last()
             )
         }
     }

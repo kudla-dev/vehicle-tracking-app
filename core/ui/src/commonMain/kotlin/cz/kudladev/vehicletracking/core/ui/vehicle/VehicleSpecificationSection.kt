@@ -27,7 +27,10 @@ fun VehicleSpecificationSection(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        HorizontalDivider(modifier = Modifier.fillMaxWidth())
+        HorizontalDivider(
+            modifier = Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+        )
         Row(
             modifier = Modifier.fillMaxWidth(),
         ) {
@@ -42,7 +45,10 @@ fun VehicleSpecificationSection(
                 value = vehicle.model
             )
         }
-        HorizontalDivider(modifier = Modifier.fillMaxWidth())
+        HorizontalDivider(
+            modifier = Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+        )
         Row(
             modifier = Modifier.fillMaxWidth(),
         ) {
@@ -57,7 +63,10 @@ fun VehicleSpecificationSection(
                 value = vehicle.color
             )
         }
-        HorizontalDivider(modifier = Modifier.fillMaxWidth())
+        HorizontalDivider(
+            modifier = Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+        )
         Row(
             modifier = Modifier.fillMaxWidth(),
         ) {
@@ -72,7 +81,10 @@ fun VehicleSpecificationSection(
                 value = vehicle.driverLicense
             )
         }
-        HorizontalDivider(modifier = Modifier.fillMaxWidth())
+        HorizontalDivider(
+            modifier = Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+        )
         Row(
             modifier = Modifier.fillMaxWidth(),
         ) {
@@ -131,7 +143,7 @@ private fun VehicleSpecificationItem(
         Text(
             text = title.uppercase(),
             style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
         )
         Text(
             text = value ?: "N/A",

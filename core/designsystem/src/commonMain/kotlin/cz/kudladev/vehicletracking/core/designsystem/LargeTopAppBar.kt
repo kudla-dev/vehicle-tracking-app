@@ -33,6 +33,7 @@ fun LargeTopAppBar(
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
+            scrolledContainerColor = MaterialTheme.colorScheme.background,
         ),
         scrollBehavior = scrollBehavior
     )

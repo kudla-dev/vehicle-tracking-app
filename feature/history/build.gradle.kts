@@ -47,8 +47,11 @@ kotlin {
 
             implementation(libs.bundles.koin)
 
+            implementation(libs.bundles.paging)
             implementation(projects.core.domain)
             implementation(projects.core.designsystem)
+            implementation(projects.core.ui)
+            implementation(projects.model)
 
         }
     }

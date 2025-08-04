@@ -1,6 +1,7 @@
 package cz.kudladev.vehicletracking.feature.menu.manage_trackings
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -18,11 +19,15 @@ import androidx.paging.LoadState
 import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
 import cz.kudladev.vehicletracking.core.designsystem.BackButton
+import cz.kudladev.vehicletracking.core.designsystem.Image
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
+import cz.kudladev.vehicletracking.core.designsystem.theme.Images
 import cz.kudladev.vehicletracking.core.ui.tracking.TrackingItem
+import cz.kudladev.vehicletracking.core.ui.tracking.TrackingItemSkeleton
 import cz.kudladev.vehicletracking.model.Tracking
 import cz.kudladev.vehicletracking.model.TrackingState
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
@@ -132,13 +137,13 @@ private fun ManageTrackingsScreen(
                 }
                 LoadState.Loading -> {
                     Column(
-                        modifier = Modifier.padding(combinedPadding)
+                        modifier = Modifier
+                            .padding(combinedPadding),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        CircularProgressIndicator()
-                        Text(
-                            text = "Loading trackings...",
-                            modifier = Modifier.padding(16.dp)
-                        )
+                        repeat(6) {
+                            TrackingItemSkeleton(modifier = Modifier.fillMaxWidth())
+                        }
                     }
                 }
                 else -> {
@@ -151,14 +156,13 @@ private fun ManageTrackingsScreen(
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Info,
-                                    contentDescription = "No trackings",
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                Image(
+                                    painter = painterResource(Images.NotFound),
+                                    contentDescription = "No trackings found",
                                     modifier = Modifier.size(64.dp)
                                 )
                                 Text(
-                                    text = "No trackings found",
+                                    text = "Oh no! We couldn't find any trackings.",
                                     modifier = Modifier.padding(top = 8.dp),
                                     style = MaterialTheme.typography.titleSmall,
                                 )
@@ -176,7 +180,6 @@ private fun ManageTrackingsScreen(
                                         TrackingItem(
                                             tracking = item,
                                             onClick = { onTrackingClicked(item) },
-                                            modifier = Modifier.padding(horizontal = 8.dp)
                                         )
                                     }
                                 }

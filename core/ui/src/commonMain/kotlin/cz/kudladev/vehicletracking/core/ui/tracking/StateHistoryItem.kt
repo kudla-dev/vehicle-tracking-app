@@ -2,6 +2,7 @@ package cz.kudladev.vehicletracking.core.ui.tracking
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
@@ -15,10 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.valentinilk.shimmer.shimmer
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
 import cz.kudladev.vehicletracking.core.ui.util.toFormattedString
 import cz.kudladev.vehicletracking.model.TrackingLog
@@ -32,7 +36,7 @@ fun StateHistoryItem(
     number: Int,
     isLast: Boolean = false,
 ){
-    val lineColor = MaterialTheme.colorScheme.outline
+    val lineColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
 
     Row(
         modifier = Modifier
@@ -100,42 +104,6 @@ fun StateHistoryItem(
 }
 
 @Composable
-private fun StateHistoryItemNumber(
-    number: Int,
-    isLast: Boolean
-) {
-    Box(
-        modifier = Modifier
-            .size(48.dp)
-            .clip(RoundedCornerShape(100.dp))
-            .background(
-                when (isLast) {
-                    true -> {
-                        MaterialTheme.colorScheme.primary
-                    }
-                    false -> {
-                        MaterialTheme.colorScheme.inversePrimary
-                    }
-                }
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = number.toString(),
-            style = MaterialTheme.typography.titleSmall,
-            color = when (isLast){
-                true -> {
-                    MaterialTheme.colorScheme.onPrimary
-                }
-                false -> {
-                    MaterialTheme.colorScheme.onBackground
-                }
-            }
-        )
-    }
-}
-
-@Composable
 private fun StateIcon(
     isLast: Boolean,
     state: TrackingState
@@ -146,6 +114,117 @@ private fun StateIcon(
         tint = MaterialTheme.colorScheme.onBackground,
         modifier = Modifier.size(28.dp)
     )
+}
+
+@Composable
+fun StateHistoryItemSkeleton(
+    modifier: Modifier = Modifier,
+    isLast: Boolean = false,
+) {
+    val lineColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f)
+    val titleHeight = with(LocalDensity.current) {
+        MaterialTheme.typography.titleMedium.lineHeight.toDp()
+    }
+    val labelHeight = with(LocalDensity.current) {
+        MaterialTheme.typography.labelSmall.lineHeight.toDp()
+    }
+    val bodyHeight = with(LocalDensity.current) {
+        MaterialTheme.typography.bodyMedium.lineHeight.toDp()
+    }
+
+    Row(
+        modifier = Modifier
+            .shimmer()
+            .drawBehind {
+                if (!isLast) {
+                    val circleRadius = 28.dp.toPx()
+                    val linePadding = circleRadius / 2
+                    val lineStart = circleRadius + 8.dp.toPx()
+                    drawLine(
+                        color = lineColor,
+                        start = Offset(linePadding, lineStart),
+                        end = Offset(linePadding, size.height),
+                        strokeWidth = 2.dp.toPx(),
+                        cap = StrokeCap.Square
+                    )
+                }
+            }
+            .then(modifier),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    // State icon placeholder
+                    Box(
+                        modifier = Modifier
+                            .size(28.dp)
+                            .clip(CircleShape)
+                            .background(Color.Gray)
+                    )
+
+                    Column {
+                        // State name placeholder
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 16.dp)
+                                .width(120.dp)
+                                .height(titleHeight)
+                                .clip(MaterialTheme.shapes.medium)
+                                .background(Color.Gray)
+                        )
+
+                        // Date placeholder
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 16.dp, top = 4.dp)
+                                .width(80.dp)
+                                .height(labelHeight)
+                                .clip(MaterialTheme.shapes.medium)
+                                .background(Color.Gray)
+                        )
+                    }
+                }
+            }
+
+            // Message placeholder
+            Box(
+                modifier = Modifier
+                    .padding(start = 44.dp, top = 4.dp)
+                    .fillMaxWidth(0.8f)
+                    .height(bodyHeight)
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(Color.Gray)
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun StateHistoryItemSkeletonPreview() {
+    AppTheme {
+        Surface {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                StateHistoryItemSkeleton(isLast = false)
+                StateHistoryItemSkeleton(isLast = false)
+                StateHistoryItemSkeleton(isLast = true)
+            }
+        }
+    }
 }
 
 @Preview

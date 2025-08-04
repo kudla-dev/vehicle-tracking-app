@@ -33,6 +33,8 @@ interface TrackingRepository {
 
     suspend fun getTrackings(
         states: List<TrackingState> = emptyList(),
+        userId: String? = null,
+        vehicleId: Long? = null,
         page: Int = 0,
         pageSize: Int = 10,
     ): Result<List<Tracking>, ErrorMessage>

@@ -20,6 +20,9 @@ import coil3.compose.AsyncImage
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.*
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import cz.kudladev.vehicletracking.model.Image
 import cz.kudladev.vehicletracking.model.ImageWithBytes
 import cz.kudladev.vehicletracking.model.ImageWithUrl
@@ -88,8 +91,15 @@ fun SwipeablePhotos(
             ) {
                 Text(
                     "${pagerState.currentPage + 1} / ${images.size}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = Color.White,
+                        shadow = Shadow(
+                            color = Color.Black,
+                            offset = Offset(0f, 1f),
+                            blurRadius = 4f
+                        )
+                    ),
+
                 )
             }
         }

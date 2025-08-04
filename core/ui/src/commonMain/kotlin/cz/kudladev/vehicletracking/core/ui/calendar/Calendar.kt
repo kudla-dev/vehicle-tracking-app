@@ -44,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -157,6 +158,7 @@ fun DatePickerWithTimePicker(
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
             fontWeight = FontWeight.SemiBold,
+            fontStyle = FontStyle.Italic,
         )
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -177,13 +179,15 @@ fun DatePickerWithTimePicker(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                         contentDescription = "Previous month",
                         tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(32.dp),
                     )
                 }
                 Text(
                     text = selectedMonth.getMonthName(),
                     fontSize = MaterialTheme.typography.titleMedium.fontSize,
                     fontWeight = FontWeight.SemiBold,
+                    fontStyle = FontStyle.Italic,
+
                 )
                 IconButton(
                     onClick = {
@@ -307,6 +311,7 @@ fun DatePickerWithTimePicker(
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(top = 16.dp),
             fontWeight = FontWeight.SemiBold,
+            fontStyle = FontStyle.Italic,
         )
         Row(
             modifier = Modifier

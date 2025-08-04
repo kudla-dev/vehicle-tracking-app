@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -23,7 +24,7 @@ fun SearchScreenRoot(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    SearchScreenScreen(
+    SearchScreen(
         state = state,
         onAction = viewModel::onAction,
         paddingValues = paddingValues,
@@ -33,7 +34,7 @@ fun SearchScreenRoot(
 }
 
 @Composable
-fun SearchScreenScreen(
+fun SearchScreen(
     state: SearchScreenState,
     onAction: (SearchScreenAction) -> Unit,
     paddingValues: PaddingValues,
@@ -43,6 +44,7 @@ fun SearchScreenScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .statusBarsPadding()
             .padding(
                 top = paddingValues.calculateTopPadding()
             )
@@ -58,5 +60,6 @@ fun SearchScreenScreen(
             },
             onCancel = onCancel
         )
+
     }
 }

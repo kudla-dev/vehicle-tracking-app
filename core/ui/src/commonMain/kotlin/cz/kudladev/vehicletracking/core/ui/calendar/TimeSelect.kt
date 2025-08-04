@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -41,13 +42,14 @@ fun TimeSelect(
                 .widthIn(300.dp,600.dp)
                 .heightIn(300.dp,700.dp)
                 .clip(MaterialTheme.shapes.medium)
-                .background(MaterialTheme.colorScheme.surface),
+                .background(MaterialTheme.colorScheme.background),
         ) {
             Text(
                 text = "Select time",
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(top = 16.dp, bottom = 8.dp, start = 16.dp),
                 fontWeight = FontWeight.SemiBold,
+                fontStyle = FontStyle.Italic,
             )
             LazyColumn(
                 contentPadding = PaddingValues(16.dp),
@@ -61,8 +63,8 @@ fun TimeSelect(
                             .fillMaxSize()
                             .clip(MaterialTheme.shapes.small)
                             .background(
-                                if (time == selectedTime) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f)
-                                else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+                                if (time == selectedTime) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.surface
                             )
                             .padding(vertical = 8.dp)
                             .padding(horizontal = 16.dp)
@@ -70,6 +72,7 @@ fun TimeSelect(
                                 onTimeSelected(time)
                                 onDismiss()
                             },
+                        color = if (time == selectedTime) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
                     )
                 }
             }

@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.kudladev.vehicletracking.core.designsystem.BackButton
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
+import cz.kudladev.vehicletracking.core.designsystem.theme.displayFontFamily
 import cz.kudladev.vehicletracking.core.ui.calendar.DatePickerWithTimePicker
 import cz.kudladev.vehicletracking.core.ui.calendar.DateTimePickerDefaults
 import cz.kudladev.vehicletracking.core.ui.others.LoadingDialog
@@ -94,6 +96,7 @@ fun VehicleDetailScreen(
                             maxFontSize = 24.sp,
                             stepSize = 1.sp
                         ),
+                        fontStyle = FontStyle.Italic
                     )
                 },
                 navigationIcon = {
@@ -205,6 +208,8 @@ private fun VehicleDetailTitle(
                 maxFontSize = 24.sp,
                 stepSize = 1.sp
             ),
+            fontFamily = displayFontFamily(),
+            fontStyle = FontStyle.Italic,
         )
         else -> {
             Box(

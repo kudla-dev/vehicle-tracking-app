@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -38,7 +39,8 @@ fun TrackingHistory(
         Text(
             text = "History",
             style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            fontStyle = FontStyle.Italic,
         )
         Spacer(modifier = Modifier.height(16.dp))
         if (trackingHistory.isEmpty()) {
@@ -86,13 +88,15 @@ fun TrackingHistoryItem(tracking: Tracking, onClick: (Tracking) -> Unit) {
             )
             Text(
                 text = tracking.vehicle.fullName,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 2,
                 minLines = 2
             )
-            Text(
-                text = "+${tracking.finalDistance} km",
-            )
+            tracking.finalDistance?.let {
+                Text(
+                    text = "+${it} km",
+                )
+            }
         }
 
     }

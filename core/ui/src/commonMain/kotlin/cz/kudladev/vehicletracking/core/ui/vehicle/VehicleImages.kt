@@ -1,6 +1,8 @@
 package cz.kudladev.vehicletracking.core.ui.vehicle
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
 import cz.kudladev.vehicletracking.core.ui.util.toImageBitmap
 import cz.kudladev.vehicletracking.model.Image
 import cz.kudladev.vehicletracking.model.ImageWithBytes
@@ -143,10 +146,20 @@ fun VehicleImages(
                 ) {
                     repeat(images.size) { index ->
                         val isSelected = pagerState.currentPage == index
+                        val width = animateDpAsState(
+                            targetValue = if (isSelected) 24.dp else 8.dp,
+                            animationSpec = spring(
+                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                stiffness = Spring.StiffnessLow
+                            ),
+                            label = "width"
+                        )
+                        val height = 8.dp
+
                         Box(
                             modifier = Modifier
                                 .padding(horizontal = 4.dp)
-                                .size(if (isSelected) 10.dp else 8.dp)
+                                .size(width = width.value, height = height)
                                 .clip(CircleShape)
                                 .background(
                                     if (isSelected)
@@ -154,6 +167,7 @@ fun VehicleImages(
                                     else
                                         MaterialTheme.colorScheme.outlineVariant
                                 )
+                                .animateContentSize()
                         )
                     }
                 }
@@ -171,11 +185,15 @@ private fun VehicleImagesPreview() {
         ImageWithUrl(url = "https://cdn.motopark.cz/images/0/bedc811d0cdcea9a/2/yamaha-tenere-700-2025-icon-blue.png?hash=488245943", position = 2),
     )
 
-    VehicleImages(
-        modifier = Modifier.height(300.dp),
-        images = images,
-        onImageClick = {},
-        onImageRemove = null,
-        onImagesReordered = {}
-    )
+    AppTheme {
+        Surface {
+            VehicleImages(
+                modifier = Modifier.height(300.dp),
+                images = images,
+                onImageClick = {},
+                onImageRemove = null,
+                onImagesReordered = {}
+            )
+        }
+    }
 }

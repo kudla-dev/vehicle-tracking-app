@@ -44,6 +44,18 @@ enum class TrackingState(val state: String, val displayName: String, val message
         WAITING_FOR_YOUR_CONFIRMATION("waiting_for_your_confirmation", "Waiting for Your Confirmation", "Please confirm the state of the tracking"),
         COMPLETED("completed", "Completed"),
         ERROR("error", "Error");
+
+    companion object {
+        fun nextState(state: TrackingState): TrackingState {
+            return when (state) {
+                PENDING -> APPROVED
+                APPROVED -> ACTIVE
+                ACTIVE -> RETURNED
+                RETURNED -> COMPLETED
+                else -> state
+            }
+        }
+    }
 }
 
 fun String.toTrackingState(): TrackingState {
