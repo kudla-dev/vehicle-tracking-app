@@ -1,13 +1,19 @@
 package cz.kudladev.vehicletracking.core.designsystem
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,9 +30,10 @@ fun <T> ChoiceTextField(
     ExposedDropdownMenuBox(
         modifier = modifier,
         expanded = expanded,
-        onExpandedChange = onExpandedChange,
+        onExpandedChange = onExpandedChange
     ) {
-        OutlinedTextField(
+        // Use Material 3's OutlinedTextField instead of your custom one
+        androidx.compose.material3.TextField(
             modifier = Modifier
                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
                 .then(modifier),
@@ -39,15 +46,19 @@ fun <T> ChoiceTextField(
                     expanded = expanded,
                 )
             },
-            shape = MaterialTheme.shapes.extraLarge,
+            singleLine = true,
+            shape = RoundedCornerShape(13.dp),
+            colors = textFieldColors()
         )
-        DropdownMenu(
+        ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = {
                 focusManager.clearFocus()
                 onExpandedChange(false)
             },
-            shape = MaterialTheme.shapes.extraLarge,
+            shape = RoundedCornerShape(13.dp),
+            matchAnchorWidth = true,
+            containerColor = MaterialTheme.colorScheme.secondary,
         ) {
             options.forEach { option ->
                 DropdownMenuItem(
@@ -64,26 +75,6 @@ fun <T> ChoiceTextField(
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                 )
             }
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun ChoiceTextFieldPreview() {
-    AppTheme {
-        Surface() {
-            var expanded by remember { mutableStateOf(false) }
-            ChoiceTextField(
-                value = "Option 1",
-                options = listOf("Option 1", "Option 2", "Option 3"),
-                onValueChange = {},
-                label = "Choose an option",
-                expanded = expanded,
-                onExpandedChange = {
-                    expanded = it
-                }
-            )
         }
     }
 }

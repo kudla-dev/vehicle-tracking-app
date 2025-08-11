@@ -1,7 +1,9 @@
 package cz.kudladev.vehicletracking.feature.vehicles
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import app.cash.paging.Pager
 import app.cash.paging.PagingConfig
 import app.cash.paging.cachedIn
@@ -13,8 +15,11 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 
 class VehicleListViewModel(
+    savedStateHandle: SavedStateHandle,
     vehicleRepository: VehicleRepository
 ) : ViewModel() {
+
+    val searchQuery: String? = savedStateHandle.toRoute<VehicleList>().searchQuery
 
     val vehicles = Pager(
         config = PagingConfig(
@@ -23,6 +28,7 @@ class VehicleListViewModel(
         )
     ) {
         VehiclePagingSource(
+            search = searchQuery,
             vehicleRepository = vehicleRepository,
             brandId = _state.value.selectedBrand?.id,
             place = _state.value.place

@@ -7,35 +7,31 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.TextAutoSize
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.kudladev.vehicletracking.core.designsystem.BackButton
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
-import cz.kudladev.vehicletracking.core.designsystem.theme.displayFontFamily
+import cz.kudladev.vehicletracking.core.designsystem.PrimaryButton
+import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
 import cz.kudladev.vehicletracking.core.ui.calendar.DatePickerWithTimePicker
+import cz.kudladev.vehicletracking.core.ui.calendar.DatePickerWithTimePickerSkeleton
 import cz.kudladev.vehicletracking.core.ui.calendar.DateTimePickerDefaults
 import cz.kudladev.vehicletracking.core.ui.others.LoadingDialog
-import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleImages
-import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleSpecificationSection
-import cz.kudladev.vehicletracking.model.Brand
-import cz.kudladev.vehicletracking.model.Vehicle
+import cz.kudladev.vehicletracking.core.ui.vehicle.*
+import cz.kudladev.vehicletracking.feature.vehicledetail.VehicleDetailAction.OnStartEndDateTimeChange
+import cz.kudladev.vehicletracking.model.UiState
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
@@ -54,7 +50,7 @@ fun VehicleDetailRoot(
 
     LaunchedEffect(state.trackingCreatingState){
         when (state.trackingCreatingState) {
-            is TrackingCreatingState.Success -> {
+            is UiState.Success -> {
                 onCreate?.invoke()
             }
             else -> {
@@ -80,34 +76,11 @@ fun VehicleDetailScreen(
     state: VehicleDetailState,
     onAction: (VehicleDetailAction) -> Unit,
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(
-        topBar = {
-            LargeTopAppBar(
-                title = {
-                    Text(
-                        text = "Vehicle Detail",
-                        maxLines = 1,
-                        softWrap = true,
-                        overflow = TextOverflow.Ellipsis,
-                        autoSize = TextAutoSize.StepBased(
-                            minFontSize = 18.sp,
-                            maxFontSize = 24.sp,
-                            stepSize = 1.sp
-                        ),
-                        fontStyle = FontStyle.Italic
-                    )
-                },
-                navigationIcon = {
-                    BackButton { onBackClick() }
-                },
-                scrollBehavior = scrollBehavior,
-            )
-        },
+        contentWindowInsets = WindowInsets.statusBars,
         modifier = Modifier
             .padding(bottom = paddingValues.calculateBottomPadding())
-            .nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
         val combinedPadding = PaddingValues(
             bottom = paddingValues.calculateBottomPadding() + 16.dp,
@@ -125,36 +98,76 @@ fun VehicleDetailScreen(
                 contentPadding = combinedPadding,
             ) {
                 when (state.vehicle){
-                    is VehicleLoadingState.Success -> {
+                    is UiState.Success -> {
                         item {
                             VehicleImages(
                                 modifier = Modifier
                                     .height(300.dp),
-                                images = state.vehicle.vehicle.images,
+                                images = state.vehicle.data.images,
                                 onImageClick = {},
                                 onImagesReordered = {},
                             )
+                        }
+                        item {
                             VehicleDetailTitle(
-                                vehicle = state.vehicle
+                                vehicle = state.vehicle.data
                             )
                             VehicleSpecificationSection(
                                 modifier = Modifier
                                     .padding(vertical = 16.dp)
                                     .fillMaxWidth(),
-                                vehicle = state.vehicle.vehicle
-                            )
-                            DatePickerWithTimePicker(
-                                range = true,
-                                dateTimePickerDefaults = DateTimePickerDefaults(
-                                    disablePastDates = true,
-                                ),
-                                onRangeSelected = { start, end ->
-                                    onAction(VehicleDetailAction.OnStartEndDateTimeChange(start, end))
-                                }
+                                vehicle = state.vehicle.data
                             )
                         }
-                    } else -> {
+                        item {
+                            when (state.calendar) {
+                                is UiState.Error -> {
+                                    Text(
+                                        text = "Error loading calendar: ${state.calendar.message}",
+                                        color = MaterialTheme.colorScheme.error,
+                                        modifier = Modifier.padding(16.dp)
+                                    )
+                                }
+                                is UiState.Success -> {
+                                    DatePickerWithTimePicker(
+                                        range = true,
+                                        dateTimePickerDefaults = DateTimePickerDefaults(
+                                            disablePastDates = true,
+                                            disabledDatesWithTimeSlot = state.calendar.data
+                                        ),
+                                        onRangeSelected = { start, end ->
+                                            onAction(OnStartEndDateTimeChange(start, end))
+                                        }
+                                    )
+                                }
+                                else -> {
+                                    DatePickerWithTimePickerSkeleton(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    is UiState.Error -> {
 
+                    }
+                    else -> {
+                        item {
+                            VehicleImagesSkeleton(
+                                modifier = Modifier
+                                    .height(300.dp)
+                            )
+                        }
+                        item {
+                            VehicleDetailTitleSkeleton()
+                        }
+                        item {
+                            VehicleSpecificationSectionSkeleton()
+                        }
+                        item {
+                            DatePickerWithTimePickerSkeleton()
+                        }
                     }
                 }
             }
@@ -171,119 +184,41 @@ fun VehicleDetailScreen(
                         animationSpec = tween(durationMillis = 500)
                     )
                 ){
-                    Button(
+                    PrimaryButton(
                         modifier = Modifier
-                            .padding(bottom = 16.dp)
-                            .widthIn(300.dp, 500.dp),
+                            .padding(bottom = 16.dp),
                         onClick = {
                             onAction(VehicleDetailAction.CreateTracking)
-                        }
-                    ){
-                        Text(
-                            text = "Reserve"
-                        )
-                    }
+                        },
+                        text = "Reserve"
+                    )
                 }
             }
+            BackButton(
+                modifier = Modifier
+                    .statusBarsPadding(),
+                onClick = onBackClick
+            )
         }
     }
     LoadingDialog(
         title = "Creating a new tracking...",
-        isLoading = state.trackingCreatingState is TrackingCreatingState.Loading
+        isLoading = state.trackingCreatingState is UiState.Loading
     )
-}
-
-@Composable
-private fun VehicleDetailTitle(
-    vehicle: VehicleLoadingState
-){
-    when (vehicle) {
-        is VehicleLoadingState.Success -> Text(
-            text = vehicle.vehicle.fullName,
-            maxLines = 1,
-            softWrap = true,
-            overflow = TextOverflow.Ellipsis,
-            autoSize = TextAutoSize.StepBased(
-                minFontSize = 18.sp,
-                maxFontSize = 24.sp,
-                stepSize = 1.sp
-            ),
-            fontFamily = displayFontFamily(),
-            fontStyle = FontStyle.Italic,
-        )
-        else -> {
-            Box(
-                modifier = Modifier
-                    .height(24.dp)
-                    .width(150.dp)
-            )
-        }
-    }
-}
-
-private val testVehicle = Vehicle(
-    brand = Brand(
-        id = 1,
-        name = "Test Brand",
-        logoURL = ""
-    ),
-    fullName = "Test Vehicle",
-    color = "Redasdfasdfasdfasdfasfdasdfafsdfasdfasdfasdfasdfasdf",
-    year = "2023",
-    model = "Model X",
-    spz = "1234 ABC",
-    transferableSpz = false,
-    maximumDistance = 0,
-    totalDistance = 0,
-    place = "Ostrava",
-    driverLicense = "A1",
-    images = emptyList()
-)
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview
-@Composable
-private fun VehicleDetailTitleSuccessPreview() {
-    Scaffold(
-        topBar = {
-            LargeTopAppBar(
-                title = {
-                    VehicleDetailTitle(
-                        vehicle = VehicleLoadingState.Success(
-                            vehicle = testVehicle
-                        )
-                    )
-                },
-                navigationIcon = {
-                    BackButton {  }
-                },
-            )
-        }
-    ) {
-
-    }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 private fun VehicleDetailTitleLoadingPreview() {
-    Scaffold(
-        topBar = {
-            LargeTopAppBar(
-                title = {
-                    VehicleDetailTitle(
-                        vehicle = VehicleLoadingState.Loading
-                    )
-                },
-                navigationIcon = {
-                    BackButton {  }
-                },
-            )
-        }
-    ) {
+    AppTheme {
+        VehicleDetailRoot(
+            paddingValues = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+            onCreate = {
 
+            },
+            onBack = {}
+        )
     }
 
 }

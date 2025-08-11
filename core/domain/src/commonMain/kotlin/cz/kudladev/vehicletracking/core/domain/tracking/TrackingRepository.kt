@@ -26,6 +26,7 @@ interface TrackingRepository {
     suspend fun uploadImage(
         imageData: ByteArray,
         trackingId: String,
+        position: Int,
         state: String
     ): Flow<Result<ProgressUpdate, ErrorMessage>>
 

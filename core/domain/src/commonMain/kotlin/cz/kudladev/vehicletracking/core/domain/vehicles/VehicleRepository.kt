@@ -4,6 +4,8 @@ import cz.kudladev.vehicletracking.model.Vehicle
 import cz.kudladev.vehicletracking.model.ErrorMessage
 import cz.kudladev.vehicletracking.model.Result
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 
 interface VehicleRepository {
 
@@ -28,6 +30,10 @@ interface VehicleRepository {
     suspend fun getById(
         id: Int,
     ): Result<Vehicle, ErrorMessage>
+
+    suspend fun getCalendar(
+        vehicleId: Int,
+    ): Result<Map<LocalDate, List<LocalTime>>, ErrorMessage>
 
     suspend fun scrape(
         url: String,

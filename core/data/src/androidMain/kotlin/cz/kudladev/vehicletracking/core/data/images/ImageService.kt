@@ -176,7 +176,7 @@ actual class ImageService(
         directUploadStatuses.value = emptyList()
     }
 
-    actual suspend fun enqueueBackgroundUpload(imageData: ByteArray, trackingId: String, state: String) {
+    actual suspend fun enqueueBackgroundUpload(imageData: ByteArray, trackingId: String, position: Int, state: String) {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
@@ -195,6 +195,7 @@ actual class ImageService(
                 workDataOf(
                     "imagePath" to file.absolutePath,
                     "trackingId" to trackingId,
+                    "position" to position,
                     "state" to state,
                 )
             )

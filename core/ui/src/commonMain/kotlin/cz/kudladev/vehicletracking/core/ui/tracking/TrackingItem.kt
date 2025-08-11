@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.valentinilk.shimmer.shimmer
+import cz.kudladev.vehicletracking.core.designsystem.Badge
 import cz.kudladev.vehicletracking.core.designsystem.Image
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
 import cz.kudladev.vehicletracking.core.ui.user.testUser
@@ -57,36 +58,55 @@ fun TrackingItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Image(
-                imageUrl = tracking.vehicle.images.firstOrNull()?.url ?: "",
+            Box(
                 modifier = Modifier
                     .width(160.dp)
                     .clip(MaterialTheme.shapes.medium)
                     .aspectRatio(16f / 9f),
-                contentScale = ContentScale.Crop,
-            )
+            ){
+                Image(
+                    imageUrl = tracking.vehicle.images.firstOrNull()?.url ?: "",
+                    modifier = Modifier
+                        .width(160.dp)
+                        .clip(MaterialTheme.shapes.medium)
+                        .aspectRatio(16f / 9f),
+                    contentScale = ContentScale.Crop,
+                )
+                lastTrackingState?.let {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp)
+                    ){
+                        Badge(
+                            text = it.displayName,
+                            icon = it.activeIcon,
+                        )
+                    }
+                }
+            }
             Column(
                 modifier = Modifier
                     .padding(4.dp)
             ) {
-                lastTrackingState?.let {
+                Text(
+                    text = tracking.vehicle.fullName,
+                    style = MaterialTheme.typography.bodyMedium,
+                    minLines = 2,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = tracking.user.fullName,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                tracking.finalDistance?.let {
                     Text(
-                        text = it.displayName,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text = tracking.vehicle.fullName,
+                        text = "+${it} km",
                         style = MaterialTheme.typography.bodyMedium,
-                        minLines = 2,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Text(
-                        text = tracking.user.fullName,
-                        style = MaterialTheme.typography.bodyMedium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
+                        fontWeight = FontWeight.SemiBold,
                     )
                 }
             }

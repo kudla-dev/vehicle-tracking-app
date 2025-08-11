@@ -47,9 +47,10 @@ kotlin {
 
             implementation(libs.bundles.koin)
 
+
             implementation(projects.core.domain)
             implementation(projects.core.ui)
-
+            implementation(projects.model)
             implementation(projects.core.designsystem)
         }
     }

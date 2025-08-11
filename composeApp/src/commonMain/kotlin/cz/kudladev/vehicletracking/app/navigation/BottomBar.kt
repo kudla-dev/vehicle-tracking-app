@@ -15,11 +15,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -31,13 +28,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
-import com.skydoves.flexible.core.toPx
 import cz.kudladev.vehicletracking.app.AppState
-import cz.kudladev.vehicletracking.app.navigation.core.Menu
-import cz.kudladev.vehicletracking.feature.favourite.Favourites
-import cz.kudladev.vehicletracking.feature.history.History
-import cz.kudladev.vehicletracking.feature.tracking.Tracking
-import cz.kudladev.vehicletracking.feature.vehicles.VehicleList
+import cz.kudladev.vehicletracking.app.navigation.core.*
 import kotlinx.serialization.Serializable
 import kotlin.reflect.KClass
 
@@ -53,31 +45,31 @@ enum class BottomBarDestinations(
         unSelectedIcon = Icons.AutoMirrored.Default.List,
         selectedIcon = Icons.AutoMirrored.Filled.List,
         label = "Vehicles",
-        route = VehicleList::class,
+        route = VehicleRoot::class,
     ),
     FavouriteDest(
         unSelectedIcon = Icons.Outlined.Favorite,
         selectedIcon = Icons.Filled.Favorite,
         label = "Favourite",
-        route = Favourites::class,
+        route = FavouriteRoot::class,
     ),
     CurrentTrackingDest(
         unSelectedIcon = Icons.Outlined.DirectionsCar,
         selectedIcon = Icons.Filled.DirectionsCar,
         label = "Tracking",
-        route = Tracking::class,
+        route = TrackingRoot::class,
     ),
     HistoryDest(
         unSelectedIcon = Icons.Outlined.History,
         selectedIcon = Icons.Filled.History,
         label = "History",
-        route = History::class,
+        route = HistoryRoot::class,
     ),
     MenuDest(
         unSelectedIcon = Icons.Outlined.Menu,
         selectedIcon = Icons.Filled.Menu,
         label = "Menu",
-        route = Menu::class,
+        route = MenuRoot::class,
     ),
 }
 

@@ -2,6 +2,7 @@ package cz.kudladev.vehicletracking.core.ui.tracking
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontStyle
@@ -20,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import cz.kudladev.vehicletracking.core.designsystem.Badge
 import cz.kudladev.vehicletracking.core.designsystem.Image
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
 import cz.kudladev.vehicletracking.core.ui.util.toFormattedString
@@ -63,6 +66,8 @@ fun TrackingHistory(
 
 @Composable
 fun TrackingHistoryItem(tracking: Tracking, onClick: (Tracking) -> Unit) {
+    val lastTracking = tracking.stateLogs.last()
+
     Row(
         modifier = Modifier
             .clip(MaterialTheme.shapes.medium)
@@ -73,24 +78,40 @@ fun TrackingHistoryItem(tracking: Tracking, onClick: (Tracking) -> Unit) {
             ),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Image(
-            imageUrl = tracking.vehicle.images.firstOrNull()?.url ?: "",
+        Box(
             modifier = Modifier
                 .width(150.dp)
                 .clip(MaterialTheme.shapes.medium)
-        )
+        ){
+            Image(
+                imageUrl = tracking.vehicle.images.firstOrNull()?.url ?: "",
+                modifier = Modifier
+                    .width(150.dp)
+                    .clip(MaterialTheme.shapes.medium)
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 8.dp, end = 8.dp)
+            ){
+                Badge(
+                    text = lastTracking.state.displayName,
+                    icon = lastTracking.state.activeIcon,
+                )
+            }
+        }
         Column(
             modifier = Modifier
                 .weight(1f),
         ) {
             Text(
-                text = "${tracking.stateLogs.last().state.displayName}: ${tracking.endTime.toFormattedString()}"
-            )
-            Text(
                 text = tracking.vehicle.fullName,
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 2,
                 minLines = 2
+            )
+            Text(
+                text = tracking.endTime.toFormattedString()
             )
             tracking.finalDistance?.let {
                 Text(

@@ -6,5 +6,6 @@ import cz.kudladev.vehicletracking.model.UiState
 data class TrackingDetailState(
     val tracking: UiState<Tracking> = UiState.Loading,
     val userTrackingHistory: UiState<List<Tracking>> = UiState.Loading,
+    val updatedTracking: UiState<Tracking> = UiState.Idle,
 )
 

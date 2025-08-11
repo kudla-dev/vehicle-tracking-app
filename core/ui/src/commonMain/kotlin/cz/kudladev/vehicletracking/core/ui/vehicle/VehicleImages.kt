@@ -18,11 +18,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.valentinilk.shimmer.shimmer
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
 import cz.kudladev.vehicletracking.core.ui.util.toImageBitmap
 import cz.kudladev.vehicletracking.model.Image
@@ -172,6 +174,68 @@ fun VehicleImages(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun VehicleImagesSkeleton(
+    modifier: Modifier = Modifier,
+    imageCount: Int = 3
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        // Image carousel placeholder with shimmer effect
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .clip(MaterialTheme.shapes.medium)
+                .shimmer()
+                .background(Color.Gray)
+        )
+
+        // Pagination indicators
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            repeat(imageCount) { index ->
+                val isSelected = index == 0
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp)
+                        .size(
+                            width = if (isSelected) 24.dp else 8.dp,
+                            height = 8.dp
+                        )
+                        .clip(CircleShape)
+                        .shimmer()
+                        .background(
+                            if (isSelected)
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+                            else
+                                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.7f)
+                        )
+                )
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun VehicleImagesSkeletonPreview() {
+    AppTheme {
+        Surface {
+            VehicleImagesSkeleton(
+                modifier = Modifier.height(300.dp)
+            )
         }
     }
 }

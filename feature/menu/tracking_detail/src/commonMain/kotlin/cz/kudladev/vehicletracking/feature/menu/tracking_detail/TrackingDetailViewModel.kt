@@ -4,7 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import cz.kudladev.vehicletracking.core.domain.auth.UserStateHolder
 import cz.kudladev.vehicletracking.core.domain.tracking.TrackingRepository
+import cz.kudladev.vehicletracking.model.TrackingState
 import cz.kudladev.vehicletracking.model.UiState
 import cz.kudladev.vehicletracking.model.onError
 import cz.kudladev.vehicletracking.model.onSuccess
@@ -17,6 +19,7 @@ import kotlinx.coroutines.launch
 
 class TrackingDetailViewModel(
     private val trackingRepository: TrackingRepository,
+    private val userStateHolder: UserStateHolder,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -32,9 +35,22 @@ class TrackingDetailViewModel(
             initialValue = TrackingDetailState()
         )
 
+    val user = userStateHolder.user
+
     fun onAction(action: TrackingDetailAction) {
         when (action) {
-            else -> TODO("Handle actions")
+            is TrackingDetailAction.ApproveTracking -> {
+                updateTracking(
+                    trackingId = trackingId,
+                    state = TrackingState.APPROVED
+                )
+            }
+            is TrackingDetailAction.RejectTracking -> {
+                updateTracking(
+                    trackingId = trackingId,
+                    state = TrackingState.REJECTED
+                )
+            }
         }
     }
 
@@ -78,6 +94,31 @@ class TrackingDetailViewModel(
             .onError { error ->
                 _state.update { it.copy(
                     userTrackingHistory = UiState.Error(error.message ?: "Unknown error")
+                ) }
+            }
+    }
+
+    private fun updateTracking(
+        trackingId: String,
+        state: TrackingState,
+    ) = viewModelScope.launch {
+        _state.update { it.copy(
+            updatedTracking = UiState.Loading
+        ) }
+        trackingRepository
+            .updateTracking(
+                trackingId = trackingId,
+                state = state,
+            )
+            .onSuccess { tracking ->
+                _state.update { it.copy(
+                    updatedTracking = UiState.Success(tracking)
+                ) }
+                refresh()
+            }
+            .onError { error ->
+                _state.update { it.copy(
+                    updatedTracking = UiState.Error(error.message ?: "Unknown error")
                 ) }
             }
     }

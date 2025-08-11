@@ -49,6 +49,9 @@ kotlin {
 
             implementation(libs.bundles.paging)
 
+            implementation(libs.navigation.compose)
+
+
             implementation(projects.model)
             implementation(projects.core.domain)
             implementation(projects.core.designsystem)

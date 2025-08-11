@@ -116,6 +116,17 @@ class AppState(
         }
     }
 
+    fun navigateToCurrentTrackingRoot(){
+        trace("Navigation: CurrentTrackingRoot") {
+            coreNavController.navigateToTracking(navOptions {
+                popUpTo(CoreRoot) {
+                    saveState = false
+                }
+                launchSingleTop = true
+                restoreState = false
+            })
+        }
+    }
 
 
 }

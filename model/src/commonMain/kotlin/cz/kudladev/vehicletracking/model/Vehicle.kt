@@ -15,7 +15,7 @@ data class Vehicle(
     val maximumDistance: Int = 0,
     val totalDistance: Int = 0,
     val place: String = "",
-    val driverLicense: String = "",
+    val driverLicenses: MutableSet<DriverLicense> = mutableSetOf(),
     val images: List<ImageWithUrl> = emptyList()
 )
 

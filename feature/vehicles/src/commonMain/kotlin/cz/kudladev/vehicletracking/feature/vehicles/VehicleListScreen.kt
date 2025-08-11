@@ -39,9 +39,10 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
-data object VehicleList
-@Serializable
-data object ManageVehicles
+data class VehicleList(
+    val searchQuery: String? = null,
+    val create: Boolean = false,
+)
 
 @Composable
 fun VehicleListScreenRoot(

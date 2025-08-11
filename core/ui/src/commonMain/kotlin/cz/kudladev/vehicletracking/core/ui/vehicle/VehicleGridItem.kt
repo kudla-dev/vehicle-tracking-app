@@ -85,14 +85,16 @@ fun VehicleGridItem(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(8.dp),
-                    horizontalArrangement = Arrangement.End,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
                     verticalAlignment = Alignment.Bottom
                 ) {
-                    Badge(
-                        text = vehicle.driverLicense,
-                        containerColor = MaterialTheme.colorScheme.tertiary,
-                        contentColor = MaterialTheme.colorScheme.onTertiary,
-                    )
+                    vehicle.driverLicenses.forEach {
+                        Badge(
+                            text = it.type,
+                            containerColor = MaterialTheme.colorScheme.tertiary,
+                            contentColor = MaterialTheme.colorScheme.onTertiary,
+                        )
+                    }
                 }
             }
             Text(

@@ -21,6 +21,7 @@ class TrackingImageWorker(
         val imagePath = inputData.getString("imagePath")
         val vehicleId = inputData.getString("trackingId") ?: ""
         val state = inputData.getString("state") ?: "UNKNOWN"
+        val position = inputData.getInt("position", 0)
 
         if (imagePath == null || vehicleId.isEmpty()) {
             return Result.failure(workDataOf("error" to "Missing image path or vehicle ID"))
@@ -38,6 +39,7 @@ class TrackingImageWorker(
             trackingRepository.uploadImage(
                 imageData = imageData,
                 trackingId = vehicleId,
+                position = position,
                 state = state
             ).collect { result ->
                 when (result) {

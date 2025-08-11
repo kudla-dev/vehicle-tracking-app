@@ -1,5 +1,6 @@
 package cz.kudladev.vehicletracking.core.data.vehicles.models
 
+import cz.kudladev.vehicletracking.model.DriverLicense
 import cz.kudladev.vehicletracking.model.ImageWithUrl
 import cz.kudladev.vehicletracking.model.Vehicle
 import kotlinx.serialization.Serializable
@@ -14,7 +15,11 @@ data class VehicleScrape(
 fun VehicleScrape.toDomain(): Vehicle {
     return Vehicle(
         fullName = fullName,
-        driverLicense = drivingLicenses.joinToString(", "),
+        driverLicenses = drivingLicenses.map { type ->
+            DriverLicense(
+                type = type
+            )
+        }.toMutableSet(),
         images = imageUrls.mapIndexed { index, url ->
             ImageWithUrl(
                 url = url,

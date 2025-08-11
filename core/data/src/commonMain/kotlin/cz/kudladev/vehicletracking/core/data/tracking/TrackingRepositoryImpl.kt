@@ -74,6 +74,7 @@ class TrackingRepositoryImpl(
     override suspend fun uploadImage(
         imageData: ByteArray,
         trackingId: String,
+        position: Int,
         state: String
     ): Flow<Result<ProgressUpdate, ErrorMessage>> = channelFlow {
         safeCall<TrackingResponse> {

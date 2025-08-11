@@ -35,6 +35,7 @@ class ImageRepositoryImpl(
     override suspend fun uploadImageToTracking(
         image: Image,
         trackingId: String,
+        position: Int,
         state: TrackingState
     ) {
         when (image) {
@@ -42,6 +43,7 @@ class ImageRepositoryImpl(
                 imageService.enqueueBackgroundUpload(
                     imageData = image.bytes ?: ByteArray(0),
                     trackingId = trackingId,
+                    position = position,
                     state = state.state,
                 )
             }

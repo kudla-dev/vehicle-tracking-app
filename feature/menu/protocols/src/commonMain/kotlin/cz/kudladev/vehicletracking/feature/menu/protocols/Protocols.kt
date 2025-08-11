@@ -36,6 +36,7 @@ import com.skydoves.landscapist.coil3.CoilImage
 import cz.kudladev.vehicletracking.core.designsystem.BackButton
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
 import cz.kudladev.vehicletracking.core.designsystem.OutlinedTextField
+import cz.kudladev.vehicletracking.core.designsystem.PrimaryButton
 import cz.kudladev.vehicletracking.core.ui.image.SummaryImage
 import cz.kudladev.vehicletracking.core.ui.image.UploadDialog
 import cz.kudladev.vehicletracking.core.ui.util.toImageBitmap
@@ -117,7 +118,9 @@ fun ProtocolsScreen(
                     )
                 },
                 navigationIcon = {
-                    BackButton { onBack() }
+                    BackButton(
+                        onClick = onBack
+                    )
                 },
                 scrollBehavior = scrollBehavior
             )
@@ -259,7 +262,7 @@ fun ProtocolsCapture(
     onRetake: () -> Unit,
     action: (ProtocolsAction) -> Unit,
     onBack: () -> Unit,
-    onNext: () -> Unit
+    onNext: () -> Unit,
 ){
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -337,7 +340,7 @@ fun ProtocolsCapture(
                         modifier = Modifier
                             .size(64.dp)
                             .clip(RoundedCornerShape(100))
-                            .border(1.dp, Color.White, RoundedCornerShape(100))
+                            .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f), RoundedCornerShape(100))
                             .clickable(
                                 onClick = {
                                     cameraState.capture()
@@ -349,7 +352,7 @@ fun ProtocolsCapture(
                             modifier = Modifier
                                 .size(56.dp)
                                 .clip(RoundedCornerShape(100))
-                                .background(Color.White)
+                                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f))
                         )
                     }
                 }

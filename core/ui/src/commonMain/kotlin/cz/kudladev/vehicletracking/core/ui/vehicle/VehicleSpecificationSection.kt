@@ -1,19 +1,28 @@
 package cz.kudladev.vehicletracking.core.ui.vehicle
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.valentinilk.shimmer.shimmer
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
 import cz.kudladev.vehicletracking.model.Brand
+import cz.kudladev.vehicletracking.model.DriverLicense
 import cz.kudladev.vehicletracking.model.Vehicle
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -78,7 +87,7 @@ fun VehicleSpecificationSection(
             VehicleSpecificationItem(
                 modifier = Modifier.weight(1f),
                 title = "Driver License",
-                value = vehicle.driverLicense
+                value = vehicle.driverLicenses.joinToString(separator = ", ") { it.type }.ifBlank({ "N/A" })
             )
         }
         HorizontalDivider(
@@ -102,6 +111,69 @@ fun VehicleSpecificationSection(
     }
 }
 
+@Composable
+fun VehicleSpecificationSectionSkeleton(
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.shimmer(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        repeat(4){
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                VehicleSpecificationItemSkeleton(
+                    modifier = Modifier.weight(1f)
+                )
+                VehicleSpecificationItemSkeleton(
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun VehicleSpecificationItemSkeleton(
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+    ) {
+        Box(
+            modifier = Modifier
+                .width(80.dp)
+                .height(16.dp)
+                .clip(MaterialTheme.shapes.small)
+                .background(Color.Gray)
+        )
+        Box(
+            modifier = Modifier
+                .padding(top = 4.dp)
+                .width(120.dp)
+                .height(20.dp)
+                .clip(MaterialTheme.shapes.small)
+                .background(Color.Gray)
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun VehicleSpecificationSectionSkeletonPreview() {
+    AppTheme {
+        Surface {
+            VehicleSpecificationSectionSkeleton()
+        }
+    }
+}
+
 internal val testVehicle = Vehicle(
     brand = Brand(
         id = 1,
@@ -117,7 +189,7 @@ internal val testVehicle = Vehicle(
     maximumDistance = 0,
     totalDistance = 0,
     place = "Ostrava",
-    driverLicense = "A1",
+    driverLicenses = mutableSetOf(DriverLicense("A")),
     images = emptyList()
 )
 

@@ -21,7 +21,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.valentinilk.shimmer.shimmer
+import cz.kudladev.vehicletracking.core.designsystem.Badge
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
 import cz.kudladev.vehicletracking.core.ui.util.toFormattedString
 import cz.kudladev.vehicletracking.model.Role
@@ -55,10 +57,11 @@ fun CurrentState(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
+            Badge(
                 text = currentTracking.state.displayName,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.ExtraBold
+                icon = currentTracking.state.activeIcon,
+                textSize = 14.sp,
+                iconSize = 16.dp,
             )
             Text(
                 text = currentTracking.assignedAt?.toFormattedString() ?: "N/A",

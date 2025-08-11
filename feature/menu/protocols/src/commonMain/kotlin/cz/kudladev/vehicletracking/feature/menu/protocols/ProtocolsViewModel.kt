@@ -113,11 +113,13 @@ class ProtocolsViewModel(
                     tracking = UiState.Success(tracking)
                 ) }
                 println("Tracking updated successfully: $tracking")
+                var position = 0
                 images.forEach { (page, image) ->
                     imageRepository
                         .uploadImageToTracking(
                             image = image,
                             trackingId = trackingId,
+                            position = position++,
                             state = trackingState
                         )
                 }

@@ -10,6 +10,7 @@ interface ImageRepository {
     suspend fun uploadImageToTracking(
         image: Image,
         trackingId: String,
+        position: Int,
         state: TrackingState
     )
     fun cancelUpload(id: String)

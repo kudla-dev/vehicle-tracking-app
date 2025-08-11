@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,6 +17,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -27,6 +30,9 @@ import cz.kudladev.vehicletracking.core.designsystem.BackButton
 import cz.kudladev.vehicletracking.core.designsystem.ChoiceTextField
 import cz.kudladev.vehicletracking.core.designsystem.MediumTopAppBar
 import cz.kudladev.vehicletracking.core.designsystem.OutlinedTextField
+import cz.kudladev.vehicletracking.core.designsystem.PrimaryButton
+import cz.kudladev.vehicletracking.core.designsystem.SecondaryButton
+import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
 import cz.kudladev.vehicletracking.core.ui.image.UploadDialog
 import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleImages
 import cz.kudladev.vehicletracking.model.Brand
@@ -103,6 +109,7 @@ fun AddEditVehicleScreen(
                 title = {
                     Text(
                         "Create new vehicle",
+                        fontStyle = FontStyle.Italic,
                     )
                 },
                 navigationIcon = {
@@ -113,9 +120,9 @@ fun AddEditVehicleScreen(
         }
     ) { innerPadding ->
         val combinedPadding = PaddingValues(
-            start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
+            start = innerPadding.calculateStartPadding(LocalLayoutDirection.current) + 16.dp,
             top = innerPadding.calculateTopPadding() + 16.dp,
-            end = innerPadding.calculateEndPadding(LocalLayoutDirection.current),
+            end = innerPadding.calculateEndPadding(LocalLayoutDirection.current) + 16.dp,
             bottom = paddingValues.calculateBottomPadding() + 16.dp,
         )
         LazyColumn(
@@ -137,24 +144,20 @@ fun AddEditVehicleScreen(
                         onAction(AddEditVehicleAction.OnImagesReordered(images))
                     }
                 )
-                OutlinedButton(
+                SecondaryButton(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp),
+                        .fillMaxWidth(),
+                    text = "Manage images",
                     onClick = {
                         onAction(AddEditVehicleAction.ToggleImageDialog)
                     }
-                ) {
-                    Text(
-                        "Add images",
-                    )
-                }
+                )
                 state.imagesError?.let {
                     Text(
                         text = it,
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.labelSmall,
-                        modifier = Modifier.padding(start = 24.dp),
+                        modifier = Modifier.padding(start = 8.dp),
                         softWrap = true,
                         maxLines = 2,
                         minLines = 1
@@ -164,7 +167,9 @@ fun AddEditVehicleScreen(
             }
             item {
                 ChoiceTextField<Brand>(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
                     value = state.brand?.name ?: "",
                     onValueChange = {
                         onAction(AddEditVehicleAction.OnBrandChange(it))
@@ -179,7 +184,7 @@ fun AddEditVehicleScreen(
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
+                        .padding(vertical = 4.dp),
                     value = state.fullName,
                     onValueChange = {
                         onAction(AddEditVehicleAction.OnFullNameChange(it))
@@ -202,7 +207,7 @@ fun AddEditVehicleScreen(
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
+                        .padding(vertical = 4.dp),
                     value = state.model,
                     onValueChange = {
                         onAction(AddEditVehicleAction.OnModelChange(it))
@@ -225,7 +230,7 @@ fun AddEditVehicleScreen(
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
+                        .padding(vertical = 4.dp),
                     value = state.year,
                     onValueChange = {
                         onAction(AddEditVehicleAction.OnYearChange(it))
@@ -249,7 +254,7 @@ fun AddEditVehicleScreen(
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
+                        .padding(vertical = 4.dp),
                     value = state.color,
                     onValueChange = {
                         onAction(AddEditVehicleAction.OnColorChange(it))
@@ -270,7 +275,9 @@ fun AddEditVehicleScreen(
                     )
                 )
                 ChoiceTextField(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
                     value = state.driverLicense,
                     onValueChange = {
                         onAction(AddEditVehicleAction.OnDriverLicenseChange(it))
@@ -285,7 +292,7 @@ fun AddEditVehicleScreen(
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
+                        .padding(vertical = 4.dp),
                     value = state.spz,
                     onValueChange = {
                         onAction(AddEditVehicleAction.OnSpzChange(it))
@@ -306,7 +313,9 @@ fun AddEditVehicleScreen(
                     )
                 )
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, top = 4.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -324,7 +333,7 @@ fun AddEditVehicleScreen(
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
+                        .padding(vertical = 4.dp),
                     value = state.totalDistance,
                     onValueChange = {
                         onAction(AddEditVehicleAction.OnTotalDistanceChange(it))
@@ -354,7 +363,7 @@ fun AddEditVehicleScreen(
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
+                        .padding(vertical = 4.dp),
                     value = state.maximumDistance,
                     onValueChange = {
                         onAction(AddEditVehicleAction.OnMaximumDistanceChange(it))
@@ -382,8 +391,10 @@ fun AddEditVehicleScreen(
                         )
                     }
                 )
-                ChoiceTextField<String>(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                ChoiceTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
                     value = state.place,
                     onValueChange = {
                         onAction(AddEditVehicleAction.OnPlaceChange(it))
@@ -397,24 +408,27 @@ fun AddEditVehicleScreen(
                 )
             }
             item {
-                Button(
+                PrimaryButton(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
                     onClick = {
                         onAction(AddEditVehicleAction.OnSaveClick)
+                    },
+                    text = "Create vehicle",
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add vehicle",
+                        )
                     }
-                ) {
-                    Text(
-                        text = "Create vehicle",
-                    )
-                }
+                )
             }
         }
     }
 
     if (state.imageDialog){
-        ModalBottomSheet(
+        cz.kudladev.vehicletracking.core.designsystem.ModalBottomSheet(
             onDismissRequest = {
                 onAction(AddEditVehicleAction.ToggleImageDialog)
             }
@@ -429,7 +443,8 @@ fun AddEditVehicleScreen(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(bottom = 16.dp),
                     style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    fontStyle = FontStyle.Italic
                 )
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
@@ -458,28 +473,27 @@ fun AddEditVehicleScreen(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     HorizontalDivider(
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
                     )
                     Text(
                         modifier = Modifier.padding(horizontal = 8.dp),
                         text = "or"
                     )
                     HorizontalDivider(
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
                     )
                 }
-                OutlinedButton(
+                SecondaryButton(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(OutlinedTextFieldDefaults.MinHeight),
                     onClick = {
                         multipleImagePicker.launch()
-                    }
-                ) {
-                    Text(
-                        text = "Pick from gallery",
-                    )
-                }
+                    },
+                    text = "Pick from gallery",
+                )
             }
         }
     }
@@ -496,11 +510,13 @@ fun AddEditVehicleScreen(
 @Preview
 @Composable
 fun AddEditVehicleScreenPreview() {
-    AddEditVehicleScreen(
-        state = AddEditVehicleState(),
-        uploadStatus = emptyList(),
-        onAction = {},
-        paddingValues = PaddingValues(0.dp),
-        onBack = {}
-    )
+    AppTheme {
+        AddEditVehicleScreen(
+            state = AddEditVehicleState(),
+            uploadStatus = emptyList(),
+            onAction = {},
+            paddingValues = PaddingValues(0.dp),
+            onBack = {}
+        )
+    }
 }

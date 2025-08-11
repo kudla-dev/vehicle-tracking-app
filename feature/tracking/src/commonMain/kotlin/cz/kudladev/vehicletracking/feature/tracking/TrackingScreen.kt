@@ -1,5 +1,6 @@
 package cz.kudladev.vehicletracking.feature.tracking
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.scrollable
@@ -40,6 +41,8 @@ import cz.kudladev.vehicletracking.core.ui.tracking.CurrentState
 import cz.kudladev.vehicletracking.core.ui.tracking.CurrentStateSkeleton
 import cz.kudladev.vehicletracking.core.ui.tracking.StateHistory
 import cz.kudladev.vehicletracking.core.ui.tracking.StateHistorySkeleton
+import cz.kudladev.vehicletracking.core.ui.tracking.TimeRemaining
+import cz.kudladev.vehicletracking.core.ui.tracking.TrackingDetailSection
 import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleHeader
 import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleHeaderSkeleton
 import cz.kudladev.vehicletracking.model.TrackingState
@@ -56,7 +59,7 @@ data object Tracking
 fun TrackingScreenRoot(
     paddingValues: PaddingValues,
     viewModel: TrackingScreenViewModel = koinViewModel(),
-    onVehicleClick: (Vehicle) -> Unit
+    onVehicleClick: (Int) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -73,7 +76,7 @@ fun TrackingScreenRoot(
 private fun TrackingScreen(
     paddingValues: PaddingValues,
     state: TrackingScreenState,
-    onVehicleClick: (Vehicle) -> Unit,
+    onVehicleClick: (Int) -> Unit,
     onAction: (TrackingScreenAction) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
@@ -109,7 +112,7 @@ private fun TrackingScreen(
         ) { innerPadding ->
             val combinedPadding = PaddingValues(
                 bottom = paddingValues.calculateBottomPadding() + 16.dp,
-                top = innerPadding.calculateTopPadding(),
+                top = innerPadding.calculateTopPadding() + 16.dp,
                 start = innerPadding.calculateStartPadding(LocalLayoutDirection.current) + 16.dp,
                 end = innerPadding.calculateEndPadding(LocalLayoutDirection.current) + 16.dp,
             )
@@ -159,6 +162,7 @@ private fun TrackingScreen(
                         CurrentStateSkeleton(
                             modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
                         )
+
                         StateHistorySkeleton(
                             modifier = Modifier.fillMaxWidth(),
                             itemCount = 3
@@ -207,10 +211,12 @@ private fun TrackingScreen(
 
                                 val nextImages by remember{
                                     mutableStateOf(
-                                        data!!.stateLogs.firstOrNull() { it.state == TrackingState.ACTIVE }
+                                        data!!.stateLogs.firstOrNull() { it.state == TrackingState.RETURNED }
                                             ?.images
                                     )
                                 }
+                                val lastState = data!!.stateLogs.lastOrNull()
+                                val activeState = data!!.stateLogs.firstOrNull { it.state == TrackingState.ACTIVE }
                                 LazyColumn(
                                     modifier = Modifier,
                                     contentPadding = combinedPadding,
@@ -220,7 +226,7 @@ private fun TrackingScreen(
                                             modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
                                             vehicle = data!!.vehicle,
                                             onClick = {
-                                                onVehicleClick(data!!.vehicle)
+                                                onVehicleClick(data!!.vehicle.id!!)
                                             }
                                         )
                                     }
@@ -231,22 +237,41 @@ private fun TrackingScreen(
                                         )
                                     }
                                     item {
+                                        AnimatedVisibility(
+                                            visible = lastState?.state == TrackingState.ACTIVE
+                                        ){
+                                            TimeRemaining(
+                                                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                                                startTime = data!!.startTime,
+                                                endTime = data!!.endTime,
+                                            )
+                                        }
+                                    }
+                                    item {
+                                        TrackingDetailSection(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            trackingId = data!!.id,
+                                            startDate = data!!.startTime,
+                                            endDate = data!!.endTime,
+                                        )
+                                    }
+                                    item {
                                         StateHistory(
                                             modifier = Modifier.fillMaxWidth(),
                                             logs = data!!.stateLogs,
                                         )
                                     }
-                                    data!!.stateLogs.lastOrNull()?.state?.let { lastState ->
-                                        if (lastState == TrackingState.RETURNED || lastState == TrackingState.ACTIVE || lastState == TrackingState.COMPLETED) {
+                                    lastState?.let { state ->
+                                        if (state.state == TrackingState.RETURNED || state.state == TrackingState.ACTIVE || state.state == TrackingState.COMPLETED) {
                                             itemsIndexed(summaryImageTitles) { index,page ->
                                                 SummaryImage(
-                                                    image = data!!.stateLogs.last().images?.getOrNull(index),
+                                                    image = activeState?.images?.getOrNull(index),
                                                     nextImage = nextImages?.getOrElse(index) { null },
                                                     title = page,
                                                 )
                                             }
                                         }
-                                        if (lastState == TrackingState.RETURNED) {
+                                        if (state.state == TrackingState.RETURNED) {
                                             item {
                                                 Box(
                                                     modifier = Modifier.fillMaxWidth().padding(top = 32.dp, bottom = 16.dp),
@@ -255,7 +280,7 @@ private fun TrackingScreen(
                                                     PrimaryButton(
                                                         text = "Confirm Return",
                                                         onClick = {
-                                                            onAction(TrackingScreenAction.ConfirmReturn(data!!.id, lastState))
+                                                            onAction(TrackingScreenAction.ConfirmReturn(data!!.id, lastState.state))
                                                         },
                                                         leadingIcon = {
                                                             Icon(

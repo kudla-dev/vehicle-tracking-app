@@ -121,13 +121,28 @@ private fun formatRemainingTime(
 
 private fun formatDuration(duration: Duration): String {
     val totalSeconds = duration.inWholeSeconds
-    val hours = totalSeconds / 3600
+
+    // Calculate time units
+    val secondsInMonth = 30 * 24 * 3600L
+    val secondsInDay = 24 * 3600L
+
+    val months = totalSeconds / secondsInMonth
+    val days = (totalSeconds % secondsInMonth) / secondsInDay
+    val hours = (totalSeconds % secondsInDay) / 3600
     val minutes = (totalSeconds % 3600) / 60
     val seconds = totalSeconds % 60
 
-    return buildString {
-        if (hours > 0) append("$hours hours, ")
-        if (hours > 0 || minutes > 0) append("$minutes minutes, ")
-        append("$seconds seconds")
-    }
+    // Create parts list and filter out zero values
+    val parts = mutableListOf<String>()
+
+    if (months > 0) parts.add(if (months == 1L) "1 month" else "$months months")
+    if (days > 0) parts.add(if (days == 1L) "1 day" else "$days days")
+    if (hours > 0) parts.add(if (hours == 1L) "1 hour" else "$hours hours")
+    if (minutes > 0) parts.add(if (minutes == 1L) "1 minute" else "$minutes minutes")
+    if (seconds > 0 || parts.isEmpty()) parts.add(if (seconds == 1L) "1 second" else "$seconds seconds")
+
+    // Take only the most significant parts based on duration magnitude
+    val significantParts = parts.take(minOf(parts.size, if (months > 0) 2 else 3))
+
+    return significantParts.joinToString(", ")
 }

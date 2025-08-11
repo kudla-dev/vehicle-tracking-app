@@ -19,7 +19,7 @@ actual class ImageService {
     actual fun clearUploadStatus() {
     }
 
-    actual suspend fun enqueueBackgroundUpload(imageData: ByteArray, trackingId: String, state: String) {
+    actual suspend fun enqueueBackgroundUpload(imageData: ByteArray, trackingId: String, position: Int, state: String) {
     }
 
 

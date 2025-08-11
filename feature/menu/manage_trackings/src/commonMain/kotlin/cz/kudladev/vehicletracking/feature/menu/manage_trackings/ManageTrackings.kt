@@ -112,7 +112,7 @@ private fun ManageTrackingsScreen(
                     )
                 },
                 navigationIcon = {
-                    BackButton { onBack() }
+                    BackButton(onClick = onBack)
                 },
                 scrollBehavior = scrollBehavior
             )

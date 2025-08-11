@@ -25,14 +25,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.ArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -49,6 +48,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.valentinilk.shimmer.shimmer
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
 import cz.kudladev.vehicletracking.core.ui.calendar.DateTimeOperations.checkAvailableTimeSlotsForDay
 import kotlinx.datetime.LocalDate
@@ -153,13 +153,7 @@ fun DatePickerWithTimePicker(
     Column(
         modifier = modifier
     ) {
-        Text(
-            text = "Select date range",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
-            fontWeight = FontWeight.SemiBold,
-            fontStyle = FontStyle.Italic,
-        )
+        DatePickerWithTimePickerHeader()
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -202,26 +196,7 @@ fun DatePickerWithTimePicker(
                     )
                 }
             }
-            Row(
-                modifier = Modifier,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                for (day in dateTimePickerDefaults.dayOfWeekNamesShort.names) {
-                    Box(
-                        modifier = Modifier
-                            .aspectRatio(1f)
-                            .weight(1f),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = day[0].toString(),
-                            textAlign = TextAlign.Center,
-                            maxLines = 1,
-                            fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
-                        )
-                    }
-                }
-            }
+            WeekNamesHeader(dateTimePickerDefaults)
             for (i in calendarDates.indices step 7) {
                 Row(
                     modifier = Modifier.padding(vertical = 1.dp),
@@ -313,98 +288,37 @@ fun DatePickerWithTimePicker(
             fontWeight = FontWeight.SemiBold,
             fontStyle = FontStyle.Italic,
         )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(MaterialTheme.shapes.medium)
-                .clickable(
-                    enabled = firstDate != null && firstTime == null && calendarDates.first { it.date == firstDate!!.date }.availableTimeSlots.any { it.canStartRange },
-                    onClick = {
-                        showFirstTimeSelect = true
-                    }
-                )
-                .padding(vertical = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Text(
-                    text = "Start time",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.SemiBold,
-                )
-                AnimatedContent(
-                    targetState = when {
-                        firstDate == null -> "Select date first"
-                        firstTime == null -> "${firstDate?.date?.format()} - Select time"
-                        else -> "${firstDate?.date?.format()} - ${firstTime!!.format()}"
-                    },
-                    transitionSpec = {
-                        fadeIn(animationSpec = tween(300)) togetherWith
-                                fadeOut(animationSpec = tween(300))
-                    },
-                    label = "Start time animation"
-                ) { text ->
-                    Text(
-                        text = text,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                    )
-                }
+        SelectTimeSection(
+            enabled = firstDate != null && firstTime == null && calendarDates.first { it.date == firstDate!!.date }.availableTimeSlots.any { it.canStartRange },
+            title = "Start time",
+            targetState = when {
+                firstDate == null -> "Select date first"
+                firstTime == null -> "${firstDate?.date?.format()} - Select time"
+                else -> "${firstDate?.date?.format()} - ${firstTime!!.format()}"
+            },
+            selectedDate = firstDate,
+            selectedTime = firstTime,
+            calendarDates = calendarDates,
+            onTimeSelect = {
+                showFirstTimeSelect = it
             }
-            Icon(
-                imageVector = Icons.Default.ArrowBackIosNew,
-                contentDescription = "Select start time",
-                modifier = Modifier
-                    .rotate(180f)
-            )
-        }
-        Row(
-            modifier = Modifier
-                .clip(MaterialTheme.shapes.medium)
-                .clickable(
-                    enabled = secondDate != null && secondTime == null && calendarDates.first { it.date == secondDate!!.date }.availableTimeSlots.any { it.isAvailable },
-                    onClick = {
-                        showSecondTimeSelect = true
-                    }
-                )
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Text(
-                    text = "End time",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.SemiBold,
-                )
-                AnimatedContent(
-                    targetState = when {
-                        firstTime == null && firstDate == null -> "Select start time first"
-                        secondDate == null -> "Select end date"
-                        secondTime == null -> "${secondDate?.date?.format()} - Select time"
-                        else -> "${secondDate?.date?.format()} - ${secondTime!!.format()}"
-                    },
-                    transitionSpec = {
-                        fadeIn(animationSpec = tween(300)) togetherWith
-                                fadeOut(animationSpec = tween(300))
-                    },
-                    label = "End time animation"
-                ) { text ->
-                    Text(
-                        text = text,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                    )
-                }
+        )
+        SelectTimeSection(
+            enabled = secondDate != null && secondTime == null && calendarDates.first { it.date == secondDate!!.date }.availableTimeSlots.any { it.isAvailable },
+            title = "End time",
+            targetState = when {
+                firstTime == null && firstDate == null -> "Select start time first"
+                secondDate == null -> "Select end date"
+                secondTime == null -> "${secondDate?.date?.format()} - Select time"
+                else -> "${secondDate?.date?.format()} - ${secondTime!!.format()}"
+            },
+            selectedDate = secondDate,
+            selectedTime = secondTime,
+            calendarDates = calendarDates,
+            onTimeSelect = {
+                showSecondTimeSelect = it
             }
-            Icon(
-                imageVector = Icons.Default.ArrowBackIosNew,
-                contentDescription = "Select start time",
-                modifier = Modifier
-                    .rotate(180f)
-            )
-        }
+        )
     }
     if (showFirstTimeSelect) {
         TimeSelect(
@@ -443,6 +357,59 @@ fun DatePickerWithTimePicker(
                 )
                 showSecondTimeSelect = false
             }
+        )
+    }
+}
+
+@Composable
+private fun SelectTimeSection(
+    enabled: Boolean = false,
+    title: String,
+    targetState: String,
+    selectedDate: CalendarDate?,
+    selectedTime: LocalTime?,
+    calendarDates: List<CalendarDate>,
+    onTimeSelect: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(MaterialTheme.shapes.medium)
+            .clickable(
+                enabled = enabled,
+                onClick = {
+                    onTimeSelect(true)
+                }
+            )
+            .padding(vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold,
+            )
+            AnimatedContent(
+                targetState = targetState,
+                transitionSpec = {
+                    fadeIn(animationSpec = tween(300)) togetherWith
+                            fadeOut(animationSpec = tween(300))
+                },
+            ) { text ->
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+                )
+            }
+        }
+        Icon(
+            imageVector = Icons.Default.ArrowBackIosNew,
+            contentDescription = "Select time",
+            modifier = Modifier
+                .rotate(180f)
         )
     }
 }
@@ -497,18 +464,166 @@ private fun LocalDate.format(): String {
     return "${this.dayOfMonth}.${this.monthNumber}.${this.year}"
 }
 
+@Composable
+fun DatePickerWithTimePickerSkeleton(
+    modifier: Modifier = Modifier,
+    dateTimePickerDefaults: DateTimePickerDefaults = DateTimePickerDefaults(),
+){
+    val currentMonth = getLocalDate()
+
+    Column(
+        modifier = modifier
+    ) {
+        DatePickerWithTimePickerHeader()
+        Row(
+            modifier = Modifier
+                .shimmer()
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            IconButton(
+                onClick = { /*TODO*/ },
+                enabled = false,
+            ) {
+                Icon(
+                    modifier = Modifier.size(32.dp),
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                    contentDescription = "Next month",
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                )
+            }
+            Text(
+                text = currentMonth.getMonthName(),
+                fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                fontWeight = FontWeight.SemiBold,
+                fontStyle = FontStyle.Italic,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+            )
+            IconButton(
+                onClick = { /*TODO*/ },
+                enabled = false
+            ) {
+                Icon(
+                    modifier = Modifier.size(32.dp),
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = "Next month",
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                )
+            }
+        }
+        WeekNamesHeader(dateTimePickerDefaults)
+        repeat(5){
+            Row(
+                modifier = Modifier
+                    .shimmer()
+                    .fillMaxWidth()
+            ) {
+                repeat(7) {
+                    Box(
+                        modifier = Modifier
+                            .aspectRatio(1f)
+                            .weight(1f)
+                            .padding(4.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                                shape = RoundedCornerShape(100.dp)
+                            ),
+                    )
+                }
+            }
+        }
+        Text(
+            text = "Select time",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(top = 16.dp),
+            fontWeight = FontWeight.SemiBold,
+            fontStyle = FontStyle.Italic,
+        )
+        SelectTimeSection(
+            enabled = false,
+            title = "Start time",
+            targetState = "Select date first",
+            selectedDate = null,
+            selectedTime = null,
+            calendarDates = emptyList(),
+            onTimeSelect = { _ -> }
+        )
+        SelectTimeSection(
+            enabled = false,
+            title = "End time",
+            targetState = "Select start time first",
+            selectedDate = null,
+            selectedTime = null,
+            calendarDates = emptyList(),
+            onTimeSelect = { _ -> }
+        )
+
+    }
+}
+
+@Composable
+private fun WeekNamesHeader(dateTimePickerDefaults: DateTimePickerDefaults) {
+    Row(
+        modifier = Modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        for (day in dateTimePickerDefaults.dayOfWeekNamesShort.names) {
+            Box(
+                modifier = Modifier
+                    .aspectRatio(1f)
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = day[0].toString(),
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
+                    fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DatePickerWithTimePickerHeader() {
+    Text(
+        text = "Select date range",
+        style = MaterialTheme.typography.titleLarge,
+        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+        fontWeight = FontWeight.SemiBold,
+        fontStyle = FontStyle.Italic,
+    )
+}
+
 @Preview
 @Composable
 private fun DatePickerPreview() {
     AppTheme {
-        DatePickerWithTimePicker(
-            range = true,
-            onSelectDate = {},
-            onRangeSelected = { _, _ -> },
-            clickable = true,
-            dateTimePickerDefaults = DateTimePickerDefaults(
-                disablePastDates = true
-            ),
-        )
+        Surface {
+            DatePickerWithTimePicker(
+                range = true,
+                onSelectDate = {},
+                onRangeSelected = { _, _ -> },
+                clickable = true,
+                dateTimePickerDefaults = DateTimePickerDefaults(
+                    disablePastDates = true
+                ),
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun DatePickerWithTimePickerSkeletonPreview() {
+    AppTheme {
+        Surface {
+            DatePickerWithTimePickerSkeleton(
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }

@@ -9,12 +9,14 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
@@ -22,8 +24,10 @@ import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
 import cz.kudladev.vehicletracking.core.designsystem.theme.Images
 import cz.kudladev.vehicletracking.core.ui.tracking.TrackingItem
 import cz.kudladev.vehicletracking.core.ui.tracking.TrackingItemSkeleton
+import cz.kudladev.vehicletracking.core.ui.user.UserDistanceProgress
 import cz.kudladev.vehicletracking.model.Tracking
 import cz.kudladev.vehicletracking.model.UiState
+import cz.kudladev.vehicletracking.model.User
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -38,6 +42,8 @@ fun HistoryScreenRoot(
 ){
     val trackings = viewModel.trackings.collectAsLazyPagingItems()
 
+    val user by viewModel.user.collectAsStateWithLifecycle()
+
     LaunchedEffect(trackings) {
         println("Trackings: $trackings")
     }
@@ -45,7 +51,8 @@ fun HistoryScreenRoot(
     HistoryScreen(
         paddingValues = paddingValues,
         onAction = viewModel::onAction,
-        trackings = trackings
+        trackings = trackings,
+        user = user
     )
 }
 
@@ -54,7 +61,8 @@ fun HistoryScreenRoot(
 fun HistoryScreen(
     paddingValues: PaddingValues,
     onAction: (HistoryScreenAction) -> Unit,
-    trackings: LazyPagingItems<Tracking>
+    trackings: LazyPagingItems<Tracking>,
+    user: User? = null
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
@@ -143,6 +151,16 @@ fun HistoryScreen(
                                     modifier = Modifier.fillMaxSize(),
                                     verticalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
+                                    user?.let { user ->
+                                        stickyHeader {
+                                            UserDistanceProgress(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                distance = user.overallDistance,
+                                                maximumDistance = user.maximumDistance,
+                                            )
+                                        }
+                                    }
+
                                     items(trackings.itemCount) { tracking ->
                                         val item = trackings[tracking]
                                         if (item != null) {

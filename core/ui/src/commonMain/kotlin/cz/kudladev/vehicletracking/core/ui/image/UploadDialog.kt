@@ -18,7 +18,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
+import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,15 +41,11 @@ fun UploadDialog(
     )
 
     AlertDialog(
-        icon = {
-            Icon(
-                imageVector = Icons.Default.Cloud,
-                contentDescription = "Info"
-            )
-        },
+        icon = {},
         title = {
             Text(
                 text = "Uploading images",
+                fontStyle = FontStyle.Italic
             )
         },
         text = {
@@ -61,6 +60,7 @@ fun UploadDialog(
                     color = ProgressIndicatorDefaults.linearColor,
                     trackColor = ProgressIndicatorDefaults.linearTrackColor,
                     strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
+                    drawStopIndicator = {}
                 )
                 Text(
                     text = "Uploaded ${uploadedImages.toInt()}/$images images",
@@ -72,6 +72,19 @@ fun UploadDialog(
         onDismissRequest = {},
         confirmButton = {},
         dismissButton = {},
+        containerColor = MaterialTheme.colorScheme.background,
+        textContentColor = MaterialTheme.colorScheme.onBackground,
     )
 
+}
+
+@Preview
+@Composable
+private fun UploadDialogPreview() {
+    AppTheme {
+        UploadDialog(
+            images = 10,
+            uploadedImages = 5f
+        )
+    }
 }

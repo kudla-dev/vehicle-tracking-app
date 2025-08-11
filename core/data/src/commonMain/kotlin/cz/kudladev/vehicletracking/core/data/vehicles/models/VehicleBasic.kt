@@ -19,7 +19,7 @@ data class VehicleBasic(
     val maximumDistance: Int,
     val totalDistance: Int,
     val place: String,
-    val driverLicense: String,
+    val driverLicenses: List<DriverLicenseDTO>,
     val images: List<ImageWithUrl>
 )
 
@@ -36,7 +36,9 @@ fun VehicleBasic.toDomain(): Vehicle {
         maximumDistance = maximumDistance,
         totalDistance = totalDistance,
         place = place,
-        driverLicense = driverLicense,
+        driverLicenses = driverLicenses.map {
+            it.toDomain()
+        }.toMutableSet(),
         images = images
     )
 }

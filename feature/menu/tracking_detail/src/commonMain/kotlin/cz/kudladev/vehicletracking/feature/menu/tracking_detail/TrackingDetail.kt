@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -21,9 +22,7 @@ import cz.kudladev.vehicletracking.core.ui.tracking.StateHistory
 import cz.kudladev.vehicletracking.core.ui.tracking.TrackingDetailSection
 import cz.kudladev.vehicletracking.core.ui.tracking.TrackingHistory
 import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleHeader
-import cz.kudladev.vehicletracking.model.Tracking
-import cz.kudladev.vehicletracking.model.TrackingState
-import cz.kudladev.vehicletracking.model.UiState
+import cz.kudladev.vehicletracking.model.*
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -40,6 +39,8 @@ fun TrackingDetailRoot(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    val user by viewModel.user.collectAsStateWithLifecycle()
+
     LaunchedEffect(Unit) {
         viewModel.refresh()
     }
@@ -47,6 +48,7 @@ fun TrackingDetailRoot(
     TrackingDetailScreen(
         paddingValues = paddingValues,
         state = state,
+        user = user,
         onAction = viewModel::onAction,
         onBack = onBack,
         onPickUpProtocol = onPickUpProtocol,
@@ -59,6 +61,7 @@ fun TrackingDetailRoot(
 private fun TrackingDetailScreen(
     paddingValues: PaddingValues,
     state: TrackingDetailState,
+    user: User?,
     onAction: (TrackingDetailAction) -> Unit,
     onBack: () -> Unit,
     onPickUpProtocol: (String, TrackingState) -> Unit,
@@ -74,42 +77,69 @@ private fun TrackingDetailScreen(
                 },
                 scrollBehavior = scrollBehavior,
                 navigationIcon = {
-                    BackButton { onBack() }
+                    BackButton(
+                        onClick = onBack
+                    )
                 }
             )
         },
+        floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            SmallExtendedFloatingActionButton(
-                onClick = {
+            user?.let {
+                if (it.isAdmin()){
                     when (state.tracking) {
                         is UiState.Success -> {
-                            when (state.tracking.data.stateLogs.last().state) {
-                                TrackingState.APPROVED -> onPickUpProtocol(state.tracking.data.id, TrackingState.ACTIVE)
-                                TrackingState.ACTIVE -> onReturnProtocol(state.tracking.data.id, TrackingState.RETURNED)
+                            val lastState = state.tracking.data.stateLogs.last()
+                            when (lastState.state) {
+                                TrackingState.PENDING -> {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 16.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        SmallExtendedFloatingActionButton(
+                                            onClick = {
+                                                onAction(TrackingDetailAction.RejectTracking(state.tracking.data.id))
+                                            },
+                                            containerColor = MaterialTheme.colorScheme.tertiary,
+                                            contentColor = MaterialTheme.colorScheme.onTertiary
+                                        ){
+                                            Text(text = "Reject")
+                                        }
+                                        SmallExtendedFloatingActionButton(
+                                            onClick = {
+                                                onAction(TrackingDetailAction.ApproveTracking(state.tracking.data.id))
+                                            }
+                                        ) {
+                                            Text(text = "Approve")
+                                        }
+                                    }
+                                }
+                                TrackingState.APPROVED -> {
+                                    SmallExtendedFloatingActionButton(
+                                        onClick = {
+                                            onPickUpProtocol(state.tracking.data.id, TrackingState.ACTIVE)
+                                        }
+                                    ) {
+                                        Text(text = "Pick-up")
+                                    }
+                                }
+                                TrackingState.ACTIVE -> {
+                                    SmallExtendedFloatingActionButton(
+                                        onClick = {
+                                            onReturnProtocol(state.tracking.data.id, TrackingState.RETURNED)
+                                        }
+                                    ) {
+                                        Text(text = "Return")
+                                    }
+                                }
                                 else -> {}
                             }
                         }
                         else -> {}
                     }
-                },
-            ){
-                when (state.tracking){
-                    is UiState.Success -> {
-                        when (state.tracking.data.stateLogs.last().state){
-                            TrackingState.APPROVED -> {
-                                Text(
-                                    "Pick-Up",
-                                )
-                            }
-                            TrackingState.ACTIVE -> {
-                                Text("Return")
-                            }
-                            else -> {
-
-                            }
-                        }
-                    }
-                    else -> {}
                 }
             }
         },

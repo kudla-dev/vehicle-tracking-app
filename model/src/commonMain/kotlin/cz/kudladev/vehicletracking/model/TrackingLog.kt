@@ -3,6 +3,7 @@ package cz.kudladev.vehicletracking.model
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Garage
 import androidx.compose.material.icons.filled.HourglassBottom
 import androidx.compose.material.icons.filled.LocalParking
@@ -11,6 +12,7 @@ import androidx.compose.material.icons.filled.Pending
 import androidx.compose.material.icons.filled.Route
 import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.Error
 import androidx.compose.material.icons.outlined.Garage
 import androidx.compose.material.icons.outlined.HourglassBottom
 import androidx.compose.material.icons.outlined.Pending
@@ -40,10 +42,10 @@ enum class TrackingState(val state: String, val displayName: String, val message
         WAITING_FOR_RETURN("waiting_for_return", "Waiting for Return", "Enjoy your trip, please return the vehicle on time"),
         RETURNED("returned", "Returned", activeIcon = Icons.Filled.Garage, inactiveIcon = Icons.Outlined.Garage),
         REJECTED("rejected", "Rejected", activeIcon = Icons.Filled.Block, inactiveIcon = Icons.Outlined.Block),
-        FAILED("failed", "Failed"),
+        FAILED("failed", "Failed", activeIcon = Icons.Filled.Block, inactiveIcon = Icons.Outlined.Block),
         WAITING_FOR_YOUR_CONFIRMATION("waiting_for_your_confirmation", "Waiting for Your Confirmation", "Please confirm the state of the tracking"),
-        COMPLETED("completed", "Completed"),
-        ERROR("error", "Error");
+        COMPLETED("completed", "Completed", activeIcon = Icons.Filled.Check, inactiveIcon = Icons.Outlined.Check),
+        ERROR("error", "Error", message = "An error occurred while processing the tracking", activeIcon = Icons.Filled.Error, inactiveIcon = Icons.Outlined.Error);
 
     companion object {
         fun nextState(state: TrackingState): TrackingState {

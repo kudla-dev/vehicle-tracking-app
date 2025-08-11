@@ -14,6 +14,7 @@ expect class ImageService {
     suspend fun enqueueBackgroundUpload(
         imageData: ByteArray,
         trackingId: String,
+        position: Int,
         state: String
     )
 

@@ -3,6 +3,8 @@ package cz.kudladev.vehicletracking.core.data.vehicles
 import cz.kudladev.vehicletracking.core.data.vehicles.models.VehicleBasic
 import cz.kudladev.vehicletracking.core.data.vehicles.models.VehicleImageRequest
 import cz.kudladev.vehicletracking.core.data.vehicles.models.VehicleScrape
+import cz.kudladev.vehicletracking.core.data.vehicles.models.getTimezoneId
+import cz.kudladev.vehicletracking.core.data.vehicles.models.toCalendarMap
 import cz.kudladev.vehicletracking.core.data.vehicles.models.toDomain
 import cz.kudladev.vehicletracking.core.domain.vehicles.ProgressUpdate
 import cz.kudladev.vehicletracking.core.domain.vehicles.VehicleRepository
@@ -19,6 +21,9 @@ import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
 
 class VehicleRepositoryImpl(
     private val httpClient: HttpClient
@@ -70,6 +75,19 @@ class VehicleRepositoryImpl(
             httpClient.get("/vehicles/$id")
         }.mapSuccess {
             it.toDomain()
+        }
+    }
+
+    override suspend fun getCalendar(
+        vehicleId: Int
+    ): Result<Map<LocalDate, List<LocalTime>>, ErrorMessage> {
+        val timezoneId = getTimezoneId()
+        return safeCall<Map<String, List<String>>> {
+            httpClient.get("/vehicles/$vehicleId/calendar"){
+                parameter("timezone", timezoneId)
+            }
+        }.mapSuccess { response ->
+            response.toCalendarMap()
         }
     }
 

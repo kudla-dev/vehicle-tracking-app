@@ -20,6 +20,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
@@ -32,6 +34,8 @@ fun Badge(
     containerColor: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
     text: String,
+    textSize: TextUnit = 8.sp,
+    iconSize: Dp = 8.dp,
     icon: ImageVector? = null
 ){
 
@@ -60,14 +64,14 @@ fun Badge(
                 imageVector = it,
                 contentDescription = null,
                 modifier = Modifier
-                    .size(8.dp),
+                    .size(iconSize),
                 tint = contentColor
             )
         }
         Text(
             text = text,
             color = contentColor,
-            fontSize = 8.sp,
+            fontSize = textSize,
             textAlign = TextAlign.Center,
             fontStyle = FontStyle.Italic,
             fontWeight = FontWeight.Bold,

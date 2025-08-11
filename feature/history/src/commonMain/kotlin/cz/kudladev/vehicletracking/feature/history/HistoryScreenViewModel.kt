@@ -24,7 +24,7 @@ class HistoryScreenViewModel(
 
     private var hasLoadedInitialData = false
 
-    private val user = userStateHolder
+    val user = userStateHolder
         .user
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
 

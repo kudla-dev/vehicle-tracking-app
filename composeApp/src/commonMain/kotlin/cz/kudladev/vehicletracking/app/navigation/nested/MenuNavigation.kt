@@ -6,6 +6,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import cz.kudladev.vehicletracking.app.AppState
+import cz.kudladev.vehicletracking.app.navigation.core.sharedKoinViewModel
+import cz.kudladev.vehicletracking.feature.favourite.Favourites
+import cz.kudladev.vehicletracking.feature.favourite.FavouritesScreenRoot
+import cz.kudladev.vehicletracking.feature.history.History
+import cz.kudladev.vehicletracking.feature.history.HistoryScreenRoot
 import cz.kudladev.vehicletracking.feature.menu.admin_settings.AdminSettings
 import cz.kudladev.vehicletracking.feature.menu.admin_settings.AdminSettingsRoot
 import cz.kudladev.vehicletracking.feature.menu.main.MenuScreenRoot
@@ -19,15 +24,24 @@ import cz.kudladev.vehicletracking.feature.menu.protocols.ProtocolsRoot
 import cz.kudladev.vehicletracking.feature.menu.protocols.ProtocolsType
 import cz.kudladev.vehicletracking.feature.menu.tracking_detail.TrackingDetail
 import cz.kudladev.vehicletracking.feature.menu.tracking_detail.TrackingDetailRoot
+import cz.kudladev.vehicletracking.feature.search.SearchScreenRoot
 import cz.kudladev.vehicletracking.feature.tracking.Tracking
 import cz.kudladev.vehicletracking.feature.tracking.TrackingScreenRoot
+import cz.kudladev.vehicletracking.feature.vehicledetail.VehicleDetailRoot
+import cz.kudladev.vehicletracking.feature.vehicledetail.VehicleDetails
 import cz.kudladev.vehicletracking.feature.vehicles.VehicleList
 import cz.kudladev.vehicletracking.feature.vehicles.VehicleListScreenRoot
+import cz.kudladev.vehicletracking.feature.vehicles.VehicleListViewModel
 import kotlinx.serialization.Serializable
 import kotlin.reflect.KClass
 
 @Serializable
-data object MenuRoot
+data object Menu
+
+@Serializable
+data class Search(
+    val type: String = "vehicle",
+)
 
 @Composable
 fun MenuNavigation(
@@ -39,14 +53,17 @@ fun MenuNavigation(
         navController = navController,
         startDestination = startDestination
     ){
-         composable<MenuRoot>{
+         composable<Menu>{
             MenuScreenRoot(
                 paddingValues = appState.paddingValues,
                 onAdminSettings = {
                     navController.navigate(AdminSettings)
                 },
                 onManageVehicles = {
-                    navController.navigate(VehicleList)
+                    navController.navigate(VehicleList(
+                        searchQuery = null,
+                        create = true
+                    ))
                 },
                 onActiveTrackings = {
                     navController.navigate(ManageTrackings(ManageTrackingsTypes.ACTIVE))
@@ -65,8 +82,10 @@ fun MenuNavigation(
         composable<Tracking> {
             TrackingScreenRoot(
                 appState.paddingValues,
-                onVehicleClick = {
-
+                onVehicleClick = { vehicleId ->
+                    navController.navigate(
+                        VehicleDetails(vehicleId = vehicleId)
+                    )
                 }
             )
         }
@@ -75,26 +94,6 @@ fun MenuNavigation(
                 paddingValues = appState.paddingValues,
                 onBack = {
                     navController.navigateUp()
-                }
-            )
-        }
-        composable<VehicleList>{
-            VehicleListScreenRoot(
-                paddingValues = appState.paddingValues,
-                onSearch = {
-
-                },
-                onVehicleClick = {
-
-                },
-                onCreate = {
-                    navController.navigate(ManageVehiclesAddEdit) {
-                        popUpTo(VehicleList) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
                 }
             )
         }
@@ -133,6 +132,16 @@ fun MenuNavigation(
                 }
             )
         }
+        composable<History> {
+            HistoryScreenRoot(
+                paddingValues = appState.paddingValues,
+            )
+        }
+        composable<Favourites> {
+            FavouritesScreenRoot(
+                paddingValues = appState.paddingValues,
+            )
+        }
         composable<Protocols> {
             val type = it.toRoute<Protocols>().type
             ProtocolsRoot(
@@ -140,6 +149,74 @@ fun MenuNavigation(
                 paddingValues = appState.paddingValues,
                 onBack = {
                     navController.navigateUp()
+                }
+            )
+        }
+        composable<VehicleList> {
+            val vehicleListViewModel = it.sharedKoinViewModel<VehicleListViewModel>(appState.coreNavController)
+            val searchQuery = it.toRoute<VehicleList>().searchQuery
+            val create = it.toRoute<VehicleList>().create
+            VehicleListScreenRoot(
+                vehicleListViewModel = vehicleListViewModel,
+                paddingValues = appState.paddingValues,
+                onSearch = { type ->
+                    navController.navigate(Search(type))
+                },
+                searchQuery = searchQuery,
+                onVehicleClick = { vehicleId ->
+                    navController.navigate(
+                        VehicleDetails(vehicleId = vehicleId)
+                    ) {
+                        popUpTo(VehicleList()) {
+                            inclusive = false
+                        }
+                    }
+                },
+                onCreate = if (create){
+                    {
+                        navController.navigate(ManageVehiclesAddEdit){
+                            popUpTo(VehicleList()) {
+                                inclusive = false
+                            }
+                        }
+                    }
+                } else {
+                    null
+                }
+            )
+        }
+        composable<VehicleDetails> {
+            VehicleDetailRoot(
+                paddingValues = appState.paddingValues,
+                onBack = { navController.navigateUp() },
+                onCreate = {
+                    appState.navigateToCurrentTrackingRoot()
+                }
+            )
+        }
+        composable<Search> { backStackEntry ->
+            val type = backStackEntry.toRoute<Search>().type
+            SearchScreenRoot(
+                paddingValues = appState.paddingValues,
+                searchType = type,
+                onCancel = {
+                    navController.navigateUp()
+                },
+                onSearch = {
+                    navController.navigate(
+                        VehicleList(
+                            searchQuery = it
+                        )
+                    )
+                },
+                onVehicleSelected = { vehicleId ->
+                    navController.navigate(
+                        VehicleDetails(vehicleId = vehicleId)
+                    ) {
+                        popUpTo(VehicleList()) {
+                            inclusive = false
+                        }
+                    }
                 }
             )
         }

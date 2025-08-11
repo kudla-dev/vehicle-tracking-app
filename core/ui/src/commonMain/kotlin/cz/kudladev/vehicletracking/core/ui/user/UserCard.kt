@@ -49,6 +49,11 @@ fun UserCard(
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
+            UserDistanceProgress(
+                modifier = Modifier.padding(top = 8.dp),
+                distance = user.overallDistance,
+                maximumDistance = user.maximumDistance
+            )
         }
     }
 }

@@ -30,6 +30,7 @@ fun MediumTopAppBar(
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
+            scrolledContainerColor = MaterialTheme.colorScheme.background,
         ),
         scrollBehavior = scrollBehavior
     )
@@ -45,9 +46,9 @@ private fun MediumTopAppBarPreview() {
                 Text(text = "Medium Top App Bar")
             },
             navigationIcon = {
-                BackButton {
+                BackButton(onClick = {
 
-                }
+                })
             },
             actions = {
                 IconButton(

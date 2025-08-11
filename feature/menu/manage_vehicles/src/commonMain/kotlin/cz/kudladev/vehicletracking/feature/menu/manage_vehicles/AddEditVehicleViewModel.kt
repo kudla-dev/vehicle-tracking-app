@@ -303,7 +303,7 @@ class AddEditVehicleViewModel(
                 _state.update { it.copy(
                     images = response.images,
                     fullName = response.fullName,
-                    driverLicense = response.driverLicense
+                    driverLicense = response.driverLicenses.joinToString(", ") { it.type },
                 ) }
             }
             .onError { error ->
