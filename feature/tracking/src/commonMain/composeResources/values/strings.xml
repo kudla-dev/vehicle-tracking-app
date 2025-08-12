@@ -1,0 +1,10 @@
+<resources>
+    <string name="trackingTitle">Current Tracking</string>
+
+    <string name="trackingError">Error while loading tracking</string>
+    <string name="trackingEmpty">Oh no! It seems like there is no active tracking.</string>
+
+    <string name="confirmReturn">Confirm Return</string>
+
+
+</resources>

@@ -15,7 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import vehicletracking.core.ui.generated.resources.Res
+import vehicletracking.core.ui.generated.resources.currentDistance
 
 @Composable
 fun UserDistanceProgress(
@@ -33,7 +36,7 @@ fun UserDistanceProgress(
             horizontalArrangement = Arrangement.SpaceBetween
         ){
             Text(
-                text = "Current distance",
+                text = stringResource(Res.string.currentDistance),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )

@@ -35,7 +35,10 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import vehicletracking.core.ui.generated.resources.Res
+import vehicletracking.core.ui.generated.resources.currentState
 
 @Composable
 fun CurrentState(
@@ -47,7 +50,7 @@ fun CurrentState(
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         Text(
-            text = "Current State",
+            text = stringResource(Res.string.currentState),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.SemiBold,
             fontStyle = FontStyle.Italic,
@@ -58,7 +61,7 @@ fun CurrentState(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Badge(
-                text = currentTracking.state.displayName,
+                text = stringResource(currentTracking.state.displayName),
                 icon = currentTracking.state.activeIcon,
                 textSize = 14.sp,
                 iconSize = 16.dp,

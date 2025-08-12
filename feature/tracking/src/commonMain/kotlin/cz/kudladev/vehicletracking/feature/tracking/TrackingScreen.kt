@@ -36,7 +36,13 @@ import com.skydoves.landscapist.coil3.CoilImage
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
 import cz.kudladev.vehicletracking.core.designsystem.PrimaryButton
 import cz.kudladev.vehicletracking.core.designsystem.theme.Images
+import cz.kudladev.vehicletracking.core.ui.backViewString
+import cz.kudladev.vehicletracking.core.ui.errorString
+import cz.kudladev.vehicletracking.core.ui.frontViewString
 import cz.kudladev.vehicletracking.core.ui.image.SummaryImage
+import cz.kudladev.vehicletracking.core.ui.leftViewString
+import cz.kudladev.vehicletracking.core.ui.rightViewString
+import cz.kudladev.vehicletracking.core.ui.tachometerReadingString
 import cz.kudladev.vehicletracking.core.ui.tracking.CurrentState
 import cz.kudladev.vehicletracking.core.ui.tracking.CurrentStateSkeleton
 import cz.kudladev.vehicletracking.core.ui.tracking.StateHistory
@@ -50,7 +56,13 @@ import cz.kudladev.vehicletracking.model.UiState
 import cz.kudladev.vehicletracking.model.Vehicle
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import vehicletracking.feature.tracking.generated.resources.Res
+import vehicletracking.feature.tracking.generated.resources.confirmReturn
+import vehicletracking.feature.tracking.generated.resources.trackingEmpty
+import vehicletracking.feature.tracking.generated.resources.trackingError
+import vehicletracking.feature.tracking.generated.resources.trackingTitle
 
 @Serializable
 data object Tracking
@@ -102,7 +114,7 @@ private fun TrackingScreen(
                 LargeTopAppBar(
                     title = {
                         Text(
-                            "Current Tracking",
+                            stringResource(Res.string.trackingTitle),
                             fontStyle = FontStyle.Italic
                         )
                     },
@@ -128,18 +140,18 @@ private fun TrackingScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.ErrorOutline,
-                            contentDescription = "Error",
+                            contentDescription = errorString(),
                             tint = MaterialTheme.colorScheme.error,
                             modifier = Modifier.size(64.dp)
                         )
                         Text(
-                            text = "Error loading vehicles",
+                            text = stringResource(Res.string.trackingError),
                             modifier = Modifier.padding(top = 8.dp),
                             style = MaterialTheme.typography.titleSmall,
                         )
                         Text(
                             modifier = Modifier.widthIn(max = 300.dp),
-                            text = "${state.currentTracking.message}",
+                            text = state.currentTracking.message,
                             style = MaterialTheme.typography.labelSmall,
                             maxLines = 3,
                             softWrap = true,
@@ -193,7 +205,7 @@ private fun TrackingScreen(
                                             .size(96.dp)
                                     )
                                     Text(
-                                        text = "Oh no! It seems like there is no active tracking.",
+                                        text = stringResource(Res.string.trackingEmpty),
                                         style = MaterialTheme.typography.titleSmall,
                                         fontStyle = FontStyle.Italic,
                                         textAlign = TextAlign.Center,
@@ -202,11 +214,11 @@ private fun TrackingScreen(
                             }
                             else -> {
                                 val summaryImageTitles = listOf(
-                                    "Front View",
-                                    "Back View",
-                                    "Left Side View",
-                                    "Right Side View",
-                                    "Tachometer Reading",
+                                    frontViewString(),
+                                    backViewString(),
+                                    leftViewString(),
+                                    rightViewString(),
+                                    tachometerReadingString()
                                 )
 
                                 val nextImages by remember{
@@ -258,6 +270,7 @@ private fun TrackingScreen(
                                     item {
                                         StateHistory(
                                             modifier = Modifier.fillMaxWidth(),
+                                            tracking = data!!,
                                             logs = data!!.stateLogs,
                                         )
                                     }
@@ -278,14 +291,14 @@ private fun TrackingScreen(
                                                     contentAlignment = Alignment.Center
                                                 ) {
                                                     PrimaryButton(
-                                                        text = "Confirm Return",
+                                                        text = stringResource(Res.string.confirmReturn),
                                                         onClick = {
                                                             onAction(TrackingScreenAction.ConfirmReturn(data!!.id, lastState.state))
                                                         },
                                                         leadingIcon = {
                                                             Icon(
                                                                 imageVector = Icons.Filled.Check,
-                                                                contentDescription = "Confirm Return",
+                                                                contentDescription = stringResource(Res.string.confirmReturn),
                                                             )
                                                         }
                                                     )

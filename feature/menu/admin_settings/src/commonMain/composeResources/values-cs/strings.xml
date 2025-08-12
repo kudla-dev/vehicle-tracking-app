@@ -1,0 +1,5 @@
+<resources>
+    <string name="adminSettingsTitle">Nastavení administrátora</string>
+    <string name="defaultPlace">Výchozí místo</string>
+    <string name="requestNotification">Oznámení o požadavku</string>
+</resources>

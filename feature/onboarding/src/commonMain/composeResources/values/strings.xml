@@ -1,0 +1,21 @@
+<resources>
+    <!-- Boarding screen -->
+    <string name="welcomeTitle">Welcome</string>
+
+
+    <!-- Login screen -->
+    <string name="loginFailed">Login failed</string>
+    <string name="loggedIn">Logged in</string>
+    <string name="loginTitle">Login</string>
+    <string name="loginAction">Login</string>
+
+    <!-- Registration screen -->
+    <string name="registrationFailed">Registration failed</string>
+    <string name="registrationOnGoing">Registering</string>
+    <string name="registrationOnGoingDescription">Please wait ...</string>
+    <string name="registrationSuccessful">Registration successful</string>
+    <string name="registrationSuccessfulDescription">You can now log in</string>
+    <string name="registrationTitle">Registration</string>
+    <string name="registrationAction">Register</string>
+
+</resources>

@@ -5,6 +5,10 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.ui.graphics.vector.ImageVector
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.StringResource
+import vehicletracking.model.generated.resources.Res
+import vehicletracking.model.generated.resources.admin
+import vehicletracking.model.generated.resources.user
 
 @Serializable
 data class User(
@@ -21,17 +25,17 @@ data class User(
 
 enum class Role(
     val value: String,
-    val displayName: String,
+    val displayName: StringResource,
     val icon: ImageVector
 ) {
     USER(
         value = "USER",
-        displayName = "User",
+        displayName = Res.string.user,
         icon = Icons.Default.Person
     ),
     ADMIN(
         value = "ADMIN",
-        displayName = "Admin",
+        displayName = Res.string.admin,
         icon = Icons.Default.Shield
     )
 }

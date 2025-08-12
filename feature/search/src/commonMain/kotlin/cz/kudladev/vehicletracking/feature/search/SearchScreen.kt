@@ -22,9 +22,13 @@ import cz.kudladev.vehicletracking.core.ui.search.SearchQueryItem
 import cz.kudladev.vehicletracking.core.ui.search.SearchResultItem
 import cz.kudladev.vehicletracking.core.ui.search.SearchResultItemSkeleton
 import cz.kudladev.vehicletracking.core.ui.search.SearchTextField
+import cz.kudladev.vehicletracking.core.ui.searchString
 import cz.kudladev.vehicletracking.model.UiState
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import vehicletracking.feature.search.generated.resources.Res
+import vehicletracking.feature.search.generated.resources.searchDescription
 
 @Composable
 fun SearchScreenRoot(
@@ -145,11 +149,11 @@ fun SearchScreen(
             ){
                 Image(
                     painter = painterResource(Images.Search),
-                    contentDescription = "Search Icon",
+                    contentDescription = searchString(),
                     modifier = Modifier.size(96.dp)
                 )
                 Text(
-                    text = "Start typing to search for vehicles",
+                    text = stringResource(Res.string.searchDescription),
                     style = MaterialTheme.typography.titleSmall,
                     fontStyle = FontStyle.Italic,
                 )

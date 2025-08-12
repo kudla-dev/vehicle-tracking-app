@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
@@ -27,8 +28,18 @@ import cz.kudladev.vehicletracking.core.ui.tracking.TrackingItemSkeleton
 import cz.kudladev.vehicletracking.model.Tracking
 import cz.kudladev.vehicletracking.model.TrackingState
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import vehicletracking.feature.menu.manage_trackings.generated.resources.Res
+import vehicletracking.feature.menu.manage_trackings.generated.resources.manageTrackingsActiveTitle
+import vehicletracking.feature.menu.manage_trackings.generated.resources.manageTrackingsEmpty
+import vehicletracking.feature.menu.manage_trackings.generated.resources.manageTrackingsEmptyDescription
+import vehicletracking.feature.menu.manage_trackings.generated.resources.manageTrackingsError
+import vehicletracking.feature.menu.manage_trackings.generated.resources.manageTrackingsHistoryTitle
+import vehicletracking.feature.menu.manage_trackings.generated.resources.manageTrackingsNotStartedTitle
+import vehicletracking.feature.menu.manage_trackings.generated.resources.manageTrackingsRequestedTitle
 
 @Serializable
 data class ManageTrackings(
@@ -36,24 +47,24 @@ data class ManageTrackings(
 )
 
 @Serializable
-enum class ManageTrackingsTypes(val states: List<TrackingState>, val title: String){
+enum class ManageTrackingsTypes(val states: List<TrackingState>, val title: StringResource){
     ACTIVE(
         states =listOf(
             TrackingState.ACTIVE
         ),
-        title = "Active Trackings"
+        title = Res.string.manageTrackingsActiveTitle
     ),
     NOT_STARTED(
         states = listOf(
             TrackingState.APPROVED
         ),
-        title = "Ready to Start Trackings"
+        title = Res.string.manageTrackingsNotStartedTitle
     ),
     REQUESTED(
         states = listOf(
             TrackingState.PENDING
         ),
-        title = "Requested Trackings"
+        title = Res.string.manageTrackingsRequestedTitle
     ),
     HISTORY(
         states = listOf(
@@ -63,7 +74,7 @@ enum class ManageTrackingsTypes(val states: List<TrackingState>, val title: Stri
             TrackingState.FAILED,
             TrackingState.ERROR
         ),
-        title = "Tracking History"
+        title = Res.string.manageTrackingsHistoryTitle
     )
 }
 
@@ -108,7 +119,8 @@ private fun ManageTrackingsScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        type.title
+                        stringResource(type.title),
+                        fontStyle = FontStyle.Italic,
                     )
                 },
                 navigationIcon = {
@@ -131,7 +143,7 @@ private fun ManageTrackingsScreen(
             when (it) {
                 is LoadState.Error -> {
                     Text(
-                        text = "Error loading trackings: ${it.error}",
+                        text = stringResource(Res.string.manageTrackingsError),
                         modifier = Modifier.padding(combinedPadding)
                     )
                 }
@@ -158,11 +170,11 @@ private fun ManageTrackingsScreen(
                             ) {
                                 Image(
                                     painter = painterResource(Images.NotFound),
-                                    contentDescription = "No trackings found",
+                                    contentDescription = stringResource(Res.string.manageTrackingsEmpty),
                                     modifier = Modifier.size(64.dp)
                                 )
                                 Text(
-                                    text = "Oh no! We couldn't find any trackings.",
+                                    text = stringResource(Res.string.manageTrackingsEmptyDescription),
                                     modifier = Modifier.padding(top = 8.dp),
                                     style = MaterialTheme.typography.titleSmall,
                                 )

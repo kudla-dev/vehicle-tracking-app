@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
 import cz.kudladev.vehicletracking.model.Role
 import cz.kudladev.vehicletracking.model.User
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -35,7 +36,7 @@ fun UserCard(
                 .padding(16.dp)
         ) {
             Text(
-                text = user.role.value,
+                text = stringResource(user.role.displayName).uppercase(),
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)

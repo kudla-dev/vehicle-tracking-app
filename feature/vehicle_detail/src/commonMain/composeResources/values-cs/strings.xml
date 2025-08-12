@@ -1,0 +1,6 @@
+<resources>
+    <string name="calendarError">Chyba při načítání kalendáře</string>
+
+    <string name="reserveAction">Rezervovat</string>
+    <string name="trackingCreationLoading">Vytváří se nové sledování...</string>
+</resources>

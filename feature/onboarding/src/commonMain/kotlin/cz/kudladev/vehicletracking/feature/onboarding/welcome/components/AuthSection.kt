@@ -20,9 +20,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import cz.kudladev.vehicletracking.core.designsystem.PrimaryButton
+import cz.kudladev.vehicletracking.core.designsystem.SecondaryButton
+import org.jetbrains.compose.resources.stringResource
+import vehicletracking.feature.onboarding.generated.resources.Res
+import vehicletracking.feature.onboarding.generated.resources.loginTitle
+import vehicletracking.feature.onboarding.generated.resources.registrationTitle
+import vehicletracking.feature.onboarding.generated.resources.welcomeTitle
 
 @Composable
 fun AuthSection(
@@ -39,14 +47,15 @@ fun AuthSection(
                 bottomStart = 0.dp,
                 bottomEnd = 0.dp
             ))
-            .background(MaterialTheme.colorScheme.primaryContainer)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(top = 16.dp)
     ){
         Text(
-            "Welcome",
+            text = stringResource(Res.string.welcomeTitle),
             style = MaterialTheme.typography.displayMedium,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
+            fontStyle = FontStyle.Italic,
             modifier = Modifier
                 .fillMaxWidth()
         )
@@ -58,35 +67,17 @@ fun AuthSection(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            AuthButton(
+            PrimaryButton(
                 modifier = Modifier
                     .fillMaxWidth(0.8f),
-                content = {
-                    Text(
-                        text = "Register",
-                        style = MaterialTheme.typography.titleMedium,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
-                    )
-                },
-                contentColor = MaterialTheme.colorScheme.primaryContainer,
-                containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                text = stringResource(Res.string.registrationTitle),
                 onClick = onRegister
             )
             Spacer(modifier = Modifier.padding(8.dp))
-            AuthButton(
+            SecondaryButton(
                 modifier = Modifier
                     .fillMaxWidth(0.8f),
-                content = {
-                    Text(
-                        text = "Login",
-                        style = MaterialTheme.typography.titleMedium,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
-                    )
-                },
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                containerColor = MaterialTheme.colorScheme.inversePrimary,
+                text = stringResource(Res.string.loginTitle),
                 onClick = onLogin
             )
         }
@@ -94,22 +85,22 @@ fun AuthSection(
 }
 
 
-@Composable
-fun AuthButton(
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
-    contentColor: Color,
-    containerColor: Color,
-    onClick: () -> Unit
-){
-    Button(
-        modifier = modifier,
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(
-            contentColor = contentColor,
-            containerColor = containerColor
-        )
-    ) {
-        content()
-    }
-}
+//@Composable
+//fun AuthButton(
+//    modifier: Modifier = Modifier,
+//    content: @Composable () -> Unit,
+//    contentColor: Color,
+//    containerColor: Color,
+//    onClick: () -> Unit
+//){
+//    Button(
+//        modifier = modifier,
+//        onClick = onClick,
+//        colors = ButtonDefaults.buttonColors(
+//            contentColor = contentColor,
+//            containerColor = containerColor
+//        )
+//    ) {
+//        content()
+//    }
+//}

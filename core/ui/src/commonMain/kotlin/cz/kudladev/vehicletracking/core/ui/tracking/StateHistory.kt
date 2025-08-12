@@ -21,7 +21,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.valentinilk.shimmer.shimmer
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
+import cz.kudladev.vehicletracking.core.ui.util.toFormattedString
 import cz.kudladev.vehicletracking.model.Role
+import cz.kudladev.vehicletracking.model.Tracking
 import cz.kudladev.vehicletracking.model.TrackingLog
 import cz.kudladev.vehicletracking.model.TrackingState
 import cz.kudladev.vehicletracking.model.User
@@ -29,22 +31,39 @@ import cz.kudladev.vehicletracking.model.getNextState
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import vehicletracking.core.ui.generated.resources.Res
+import vehicletracking.core.ui.generated.resources.noMessageProvided
+import vehicletracking.core.ui.generated.resources.stateHistory
 
 @OptIn(ExperimentalComposeApi::class)
 @Composable
 fun StateHistory(
     modifier: Modifier = Modifier,
+    tracking: Tracking,
     logs: List<TrackingLog>
 ){
     val last = logs.last().state.getNextState()
-    val temp = if (last != null) { logs + TrackingLog(state = last, message = last.message) } else { logs }
+    val temp = if (last != null) { logs + TrackingLog(
+        state = last,
+        message = when (last.message) {
+            null -> stringResource(Res.string.noMessageProvided)
+            else -> stringResource( last.message!!,
+                when (last){
+                    TrackingState.WAITING_FOR_START -> tracking.startTime.toFormattedString()
+                    TrackingState.WAITING_FOR_RETURN -> tracking.endTime.toFormattedString()
+                    else -> ""
+                }
+            )
+        },
+    ) } else { logs }
     Column(
         modifier = modifier,
     ) {
         Text(
             modifier = Modifier.padding(bottom = 8.dp),
-            text = "State History",
+            text = stringResource(Res.string.stateHistory),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.SemiBold,
             fontStyle = FontStyle.Italic,
@@ -52,6 +71,7 @@ fun StateHistory(
         temp.forEachIndexed { index, log ->
             StateHistoryItem(
                 modifier = Modifier.padding(bottom = 8.dp),
+                tracking = tracking,
                 trackingLog = log,
                 number = index + 1,
                 isLast = index == temp.lastIndex,
@@ -108,6 +128,7 @@ fun StateHistoryPreview() {
     AppTheme {
         Surface {
             StateHistory(
+                tracking = testTracking,
                 logs = trackingLogs
             )
         }

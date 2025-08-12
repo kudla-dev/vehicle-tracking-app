@@ -24,7 +24,19 @@ import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
 import cz.kudladev.vehicletracking.model.Brand
 import cz.kudladev.vehicletracking.model.DriverLicense
 import cz.kudladev.vehicletracking.model.Vehicle
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import vehicletracking.core.ui.generated.resources.Res
+import vehicletracking.core.ui.generated.resources.brand
+import vehicletracking.core.ui.generated.resources.color
+import vehicletracking.core.ui.generated.resources.driverLicense
+import vehicletracking.core.ui.generated.resources.licensePlate
+import vehicletracking.core.ui.generated.resources.model
+import vehicletracking.core.ui.generated.resources.no
+import vehicletracking.core.ui.generated.resources.place
+import vehicletracking.core.ui.generated.resources.transferableLicensePlate
+import vehicletracking.core.ui.generated.resources.year
+import vehicletracking.core.ui.generated.resources.yes
 
 @Composable
 fun VehicleSpecificationSection(
@@ -45,12 +57,12 @@ fun VehicleSpecificationSection(
         ) {
             VehicleSpecificationItem(
                 modifier = Modifier.weight(1f),
-                title = "Brand",
+                title = stringResource(Res.string.brand),
                 value = vehicle.brand?.name
             )
             VehicleSpecificationItem(
                 modifier = Modifier.weight(1f),
-                title = "Model",
+                title = stringResource(Res.string.model),
                 value = vehicle.model
             )
         }
@@ -63,12 +75,12 @@ fun VehicleSpecificationSection(
         ) {
             VehicleSpecificationItem(
                 modifier = Modifier.weight(1f),
-                title = "Year",
+                title = stringResource(Res.string.year),
                 value = vehicle.year
             )
             VehicleSpecificationItem(
                 modifier = Modifier.weight(1f),
-                title = "Color",
+                title = stringResource(Res.string.color),
                 value = vehicle.color
             )
         }
@@ -81,12 +93,12 @@ fun VehicleSpecificationSection(
         ) {
             VehicleSpecificationItem(
                 modifier = Modifier.weight(1f),
-                title = "Place",
+                title = stringResource(Res.string.place),
                 value = vehicle.place
             )
             VehicleSpecificationItem(
                 modifier = Modifier.weight(1f),
-                title = "Driver License",
+                title = stringResource(Res.string.driverLicense),
                 value = vehicle.driverLicenses.joinToString(separator = ", ") { it.type }.ifBlank({ "N/A" })
             )
         }
@@ -99,13 +111,13 @@ fun VehicleSpecificationSection(
         ) {
             VehicleSpecificationItem(
                 modifier = Modifier.weight(1f),
-                title = "SPZ",
+                title = stringResource(Res.string.licensePlate),
                 value = vehicle.spz
             )
             VehicleSpecificationItem(
                 modifier = Modifier.weight(1f),
-                title = "Transferable SPZ",
-                value = if (vehicle.transferableSpz) "Yes" else "No"
+                title = stringResource(Res.string.transferableLicensePlate),
+                value = if (vehicle.transferableSpz) stringResource(Res.string.yes) else stringResource(Res.string.no)
             )
         }
     }

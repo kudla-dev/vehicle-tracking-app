@@ -1,0 +1,8 @@
+<resources>
+
+    <string name="calendarError">Error while loading calendar</string>
+
+    <string name="reserveAction">Reserve</string>
+    <string name="trackingCreationLoading">Creating a new tracking...</string>
+
+</resources>

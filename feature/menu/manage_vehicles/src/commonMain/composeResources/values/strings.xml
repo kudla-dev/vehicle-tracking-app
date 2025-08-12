@@ -1,0 +1,19 @@
+<resources>
+
+    <string name="createVehicleTitle">Create new vehicle</string>
+    <string name="editVehicleTitle">Edit vehicle</string>
+
+    <string name="manageImages">Manage images</string>
+    <string name="isTransferableLicensePlate">Is it a transferable license plate?</string>
+
+    <string name="createVehicleAction">Create vehicle</string>
+    <string name="editVehicleAction">Edit vehicle</string>
+
+    <string name="getImagesFromShopLink">You can get the images from the shop link</string>
+    <string name="vehicleShopLink">Vehicle shop link</string>
+
+    <string name="or">or</string>
+
+    <string name="pickFromGallery">Pick from gallery</string>
+
+</resources>

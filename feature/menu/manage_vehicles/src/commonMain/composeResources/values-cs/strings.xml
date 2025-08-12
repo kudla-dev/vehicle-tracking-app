@@ -1,0 +1,17 @@
+<resources>
+    <string name="createVehicleTitle">Vytvořit nové vozidlo</string>
+    <string name="editVehicleTitle">Upravit vozidlo</string>
+
+    <string name="manageImages">Správa obrázků</string>
+    <string name="isTransferableLicensePlate">Je to přenosná SPZ?</string>
+
+    <string name="createVehicleAction">Vytvořit vozidlo</string>
+    <string name="editVehicleAction">Upravit vozidlo</string>
+
+    <string name="getImagesFromShopLink">Obrázky můžete získat z odkazu na obchod</string>
+    <string name="vehicleShopLink">Odkaz na obchod s vozidlem</string>
+
+    <string name="or">nebo</string>
+
+    <string name="pickFromGallery">Vybrat z galerie</string>
+</resources>

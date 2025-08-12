@@ -26,7 +26,23 @@ import cz.kudladev.vehicletracking.core.ui.user.UserCard
 import cz.kudladev.vehicletracking.core.ui.user.UserNotLoggedIn
 import cz.kudladev.vehicletracking.model.Role
 import cz.kudladev.vehicletracking.model.User
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import vehicletracking.feature.menu.main.generated.resources.Res
+import vehicletracking.feature.menu.main.generated.resources.accountSection
+import vehicletracking.feature.menu.main.generated.resources.adminSection
+import vehicletracking.feature.menu.main.generated.resources.adminSettings
+import vehicletracking.feature.menu.main.generated.resources.changePassword
+import vehicletracking.feature.menu.main.generated.resources.logout
+import vehicletracking.feature.menu.main.generated.resources.manageUsers
+import vehicletracking.feature.menu.main.generated.resources.manageVehicles
+import vehicletracking.feature.menu.main.generated.resources.menuTitle
+import vehicletracking.feature.menu.main.generated.resources.personalData
+import vehicletracking.feature.menu.main.generated.resources.trackingHistory
+import vehicletracking.feature.menu.main.generated.resources.trackingsActive
+import vehicletracking.feature.menu.main.generated.resources.trackingsNewRequest
+import vehicletracking.feature.menu.main.generated.resources.trackingsReadyToStart
+import vehicletracking.feature.menu.main.generated.resources.trackingsSection
 
 @Composable
 fun MenuScreenRoot(
@@ -75,7 +91,7 @@ private fun MenuScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        "Menu",
+                        stringResource(Res.string.menuTitle),
                         fontStyle = FontStyle.Italic
 
                     )
@@ -146,25 +162,25 @@ private fun LazyListScope.versionSection() {
 private fun LazyListScope.accountSection() {
     item {
         MenuSection(
-            title = "Account"
+            title = stringResource(Res.string.accountSection)
         ) {
             MenuSectionItem(
                 icon = Icons.TwoTone.ManageAccounts,
-                title = "Personal data",
+                title = stringResource(Res.string.personalData),
                 onClick = {
 
                 }
             )
             MenuSectionItem(
                 icon = Icons.TwoTone.Lock,
-                title = "Change password",
+                title = stringResource(Res.string.changePassword),
                 onClick = {
 
                 }
             )
             MenuSectionItem(
                 icon = Icons.AutoMirrored.TwoTone.Logout,
-                title = "Logout",
+                title = stringResource(Res.string.logout),
                 onClick = {
                     // Handle logout
                 },
@@ -181,32 +197,32 @@ private fun LazyListScope.adminSection(
 ) {
     item {
         MenuSection(
-            title = "Admin"
+            title = stringResource(Res.string.adminSection)
         ) {
             MenuSectionItem(
                 icon = Icons.TwoTone.Groups,
-                title = "Manage users",
+                title = stringResource(Res.string.manageUsers),
                 onClick = {
 
                 }
             )
             MenuSectionItem(
                 icon = Icons.TwoTone.DirectionsCar,
-                title = "Manage vehicles",
+                title = stringResource(Res.string.manageVehicles),
                 onClick = {
                     onManageVehicles()
                 },
             )
             MenuSectionItem(
                 icon = Icons.TwoTone.TrackChanges,
-                title = "Tracking history",
+                title = stringResource(Res.string.trackingHistory),
                 onClick = {
                     onTrackingHistory()
                 },
             )
             MenuSectionItem(
                 icon = Icons.TwoTone.AdminPanelSettings,
-                title = "Admin settings",
+                title = stringResource(Res.string.adminSettings),
                 onClick = onAdminSettings,
                 isLast = true
             )
@@ -221,25 +237,25 @@ private fun LazyListScope.trackingSection(
 ) {
     item {
         MenuSection(
-            title = "Trackings"
+            title = stringResource(Res.string.trackingsSection)
         ) {
             MenuSectionItem(
                 icon = Icons.TwoTone.MarkunreadMailbox,
-                title = "New requests",
+                title = stringResource(Res.string.trackingsNewRequest),
                 onClick = {
                     onNewRequestsTrackings()
                 },
             )
             MenuSectionItem(
                 icon = Icons.TwoTone.SportsScore,
-                title = "Ready to start trackings",
+                title = stringResource(Res.string.trackingsReadyToStart),
                 onClick = {
                     onNonStartedTrackings()
                 }
             )
             MenuSectionItem(
                 icon = Icons.TwoTone.Motorcycle,
-                title = "Active trackings",
+                title = stringResource(Res.string.trackingsActive),
                 onClick = {
                     onActiveTrackings()
                 },

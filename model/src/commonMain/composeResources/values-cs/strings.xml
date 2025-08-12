@@ -1,0 +1,24 @@
+<resources>
+    <string name="pendingState">Čekání</string>
+    <string name="pendingStateDescription">Žádost byla odeslána. Čeká se na její schválení.</string>
+    <string name="waitingForApprovalState">Čekání na schválení</string>
+    <string name="waitingForApprovalStateDescription">Prosím počkejte, vaše žádost je zpracovávána.</string>
+    <string name="approvedState">Schváleno</string>
+    <string name="approvedStateDescription">Vaše žádost byla schválena.</string>
+    <string name="waitingForStartState">Čekání na zahájení</string>
+    <string name="waitingForStartStateDescription">Vozidlo si můžete příjít vyzvednout v %1$s</string>
+    <string name="rejectedState">Odmítnuto</string>
+    <string name="activeState">Aktivní</string>
+    <string name="waitingForReturnState">Čekání na vrácení</string>
+    <string name="waitingForReturnStateDescription">Užijte si jízdu, prosím vraťte vozidlo včas</string>
+    <string name="returnedState">Vráceno</string>
+    <string name="failedState">Selhalo</string>
+    <string name="waitingForYourConfirmationState">Čeká se na vaše potvrzení</string>
+    <string name="waitingForYourConfirmationStateDescription">Prosím potvrďte fotografie vyfocené při předávání a vrácení vozidla a také průběh celého sledování.</string>
+    <string name="completedState">Dokončeno</string>
+    <string name="errorState">Chyba</string>
+    <string name="errorStateDescription">Při zpracování vaší žádosti došlo k chybě.</string>
+
+    <string name="user">Uživatel</string>
+    <string name="admin">Administrátor</string>
+</resources>

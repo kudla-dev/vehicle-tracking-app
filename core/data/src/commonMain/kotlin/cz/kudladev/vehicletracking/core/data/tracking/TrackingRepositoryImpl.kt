@@ -22,6 +22,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
+import io.ktor.http.headers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.datetime.LocalDateTime
@@ -79,7 +80,7 @@ class TrackingRepositoryImpl(
     ): Flow<Result<ProgressUpdate, ErrorMessage>> = channelFlow {
         safeCall<TrackingResponse> {
             httpClient.submitFormWithBinaryData(
-                url = "/trackings/$trackingId/logs/$state/images",
+                url = "/trackings/$trackingId/logs/$state/images?position=$position",
                 formData = formData {
                     append("file", imageData, Headers.build {
                         append(HttpHeaders.ContentType, "image/jpeg")

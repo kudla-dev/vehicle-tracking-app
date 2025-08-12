@@ -39,10 +39,21 @@ import cz.kudladev.vehicletracking.core.designsystem.OutlinedTextField
 import cz.kudladev.vehicletracking.core.designsystem.PrimaryButton
 import cz.kudladev.vehicletracking.core.ui.image.SummaryImage
 import cz.kudladev.vehicletracking.core.ui.image.UploadDialog
+import cz.kudladev.vehicletracking.core.ui.nextString
+import cz.kudladev.vehicletracking.core.ui.submitString
 import cz.kudladev.vehicletracking.core.ui.util.toImageBitmap
 import cz.kudladev.vehicletracking.model.*
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import vehicletracking.feature.menu.protocols.generated.resources.Res
+import vehicletracking.feature.menu.protocols.generated.resources.additionalNotes
+import vehicletracking.feature.menu.protocols.generated.resources.cameraPermissionDenied
+import vehicletracking.feature.menu.protocols.generated.resources.currentMileage
+import vehicletracking.feature.menu.protocols.generated.resources.pickUpProtocolTitle
+import vehicletracking.feature.menu.protocols.generated.resources.retake
+import vehicletracking.feature.menu.protocols.generated.resources.returnProtocolTitle
 
 @Serializable
 data class Protocols(
@@ -52,9 +63,9 @@ data class Protocols(
 )
 
 @Serializable
-enum class ProtocolsType(val title: String) {
-    PICKUP("Pickup Protocol"),
-    RETURN("Return Protocol"),
+enum class ProtocolsType(val title: StringResource) {
+    PICKUP(Res.string.pickUpProtocolTitle),
+    RETURN(Res.string.returnProtocolTitle),
 }
 
 @Composable
@@ -114,7 +125,7 @@ fun ProtocolsScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        text = type.title
+                        text = stringResource(type.title)
                     )
                 },
                 navigationIcon = {
@@ -293,7 +304,7 @@ fun ProtocolsCapture(
                                 verticalArrangement = Arrangement.Center
                             ) {
                                 Text(
-                                    "Camera permission denied. Please allow camera access in settings.",
+                                    stringResource(Res.string.cameraPermissionDenied),
                                     textAlign = TextAlign.Center
                                 )
                             }
@@ -368,7 +379,7 @@ fun ProtocolsCapture(
                             }
                         ){
                             Text(
-                                "Retake",
+                                stringResource(Res.string.retake),
                             )
                         }
                         Button(
@@ -377,7 +388,7 @@ fun ProtocolsCapture(
                             }
                         ){
                             Text(
-                                "Next",
+                                nextString(),
                             )
                         }
                     }
@@ -432,7 +443,7 @@ fun SummaryProtocol(
                 },
                 label = {
                     Text(
-                        "Current Mileage",
+                        stringResource(Res.string.currentMileage),
                     )
                 },
                 modifier = Modifier
@@ -459,7 +470,7 @@ fun SummaryProtocol(
                 },
                 label = {
                     Text(
-                        "Additional Notes",
+                        stringResource(Res.string.additionalNotes),
                     )
                 },
                 modifier = Modifier
@@ -487,7 +498,7 @@ fun SummaryProtocol(
                     }
                 ) {
                     Text(
-                        text = "Submit",
+                        text = submitString(),
                     )
                 }
             }

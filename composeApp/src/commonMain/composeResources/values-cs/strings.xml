@@ -1,0 +1,7 @@
+<resources>
+    <string name="bottomBarVehicles">Vozidla</string>
+    <string name="bottomBarFavourites">Oblíbené</string>
+    <string name="bottomBarTracking">Sledování</string>
+    <string name="bottomBarHistory">Historie</string>
+    <string name="bottomBarMenu">Menu</string>
+</resources>

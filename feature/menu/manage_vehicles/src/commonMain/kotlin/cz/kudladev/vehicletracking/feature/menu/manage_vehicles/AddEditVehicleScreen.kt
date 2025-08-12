@@ -33,14 +33,34 @@ import cz.kudladev.vehicletracking.core.designsystem.OutlinedTextField
 import cz.kudladev.vehicletracking.core.designsystem.PrimaryButton
 import cz.kudladev.vehicletracking.core.designsystem.SecondaryButton
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
+import cz.kudladev.vehicletracking.core.ui.brandString
+import cz.kudladev.vehicletracking.core.ui.colorString
+import cz.kudladev.vehicletracking.core.ui.driverLicenseString
+import cz.kudladev.vehicletracking.core.ui.fullNameString
 import cz.kudladev.vehicletracking.core.ui.image.UploadDialog
+import cz.kudladev.vehicletracking.core.ui.licensePlateString
+import cz.kudladev.vehicletracking.core.ui.maximumDistanceString
+import cz.kudladev.vehicletracking.core.ui.modelString
+import cz.kudladev.vehicletracking.core.ui.placeString
+import cz.kudladev.vehicletracking.core.ui.totalDistanceString
 import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleImages
+import cz.kudladev.vehicletracking.core.ui.yearString
 import cz.kudladev.vehicletracking.model.Brand
 import cz.kudladev.vehicletracking.model.ImageUploadState
 import cz.kudladev.vehicletracking.model.ImageUploadStatus
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
+import vehicletracking.feature.menu.manage_vehicles.generated.resources.Res
+import vehicletracking.feature.menu.manage_vehicles.generated.resources.createVehicleAction
+import vehicletracking.feature.menu.manage_vehicles.generated.resources.createVehicleTitle
+import vehicletracking.feature.menu.manage_vehicles.generated.resources.getImagesFromShopLink
+import vehicletracking.feature.menu.manage_vehicles.generated.resources.isTransferableLicensePlate
+import vehicletracking.feature.menu.manage_vehicles.generated.resources.manageImages
+import vehicletracking.feature.menu.manage_vehicles.generated.resources.or
+import vehicletracking.feature.menu.manage_vehicles.generated.resources.pickFromGallery
+import vehicletracking.feature.menu.manage_vehicles.generated.resources.vehicleShopLink
 
 @Serializable
 data object ManageVehiclesAddEdit
@@ -108,7 +128,7 @@ fun AddEditVehicleScreen(
             MediumTopAppBar(
                 title = {
                     Text(
-                        "Create new vehicle",
+                        stringResource(Res.string.createVehicleTitle),
                         fontStyle = FontStyle.Italic,
                     )
                 },
@@ -147,7 +167,7 @@ fun AddEditVehicleScreen(
                 SecondaryButton(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    text = "Manage images",
+                    text = stringResource(Res.string.manageImages),
                     onClick = {
                         onAction(AddEditVehicleAction.ToggleImageDialog)
                     }
@@ -174,7 +194,7 @@ fun AddEditVehicleScreen(
                     onValueChange = {
                         onAction(AddEditVehicleAction.OnBrandChange(it))
                     },
-                    label = "Brand",
+                    label = brandString(),
                     expanded = state.selectingBrand,
                     onExpandedChange = {
                         onAction(AddEditVehicleAction.ToggleBrandDialog)
@@ -191,7 +211,7 @@ fun AddEditVehicleScreen(
                     },
                     error = state.fullNameError,
                     label = {
-                        Text("Full name")
+                        Text(fullNameString())
                     },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
@@ -214,7 +234,7 @@ fun AddEditVehicleScreen(
                     },
                     error = state.modelError,
                     label = {
-                        Text("Model")
+                        Text(modelString())
                     },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
@@ -237,7 +257,7 @@ fun AddEditVehicleScreen(
                     },
                     error = state.yearError,
                     label = {
-                        Text("Year")
+                        Text(yearString())
                     },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
@@ -261,7 +281,7 @@ fun AddEditVehicleScreen(
                     },
                     error = state.colorError,
                     label = {
-                        Text("Color")
+                        Text(colorString())
                     },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
@@ -282,11 +302,12 @@ fun AddEditVehicleScreen(
                     onValueChange = {
                         onAction(AddEditVehicleAction.OnDriverLicenseChange(it))
                     },
-                    label = "Driver license",
+                    label = driverLicenseString(),
                     expanded = state.selectingDriverLicense,
                     onExpandedChange = {
                         onAction(AddEditVehicleAction.ToggleDriverLicenseDialog)
                     },
+                    //TODO: fetch the driver licenses from the server
                     options = listOf("A1", "A2", "A", "AM")
                 )
                 OutlinedTextField(
@@ -298,7 +319,7 @@ fun AddEditVehicleScreen(
                         onAction(AddEditVehicleAction.OnSpzChange(it))
                     },
                     label = {
-                        Text("SPZ")
+                        Text(licensePlateString())
                     },
                     error = state.spzError,
                     singleLine = true,
@@ -320,7 +341,7 @@ fun AddEditVehicleScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Is it a transferable SPZ?",
+                        text = stringResource(Res.string.isTransferableLicensePlate),
                     )
                     Switch(
                         modifier = Modifier,
@@ -339,7 +360,7 @@ fun AddEditVehicleScreen(
                         onAction(AddEditVehicleAction.OnTotalDistanceChange(it))
                     },
                     label = {
-                        Text("Total distance")
+                        Text(totalDistanceString())
                     },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
@@ -369,7 +390,7 @@ fun AddEditVehicleScreen(
                         onAction(AddEditVehicleAction.OnMaximumDistanceChange(it))
                     },
                     label = {
-                        Text("Maximum distance")
+                        Text(maximumDistanceString())
                     },
                     error = state.maximumDistanceError,
                     singleLine = true,
@@ -399,7 +420,7 @@ fun AddEditVehicleScreen(
                     onValueChange = {
                         onAction(AddEditVehicleAction.OnPlaceChange(it))
                     },
-                    label = "Place",
+                    label = placeString(),
                     expanded = state.selectingPlace,
                     onExpandedChange = {
                         onAction(AddEditVehicleAction.TogglePlaceDialog)
@@ -415,11 +436,11 @@ fun AddEditVehicleScreen(
                     onClick = {
                         onAction(AddEditVehicleAction.OnSaveClick)
                     },
-                    text = "Create vehicle",
+                    text = stringResource(Res.string.createVehicleAction),
                     trailingIcon = {
                         Icon(
                             imageVector = Icons.Default.Add,
-                            contentDescription = "Add vehicle",
+                            contentDescription = stringResource(Res.string.createVehicleAction),
                         )
                     }
                 )
@@ -439,7 +460,7 @@ fun AddEditVehicleScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "You can get the images from the shop link",
+                    text = stringResource(Res.string.getImagesFromShopLink),
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(bottom = 16.dp),
                     style = MaterialTheme.typography.titleLarge,
@@ -453,7 +474,7 @@ fun AddEditVehicleScreen(
                         onAction(AddEditVehicleAction.OnVehicleURLChange(it))
                     },
                     label = {
-                        Text("Vehicle shop link")
+                        Text(stringResource(Res.string.vehicleShopLink))
                     },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
@@ -478,7 +499,7 @@ fun AddEditVehicleScreen(
                     )
                     Text(
                         modifier = Modifier.padding(horizontal = 8.dp),
-                        text = "or"
+                        text = stringResource(Res.string.or)
                     )
                     HorizontalDivider(
                         modifier = Modifier.weight(1f),
@@ -492,7 +513,7 @@ fun AddEditVehicleScreen(
                     onClick = {
                         multipleImagePicker.launch()
                     },
-                    text = "Pick from gallery",
+                    text = stringResource(Res.string.pickFromGallery),
                 )
             }
         }

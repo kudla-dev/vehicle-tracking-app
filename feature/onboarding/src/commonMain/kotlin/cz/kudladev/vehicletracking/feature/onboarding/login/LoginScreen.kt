@@ -29,9 +29,20 @@ import cz.kudladev.vehicletracking.core.designsystem.BackButton
 import cz.kudladev.vehicletracking.core.designsystem.KeyboardClearFocus
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
 import cz.kudladev.vehicletracking.core.designsystem.OutlinedTextField
+import cz.kudladev.vehicletracking.core.designsystem.PrimaryButton
+import cz.kudladev.vehicletracking.core.ui.emailExampleString
+import cz.kudladev.vehicletracking.core.ui.emailString
+import cz.kudladev.vehicletracking.core.ui.passwordString
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import rememberStackedSnackbarHostState
+import vehicletracking.feature.onboarding.generated.resources.Res
+import vehicletracking.feature.onboarding.generated.resources.loggedIn
+import vehicletracking.feature.onboarding.generated.resources.loginAction
+import vehicletracking.feature.onboarding.generated.resources.loginFailed
+import vehicletracking.feature.onboarding.generated.resources.loginTitle
+
 
 @Serializable
 data object Login
@@ -69,18 +80,21 @@ fun LoginScreenScreen(
         animation = StackedSnackbarAnimation.Slide
     )
 
+    val loginFailed = stringResource(Res.string.loginFailed)
+    val loggedIn = stringResource(Res.string.loggedIn)
+
     LaunchedEffect(state.loginProgress) {
         when(state.loginProgress){
             is LoginProgress.Error -> {
                 stackedSnackBarHostState.showErrorSnackbar(
-                    title = "Login failed",
+                    title = loginFailed,
                     description = state.loginProgress.message.message,
                     duration = StackedSnackbarDuration.Short
                 )
             }
             LoginProgress.LoggedIn -> {
-                stackedSnackBarHostState.showErrorSnackbar(
-                    title = "Logged in",
+                stackedSnackBarHostState.showSuccessSnackbar(
+                    title = loggedIn,
                     duration = StackedSnackbarDuration.Short
                 )
                 onLoginConfirm()
@@ -94,7 +108,7 @@ fun LoginScreenScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        text = "Login"
+                        text = stringResource(Res.string.loginTitle)
                     )
                 },
                 navigationIcon = {
@@ -116,7 +130,8 @@ fun LoginScreenScreen(
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
-                    .verticalScroll(rememberScrollState())
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 OutlinedTextField(
                     modifier = Modifier.widthIn(500.dp, 550.dp).padding(horizontal = 8.dp),
@@ -126,10 +141,10 @@ fun LoginScreenScreen(
                     },
                     label = {
                         Text(
-                            text = "Email"
+                            text = emailString()
                         )
                     },
-                    info = "Ex. john.stones@example.com",
+                    info = emailExampleString(),
                     maxLines = 1,
                     singleLine = true,
                     error = state.emailError,
@@ -153,7 +168,7 @@ fun LoginScreenScreen(
                     },
                     label = {
                         Text(
-                            text = "Password"
+                            text = passwordString()
                         )
                     },
                     maxLines = 1,
@@ -168,7 +183,7 @@ fun LoginScreenScreen(
                         ){
                             Icon(
                                 imageVector = if (state.visiblePassword) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = "password",
+                                contentDescription = passwordString(),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -186,19 +201,17 @@ fun LoginScreenScreen(
                 )
                 Row(
                     modifier = Modifier
-                        .padding(top = 8.dp)
+                        .padding(top = 16.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Button(
+                    PrimaryButton(
                         onClick = {
+                            focusManager.clearFocus()
                             onAction(LoginScreenAction.OnLogin)
-                        }
-                    ) {
-                        Text(
-                            text = "Login"
-                        )
-                    }
+                        },
+                        text = stringResource(Res.string.loginAction)
+                    )
                 }
             }
         }

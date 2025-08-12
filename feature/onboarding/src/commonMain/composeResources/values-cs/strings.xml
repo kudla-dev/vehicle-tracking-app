@@ -1,0 +1,19 @@
+<resources>
+    <!-- Boarding screen -->
+    <string name="welcomeTitle">Vítejte</string>
+
+    <!-- Login screen -->
+    <string name="loginFailed">Přihlášení se nezdařilo</string>
+    <string name="loggedIn">Přihlášeno</string>
+    <string name="loginTitle">Přihlášení</string>
+    <string name="loginAction">Přihlásit se</string>
+
+    <!-- Registration screen -->
+    <string name="registrationFailed">Registrace se nezdařila</string>
+    <string name="registrationOnGoing">Probíhá registrace</string>
+    <string name="registrationOnGoingDescription">Čekejte prosím...</string>
+    <string name="registrationSuccessful">Registrace úspěšná</string>
+    <string name="registrationSuccessfulDescription">Nyní se můžete přihlásit</string>
+    <string name="registrationTitle">Registrace</string>
+    <string name="registrationAction">Registrovat se</string>
+</resources>

@@ -21,7 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import vehicletracking.core.ui.generated.resources.Res
+import vehicletracking.core.ui.generated.resources.uploadProgress
+import vehicletracking.core.ui.generated.resources.uploadedOfImages
+import vehicletracking.core.ui.generated.resources.uploadingImages
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,7 +41,7 @@ fun UploadDialog(
         } else {
             uploadedImages / images
         },
-        label = "Upload progress",
+        label = stringResource(Res.string.uploadProgress),
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
     )
 
@@ -44,7 +49,7 @@ fun UploadDialog(
         icon = {},
         title = {
             Text(
-                text = "Uploading images",
+                text = stringResource(Res.string.uploadingImages),
                 fontStyle = FontStyle.Italic
             )
         },
@@ -63,7 +68,7 @@ fun UploadDialog(
                     drawStopIndicator = {}
                 )
                 Text(
-                    text = "Uploaded ${uploadedImages.toInt()}/$images images",
+                    text = stringResource(Res.string.uploadedOfImages, uploadedImages.toInt(),images),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )

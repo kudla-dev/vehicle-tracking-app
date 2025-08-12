@@ -1,0 +1,24 @@
+<resources>
+    <string name="pendingState">Pending</string>
+    <string name="pendingStateDescription">You submitted a request for this vehicle. It is waiting for approval.</string>
+    <string name="waitingForApprovalState">Waiting for Approval</string>
+    <string name="waitingForApprovalStateDescription">Please wait, your request is being processed.</string>
+    <string name="approvedState">Approved</string>
+    <string name="approvedStateDescription">Your request has been approved.</string>
+    <string name="waitingForStartState">Waiting for Start</string>
+    <string name="waitingForStartStateDescription">You can come for the vehicle at %1$s</string>
+    <string name="rejectedState">Rejected</string>
+    <string name="activeState">Active</string>
+    <string name="waitingForReturnState">Waiting for Return</string>
+    <string name="waitingForReturnStateDescription">Enjoy your trip, please return the vehicle on time</string>
+    <string name="returnedState">Returned</string>
+    <string name="failedState">Failed</string>
+    <string name="waitingForYourConfirmationState">Waiting for Your Confirmation</string>
+    <string name="waitingForYourConfirmationStateDescription">Please confirm the captured images of the vehicle and progress of the whole tracking.</string>
+    <string name="completedState">Completed</string>
+    <string name="errorState">Error</string>
+    <string name="errorStateDescription">An error occurred while processing your request.</string>
+
+    <string name="user">User</string>
+    <string name="admin">Admin</string>
+</resources>

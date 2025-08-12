@@ -28,10 +28,31 @@ import cz.kudladev.vehicletracking.core.designsystem.BackButton
 import cz.kudladev.vehicletracking.core.designsystem.KeyboardClearFocus
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
 import cz.kudladev.vehicletracking.core.designsystem.OutlinedTextField
+import cz.kudladev.vehicletracking.core.designsystem.PrimaryButton
+import cz.kudladev.vehicletracking.core.ui.confirmPasswordInfoString
+import cz.kudladev.vehicletracking.core.ui.confirmPasswordString
+import cz.kudladev.vehicletracking.core.ui.emailExampleString
+import cz.kudladev.vehicletracking.core.ui.emailString
+import cz.kudladev.vehicletracking.core.ui.firstNameExampleString
+import cz.kudladev.vehicletracking.core.ui.firstNameString
+import cz.kudladev.vehicletracking.core.ui.lastNameExampleString
+import cz.kudladev.vehicletracking.core.ui.lastNameString
+import cz.kudladev.vehicletracking.core.ui.passwordString
+import cz.kudladev.vehicletracking.core.ui.phoneNumberExampleString
+import cz.kudladev.vehicletracking.core.ui.phoneNumberString
 import cz.kudladev.vehicletracking.feature.onboarding.register.components.PasswordTextField
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import rememberStackedSnackbarHostState
+import vehicletracking.feature.onboarding.generated.resources.Res
+import vehicletracking.feature.onboarding.generated.resources.registrationAction
+import vehicletracking.feature.onboarding.generated.resources.registrationFailed
+import vehicletracking.feature.onboarding.generated.resources.registrationOnGoing
+import vehicletracking.feature.onboarding.generated.resources.registrationOnGoingDescription
+import vehicletracking.feature.onboarding.generated.resources.registrationSuccessful
+import vehicletracking.feature.onboarding.generated.resources.registrationSuccessfulDescription
+import vehicletracking.feature.onboarding.generated.resources.registrationTitle
 
 @Serializable
 data object Register
@@ -70,11 +91,18 @@ private fun RegisterScreen(
         animation = StackedSnackbarAnimation.Slide
     )
 
+    val registrationFailed = stringResource(Res.string.registrationFailed)
+    val registrationLoading = stringResource(Res.string.registrationOnGoing)
+    val registrationLoadingDescription = stringResource(Res.string.registrationOnGoingDescription)
+    val registrationSuccess = stringResource(Res.string.registrationSuccessful)
+    val registrationSuccessDescription = stringResource(Res.string.registrationSuccessfulDescription)
+
+
     LaunchedEffect(state.registrationProcess) {
         when (state.registrationProcess){
             is RegistrationProcess.Error -> {
                 stackedSnackBarHostState.showErrorSnackbar(
-                    title = "Registration failed",
+                    title = registrationFailed,
                     description = state.registrationProcess.message.message,
                     duration = StackedSnackbarDuration.Short,
 
@@ -83,15 +111,15 @@ private fun RegisterScreen(
             RegistrationProcess.Idle -> {}
             RegistrationProcess.Loading -> {
                 stackedSnackBarHostState.showInfoSnackbar(
-                    title = "Registering",
-                    description = "Please wait...",
+                    title = registrationLoading,
+                    description = registrationLoadingDescription,
                     duration = StackedSnackbarDuration.Short
                 )
             }
             RegistrationProcess.Success -> {
                 stackedSnackBarHostState.showSuccessSnackbar(
-                    title = "Registration successful",
-                    description = "You can now log in",
+                    title = registrationSuccess,
+                    description = registrationSuccessDescription,
                 )
                 onRegisterConfirmed()
             }
@@ -103,7 +131,7 @@ private fun RegisterScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        text = "Register",
+                        text = stringResource(Res.string.registrationTitle),
                     )
                 },
                 navigationIcon = {
@@ -123,7 +151,8 @@ private fun RegisterScreen(
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
-                    .verticalScroll(rememberScrollState())
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 OutlinedTextField(
                     modifier = Modifier.widthIn(500.dp, 750.dp).padding(horizontal = 8.dp),
@@ -133,10 +162,10 @@ private fun RegisterScreen(
                     },
                     label = {
                         Text(
-                            text = "First name"
+                            text = firstNameString()
                         )
                     },
-                    info = "Ex. John",
+                    info = firstNameExampleString(),
                     maxLines = 1,
                     singleLine = true,
                     error = state.firstNameError,
@@ -160,10 +189,10 @@ private fun RegisterScreen(
                     },
                     label = {
                         Text(
-                            text = "Last name"
+                            text = lastNameString()
                         )
                     },
-                    info = "Ex. Stones",
+                    info = lastNameExampleString(),
                     maxLines = 1,
                     singleLine = true,
                     error = state.lastNameError,
@@ -187,10 +216,10 @@ private fun RegisterScreen(
                     },
                     label = {
                         Text(
-                            text = "Email"
+                            text = emailString()
                         )
                     },
-                    info = "Ex. john.stones@example.com",
+                    info = emailExampleString(),
                     maxLines = 1,
                     singleLine = true,
                     error = state.emailError,
@@ -215,10 +244,10 @@ private fun RegisterScreen(
                     },
                     label = {
                         Text(
-                            text = "Phone number"
+                            text = phoneNumberString()
                         )
                     },
-                    info = "Ex. +420123456789",
+                    info = phoneNumberExampleString(),
                     maxLines = 1,
                     singleLine = true,
                     error = state.phoneNumberError,
@@ -260,10 +289,10 @@ private fun RegisterScreen(
                     },
                     label = {
                         Text(
-                            text = "Confirm password"
+                            text = confirmPasswordString()
                         )
                     },
-                    info = "Password must match",
+                    info = confirmPasswordInfoString(),
                     maxLines = 1,
                     singleLine = true,
                     error = state.confirmPasswordError,
@@ -276,7 +305,7 @@ private fun RegisterScreen(
                         ){
                             Icon(
                                 imageVector = if (state.visiblePassword) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = "password",
+                                contentDescription = passwordString(),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -293,8 +322,8 @@ private fun RegisterScreen(
                                 onAction(RegisterScreenAction.OnRegister)
                             } else {
                                 stackedSnackBarHostState.showInfoSnackbar(
-                                    title = "Registering",
-                                    description = "Please wait...",
+                                    title = registrationLoading,
+                                    description = registrationLoadingDescription,
                                     duration = StackedSnackbarDuration.Short
                                 )
                             }
@@ -303,28 +332,25 @@ private fun RegisterScreen(
                 )
                 Row(
                     modifier = Modifier
-                        .padding(top = 8.dp)
+                        .padding(top = 16.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Button(
+                    PrimaryButton(
                         onClick = {
                             focusManager.clearFocus()
                             if (state.registrationProcess !is RegistrationProcess.Loading){
                                 onAction(RegisterScreenAction.OnRegister)
                             } else {
                                 stackedSnackBarHostState.showInfoSnackbar(
-                                    title = "Registering",
-                                    description = "Please wait...",
+                                    title = registrationLoading,
+                                    description = registrationLoadingDescription,
                                     duration = StackedSnackbarDuration.Short
                                 )
                             }
-                        }
-                    ) {
-                        Text(
-                            text = "Register"
-                        )
-                    }
+                        },
+                        text = stringResource(Res.string.registrationAction)
+                    )
                 }
             }
         }

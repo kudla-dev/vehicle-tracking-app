@@ -1,0 +1,127 @@
+<resources>
+    <!-- Basic strings -->
+    <string name="continue">Continue</string>
+    <string name="next">Next</string>
+    <string name="back">Back</string>
+    <string name="skip">Skip</string>
+    <string name="submit">Submit</string>
+    <string name="reject">Reject</string>
+    <string name="before">Before</string>
+    <string name="after">After</string>
+    <string name="search">Search</string>
+    <string name="cancel">Cancel</string>
+    <string name="done">Done</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="ok">OK</string>
+    <string name="close">Close</string>
+    <string name="error">Error</string>
+    <string name="loading">Loading...</string>
+    <string name="clear">Clear</string>
+
+    <!-- TextFields -->
+    <string name="firstName">Fist name</string>
+    <string name="firstNameExample">Ex. John</string>
+    <string name="lastName">Last name</string>
+    <string name="lastNameExample">Ex. Stones</string>
+    <string name="email">Email</string>
+    <string name="emailExample">Ex. john.stones@example.com</string>
+    <string name="password">Password</string>
+    <string name="confirmPassword">Confirm password</string>
+    <string name="confirmPasswordInfo">Password must match</string>
+    <string name="phoneNumber">Phone number</string>
+    <string name="phoneNumberExample">Ex. +420 123 456 789</string>
+
+    <!-- Vehicle views -->
+    <string name="frontView">Front view</string>
+    <string name="backView">Back view</string>
+    <string name="leftView">Left view</string>
+    <string name="rightView">Right view</string>
+    <string name="tachometerReading">Tachometer reading</string>
+
+    <!-- Vehicle details -->
+    <string name="brand">Brand</string>
+    <string name="fullName">Full name</string>
+    <string name="model">Model</string>
+    <string name="year">Year</string>
+    <string name="color">Color</string>
+    <string name="driverLicense">Driver license</string>
+    <string name="licensePlate">License plate</string>
+    <string name="transferableLicensePlate">Transferable LP</string>
+    <string name="totalDistance">Total distance</string>
+    <string name="maximumDistance">Maximum distance</string>
+    <string name="place">Place</string>
+
+    <!-- Calendar -->
+    <string name="selectDateRange">Select date range</string>
+
+    <string name="previousMonth">Previous month</string>
+    <string name="nextMonth">Next month</string>
+    <string name="selectTime">Select time</string>
+
+    <string name="monday">M</string>
+    <string name="tuesday">T</string>
+    <string name="wednesday">W</string>
+    <string name="thursday">T</string>
+    <string name="friday">F</string>
+    <string name="saturday">S</string>
+    <string name="sunday">S</string>
+
+    <string name="january">January</string>
+    <string name="february">February</string>
+    <string name="march">March</string>
+    <string name="april">April</string>
+    <string name="may">May</string>
+    <string name="june">June</string>
+    <string name="july">July</string>
+    <string name="august">August</string>
+    <string name="september">September</string>
+    <string name="october">October</string>
+    <string name="november">November</string>
+    <string name="december">December</string>
+
+    <string name="startTime">Start time</string>
+    <string name="selectDateFirst">Select date first</string>
+    <string name="selectTimeFirst">%1$s - Select time</string>
+
+    <string name="endTime">End time</string>
+    <string name="selectStartTimeFirst">Select start time first</string>
+    <string name="selectEndDate">Select end date</string>
+    <string name="selectEndTimeFirst">%1$s - Select time</string>
+
+    <!-- Images -->
+    <string name="uploadProgress">Upload progress</string>
+    <string name="uploadingImages">Uploading images</string>
+    <string name="uploadedOfImages">Uploaded %1$d of %2$d images</string>
+    <string name="noImagesAvailable">No images available</string>
+    <string name="removeImage">Remove image</string>
+
+
+    <!-- Search -->
+    <string name="searchPlaceholder">What vehicle are you looking for?</string>
+
+    <!-- Tracking -->
+    <string name="currentState">Current state</string>
+    <string name="stateHistory">State History</string>
+    <string name="noMessageProvided">No message provided</string>
+    <string name="timeRemaining">Time remaining</string>
+    <string name="trackingDetails">Details</string>
+    <string name="trackingId">Tracking\nID</string>
+    <string name="startDate">Start date</string>
+    <string name="endDate">End date</string>
+    <string name="history">History</string>
+    <string name="historyEmpty">No tracking history available.</string>
+
+    <!-- User -->
+    <string name="currentDistance">Current distance</string>
+    <string name="userNotLoggedIn">User not logged in</string>
+
+    <!-- Brand -->
+    <string name="unknownBrand">Unknown brand</string>
+
+
+
+</resources>

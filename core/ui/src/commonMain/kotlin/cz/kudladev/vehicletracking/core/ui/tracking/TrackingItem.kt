@@ -34,6 +34,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -79,7 +80,7 @@ fun TrackingItem(
                             .padding(4.dp)
                     ){
                         Badge(
-                            text = it.displayName,
+                            text = stringResource(it.displayName),
                             icon = it.activeIcon,
                         )
                     }

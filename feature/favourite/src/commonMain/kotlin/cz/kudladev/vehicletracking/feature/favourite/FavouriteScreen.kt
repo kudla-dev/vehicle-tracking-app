@@ -1,5 +1,6 @@
 package cz.kudladev.vehicletracking.feature.favourite
 
+
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -13,7 +14,9 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontStyle
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
 import kotlinx.serialization.Serializable
-
+import org.jetbrains.compose.resources.stringResource
+import vehicletracking.feature.favourite.generated.resources.Res
+import vehicletracking.feature.favourite.generated.resources.favouriteTitle
 @Serializable
 data object Favourites
 
@@ -42,7 +45,7 @@ private fun FavouritesScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        "Your Favourites",
+                        stringResource(Res.string.favouriteTitle),
                         fontStyle = FontStyle.Italic
                     )
                 },

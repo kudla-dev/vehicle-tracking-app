@@ -5,40 +5,17 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import cz.kudladev.vehicletracking.core.ui.calendar.DateTimeOperations.addMonth
-import cz.kudladev.vehicletracking.core.ui.calendar.DateTimeOperations.getCalendarDates
-import cz.kudladev.vehicletracking.core.ui.calendar.DateTimeOperations.getLocalDate
-import cz.kudladev.vehicletracking.core.ui.calendar.DateTimeOperations.getMonthName
-import cz.kudladev.vehicletracking.core.ui.calendar.DateTimeOperations.subtractMonth
-import cz.kudladev.vehicletracking.core.ui.calendar.DateTimeOperations.updateAvailableTimesAndDisabledDates
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,11 +27,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.valentinilk.shimmer.shimmer
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
+import cz.kudladev.vehicletracking.core.ui.calendar.DateTimeOperations.addMonth
 import cz.kudladev.vehicletracking.core.ui.calendar.DateTimeOperations.checkAvailableTimeSlotsForDay
+import cz.kudladev.vehicletracking.core.ui.calendar.DateTimeOperations.getCalendarDates
+import cz.kudladev.vehicletracking.core.ui.calendar.DateTimeOperations.getLocalDate
+import cz.kudladev.vehicletracking.core.ui.calendar.DateTimeOperations.getMonthName
+import cz.kudladev.vehicletracking.core.ui.calendar.DateTimeOperations.subtractMonth
+import cz.kudladev.vehicletracking.core.ui.calendar.DateTimeOperations.updateAvailableTimesAndDisabledDates
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import vehicletracking.core.ui.generated.resources.*
 
 @Composable
 fun DatePickerWithTimePicker(
@@ -63,7 +48,10 @@ fun DatePickerWithTimePicker(
     onSelectDate: (LocalDate) -> Unit = {},
     onRangeSelected: (LocalDateTime?, LocalDateTime?) -> Unit = { _, _ -> },
     clickable: Boolean = true,
-    dateTimePickerDefaults: DateTimePickerDefaults = DateTimePickerDefaults(),
+    dateTimePickerDefaults: DateTimePickerDefaults = DateTimePickerDefaults(
+        monthNames = DateTimePickerDefaults.localizedMonthNames(),
+        dayOfWeekNames = DateTimePickerDefaults.localizedDayOfWeekNames()
+    ),
     dateTimePickerColors: DateTimePickerColors = DateTimePickerColors(
         selectedDateColor = MaterialTheme.colorScheme.primary,
         disabledDateColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
@@ -171,7 +159,7 @@ fun DatePickerWithTimePicker(
                 ){
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                        contentDescription = "Previous month",
+                        contentDescription = stringResource(Res.string.previousMonth),
                         tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                         modifier = Modifier.size(32.dp),
                     )
@@ -190,7 +178,7 @@ fun DatePickerWithTimePicker(
                 ){
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = "Next month",
+                        contentDescription = stringResource(Res.string.nextMonth),
                         tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                         modifier = Modifier.size(32.dp)
                     )
@@ -282,7 +270,7 @@ fun DatePickerWithTimePicker(
             }
         }
         Text(
-            text = "Select time",
+            text = stringResource(Res.string.selectTime),
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(top = 16.dp),
             fontWeight = FontWeight.SemiBold,
@@ -290,10 +278,10 @@ fun DatePickerWithTimePicker(
         )
         SelectTimeSection(
             enabled = firstDate != null && firstTime == null && calendarDates.first { it.date == firstDate!!.date }.availableTimeSlots.any { it.canStartRange },
-            title = "Start time",
+            title = stringResource(Res.string.startTime),
             targetState = when {
-                firstDate == null -> "Select date first"
-                firstTime == null -> "${firstDate?.date?.format()} - Select time"
+                firstDate == null -> stringResource(Res.string.selectDateFirst)
+                firstTime == null -> stringResource(Res.string.selectTimeFirst,firstDate?.date?.format() ?: "")
                 else -> "${firstDate?.date?.format()} - ${firstTime!!.format()}"
             },
             selectedDate = firstDate,
@@ -305,11 +293,11 @@ fun DatePickerWithTimePicker(
         )
         SelectTimeSection(
             enabled = secondDate != null && secondTime == null && calendarDates.first { it.date == secondDate!!.date }.availableTimeSlots.any { it.isAvailable },
-            title = "End time",
+            title = stringResource(Res.string.endTime),
             targetState = when {
-                firstTime == null && firstDate == null -> "Select start time first"
-                secondDate == null -> "Select end date"
-                secondTime == null -> "${secondDate?.date?.format()} - Select time"
+                firstTime == null && firstDate == null -> stringResource(Res.string.selectStartTimeFirst)
+                secondDate == null -> stringResource(Res.string.selectEndDate)
+                secondTime == null -> stringResource(Res.string.selectEndTimeFirst, secondDate?.date?.format() ?: "")
                 else -> "${secondDate?.date?.format()} - ${secondTime!!.format()}"
             },
             selectedDate = secondDate,
@@ -590,7 +578,7 @@ private fun WeekNamesHeader(dateTimePickerDefaults: DateTimePickerDefaults) {
 @Composable
 private fun DatePickerWithTimePickerHeader() {
     Text(
-        text = "Select date range",
+        text = stringResource(Res.string.selectDateRange),
         style = MaterialTheme.typography.titleLarge,
         modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
         fontWeight = FontWeight.SemiBold,

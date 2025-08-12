@@ -27,6 +27,8 @@ import app.cash.paging.compose.collectAsLazyPagingItems
 import cz.kudladev.vehicletracking.core.designsystem.IconFloatingActionButton
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
 import cz.kudladev.vehicletracking.core.domain.auth.UserStateHolder
+import cz.kudladev.vehicletracking.core.ui.errorString
+import cz.kudladev.vehicletracking.core.ui.searchString
 import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleGridItem
 import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleGridItemSkeleton
 import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleHorizontalItem
@@ -35,8 +37,18 @@ import cz.kudladev.vehicletracking.model.User
 import cz.kudladev.vehicletracking.model.Vehicle
 import cz.kudladev.vehicletracking.model.isAdmin
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import vehicletracking.feature.vehicles.generated.resources.Res
+import vehicletracking.feature.vehicles.generated.resources.addVehicle
+import vehicletracking.feature.vehicles.generated.resources.changeView
+import vehicletracking.feature.vehicles.generated.resources.vehicleEmpty
+import vehicletracking.feature.vehicles.generated.resources.vehicleEmptyDescription
+import vehicletracking.feature.vehicles.generated.resources.vehicleError
+import vehicletracking.feature.vehicles.generated.resources.vehiclesManageTitle
+import vehicletracking.feature.vehicles.generated.resources.vehiclesSearchResults
+import vehicletracking.feature.vehicles.generated.resources.vehiclesTitle
 
 @Serializable
 data class VehicleList(
@@ -104,9 +116,9 @@ private fun VehicleListScreen(
                     title = {
                         Text(
                             text = when {
-                                searchQuery != null -> "Search results for \"$searchQuery\""
-                                onCreate != null -> "Manage Vehicles"
-                                else -> "Vehicles"
+                                searchQuery != null -> stringResource(Res.string.vehiclesSearchResults, searchQuery)
+                                onCreate != null -> stringResource(Res.string.vehiclesManageTitle)
+                                else -> stringResource(Res.string.vehiclesTitle)
                             },
                             fontStyle = FontStyle.Italic
                         )
@@ -119,7 +131,7 @@ private fun VehicleListScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.Search,
-                                contentDescription = "Search",
+                                contentDescription = searchString(),
                                 tint = MaterialTheme.colorScheme.onBackground
                             )
                         }
@@ -133,7 +145,7 @@ private fun VehicleListScreen(
                                     VehicleListView.Grid -> Icons.Outlined.GridView
                                     VehicleListView.List -> Icons.Outlined.ViewAgenda
                                 },
-                                contentDescription = "Change view",
+                                contentDescription = stringResource(Res.string.changeView),
                                 tint = MaterialTheme.colorScheme.onBackground
                             )
                         }
@@ -148,7 +160,7 @@ private fun VehicleListScreen(
                         icon = {
                             Icon(
                                 imageVector = Icons.Outlined.Add,
-                                contentDescription = "Add Vehicle",
+                                contentDescription = stringResource(Res.string.addVehicle),
                             )
                         }
                     )
@@ -208,12 +220,12 @@ private fun VehicleListScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.ErrorOutline,
-                                contentDescription = "Error",
+                                contentDescription = errorString(),
                                 tint = MaterialTheme.colorScheme.error,
                                 modifier = Modifier.size(64.dp)
                             )
                             Text(
-                                text = "Error loading vehicles",
+                                text = stringResource(Res.string.vehicleError),
                                 modifier = Modifier.padding(top = 8.dp),
                                 style = MaterialTheme.typography.titleSmall,
                             )
@@ -240,12 +252,12 @@ private fun VehicleListScreen(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Outlined.Info,
-                                        contentDescription = "No vehicles",
+                                        contentDescription = stringResource(Res.string.vehicleEmpty),
                                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.size(64.dp)
                                     )
                                     Text(
-                                        text = "No vehicles found",
+                                        text = stringResource(Res.string.vehicleEmptyDescription),
                                         modifier = Modifier.padding(top = 8.dp),
                                         style = MaterialTheme.typography.titleSmall,
                                     )

@@ -30,7 +30,11 @@ import cz.kudladev.vehicletracking.core.ui.util.toImageBitmap
 import cz.kudladev.vehicletracking.model.Image
 import cz.kudladev.vehicletracking.model.ImageWithBytes
 import cz.kudladev.vehicletracking.model.ImageWithUrl
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import vehicletracking.core.ui.generated.resources.Res
+import vehicletracking.core.ui.generated.resources.noImagesAvailable
+import vehicletracking.core.ui.generated.resources.removeImage
 
 @Composable
 fun VehicleImages(
@@ -61,7 +65,7 @@ fun VehicleImages(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "No images available",
+                        text = stringResource(Res.string.noImagesAvailable),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center,
@@ -131,7 +135,7 @@ fun VehicleImages(
                                 ){
                                     Icon(
                                         imageVector = Icons.Default.Close,
-                                        contentDescription = "Remove image",
+                                        contentDescription = stringResource(Res.string.removeImage),
                                     )
                                 }
                             }

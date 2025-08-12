@@ -27,6 +27,10 @@ import cz.kudladev.vehicletracking.core.ui.util.toImageBitmap
 import cz.kudladev.vehicletracking.model.Image
 import cz.kudladev.vehicletracking.model.ImageWithBytes
 import cz.kudladev.vehicletracking.model.ImageWithUrl
+import org.jetbrains.compose.resources.stringResource
+import vehicletracking.core.ui.generated.resources.Res
+import vehicletracking.core.ui.generated.resources.after
+import vehicletracking.core.ui.generated.resources.before
 
 @Composable
 fun SummaryImage(
@@ -99,7 +103,7 @@ fun SummaryImage(
                 // Text on top of everything
                 if (nextImage != null) {
                     Text(
-                        text = "Before",
+                        text = stringResource(Res.string.before),
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.align(Alignment.TopStart).padding(8.dp),
                         color = Color.White,
@@ -158,7 +162,7 @@ fun SummaryImage(
 
                 // Text on top of everything
                 Text(
-                    text = "After",
+                    text = stringResource(Res.string.after),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.align(Alignment.TopStart).padding(8.dp),
                     color = Color.White,

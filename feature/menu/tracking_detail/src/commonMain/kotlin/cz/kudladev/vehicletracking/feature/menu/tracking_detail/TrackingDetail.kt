@@ -12,11 +12,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.kudladev.vehicletracking.core.designsystem.BackButton
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
 import cz.kudladev.vehicletracking.core.ui.image.SummaryImage
+import cz.kudladev.vehicletracking.core.ui.rejectString
+import cz.kudladev.vehicletracking.core.ui.submitString
 import cz.kudladev.vehicletracking.core.ui.tracking.CurrentState
 import cz.kudladev.vehicletracking.core.ui.tracking.StateHistory
 import cz.kudladev.vehicletracking.core.ui.tracking.TrackingDetailSection
@@ -24,7 +27,14 @@ import cz.kudladev.vehicletracking.core.ui.tracking.TrackingHistory
 import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleHeader
 import cz.kudladev.vehicletracking.model.*
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import vehicletracking.feature.menu.tracking_detail.generated.resources.Res
+import vehicletracking.feature.menu.tracking_detail.generated.resources.imagesFromPickUp
+import vehicletracking.feature.menu.tracking_detail.generated.resources.loadingTrackingDetails
+import vehicletracking.feature.menu.tracking_detail.generated.resources.pickUp
+import vehicletracking.feature.menu.tracking_detail.generated.resources.`return`
+import vehicletracking.feature.menu.tracking_detail.generated.resources.trackingDetailTitle
 
 @Serializable
 data class TrackingDetail(val trackingId: String)
@@ -73,7 +83,10 @@ private fun TrackingDetailScreen(
         topBar = {
             LargeTopAppBar(
                 title = {
-                    Text(text = "Tracking Detail")
+                    Text(
+                        text = stringResource(Res.string.trackingDetailTitle),
+                        fontStyle = FontStyle.Italic,
+                    )
                 },
                 scrollBehavior = scrollBehavior,
                 navigationIcon = {
@@ -106,14 +119,14 @@ private fun TrackingDetailScreen(
                                             containerColor = MaterialTheme.colorScheme.tertiary,
                                             contentColor = MaterialTheme.colorScheme.onTertiary
                                         ){
-                                            Text(text = "Reject")
+                                            Text(text = rejectString())
                                         }
                                         SmallExtendedFloatingActionButton(
                                             onClick = {
                                                 onAction(TrackingDetailAction.ApproveTracking(state.tracking.data.id))
                                             }
                                         ) {
-                                            Text(text = "Approve")
+                                            Text(text = submitString())
                                         }
                                     }
                                 }
@@ -123,7 +136,7 @@ private fun TrackingDetailScreen(
                                             onPickUpProtocol(state.tracking.data.id, TrackingState.ACTIVE)
                                         }
                                     ) {
-                                        Text(text = "Pick-up")
+                                        Text(text = stringResource(Res.string.pickUp))
                                     }
                                 }
                                 TrackingState.ACTIVE -> {
@@ -132,7 +145,7 @@ private fun TrackingDetailScreen(
                                             onReturnProtocol(state.tracking.data.id, TrackingState.RETURNED)
                                         }
                                     ) {
-                                        Text(text = "Return")
+                                        Text(text = stringResource(Res.string.`return`))
                                     }
                                 }
                                 else -> {}
@@ -189,6 +202,7 @@ private fun TrackingDetailScreen(
                         item {
                             StateHistory(
                                 modifier = Modifier.fillMaxWidth(),
+                                tracking = it.data,
                                 logs = it.data.stateLogs
                             )
                         }
@@ -222,7 +236,7 @@ private fun TrackingDetailScreen(
                                     is UiState.Success -> {
                                         item {
                                             Text(
-                                                "Images from pick-up",
+                                                stringResource(Res.string.imagesFromPickUp),
                                                 style = MaterialTheme.typography.titleLarge
                                             )
                                         }
@@ -247,7 +261,7 @@ private fun TrackingDetailScreen(
                 else -> {
                     Column {
                         Text(
-                            text = "Loading tracking details...",
+                            text = stringResource(Res.string.loadingTrackingDetails),
                         )
                     }
                 }

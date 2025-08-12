@@ -1,0 +1,123 @@
+<resources>
+    <!-- Basic strings -->
+    <string name="continue">Pokračovat</string>
+    <string name="next">Další</string>
+    <string name="back">Zpět</string>
+    <string name="skip">Přeskočit</string>
+    <string name="submit">Odeslat</string>
+    <string name="reject">Odmítnout</string>
+    <string name="before">Před</string>
+    <string name="after">Po</string>
+    <string name="search">Hledat</string>
+    <string name="cancel">Zrušit</string>
+    <string name="done">Hotovo</string>
+    <string name="save">Uložit</string>
+    <string name="delete">Smazat</string>
+    <string name="edit">Upravit</string>
+    <string name="yes">Ano</string>
+    <string name="no">Ne</string>
+    <string name="ok">OK</string>
+    <string name="close">Zavřít</string>
+    <string name="error">Chyba</string>
+    <string name="loading">Načítání...</string>
+    <string name="clear">Vymazat</string>
+
+    <!-- TextFields -->
+    <string name="firstName">Jméno</string>
+    <string name="firstNameExample">Např. Jan</string>
+    <string name="lastName">Příjmení</string>
+    <string name="lastNameExample">Např. Novák</string>
+    <string name="email">E-mail</string>
+    <string name="emailExample">Např. jan.novak@example.com</string>
+    <string name="password">Heslo</string>
+    <string name="confirmPassword">Potvrzení hesla</string>
+    <string name="confirmPasswordInfo">Hesla se musí shodovat</string>
+    <string name="phoneNumber">Telefonní číslo</string>
+    <string name="phoneNumberExample">Např. +420 123 456 789</string>
+
+    <!-- Vehicle views -->
+    <string name="frontView">Pohled zepředu</string>
+    <string name="backView">Pohled zezadu</string>
+    <string name="leftView">Pohled zleva</string>
+    <string name="rightView">Pohled zprava</string>
+    <string name="tachometerReading">Stav tachometru</string>
+
+    <!-- Vehicle details -->
+    <string name="brand">Značka</string>
+    <string name="fullName">Celé jméno</string>
+    <string name="model">Model</string>
+    <string name="year">Rok</string>
+    <string name="color">Barva</string>
+    <string name="driverLicense">Řidičský průkaz</string>
+    <string name="licensePlate">SPZ</string>
+    <string name="transferableLicensePlate">Přenosná SPZ</string>
+    <string name="totalDistance">Celková vzdálenost</string>
+    <string name="maximumDistance">Maximální vzdálenost</string>
+    <string name="place">Místo</string>
+
+    <!-- Calendar -->
+    <string name="selectDateRange">Vyberte rozsah dat</string>
+
+    <string name="previousMonth">Předchozí měsíc</string>
+    <string name="nextMonth">Další měsíc</string>
+    <string name="selectTime">Vyberte čas</string>
+
+    <string name="monday">P</string>
+    <string name="tuesday">Ú</string>
+    <string name="wednesday">S</string>
+    <string name="thursday">Č</string>
+    <string name="friday">P</string>
+    <string name="saturday">S</string>
+    <string name="sunday">N</string>
+
+    <string name="january">Leden</string>
+    <string name="february">Únor</string>
+    <string name="march">Březen</string>
+    <string name="april">Duben</string>
+    <string name="may">Květen</string>
+    <string name="june">Červen</string>
+    <string name="july">Červenec</string>
+    <string name="august">Srpen</string>
+    <string name="september">Září</string>
+    <string name="october">Říjen</string>
+    <string name="november">Listopad</string>
+    <string name="december">Prosinec</string>
+
+    <string name="startTime">Čas začátku</string>
+    <string name="selectDateFirst">Nejprve vyberte datum</string>
+    <string name="selectTimeFirst">%1$s – Vyberte čas</string>
+
+    <string name="endTime">Čas ukončení</string>
+    <string name="selectStartTimeFirst">Nejprve vyberte čas začátku</string>
+    <string name="selectEndDate">Vyberte datum ukončení</string>
+    <string name="selectEndTimeFirst">%1$s – Vyberte čas</string>
+
+    <!-- Images -->
+    <string name="uploadProgress">Průběh nahrávání</string>
+    <string name="uploadingImages">Nahrávání obrázků</string>
+    <string name="uploadedOfImages">Nahráno %1$d z %2$d obrázků</string>
+    <string name="noImagesAvailable">Žádné obrázky k dispozici</string>
+    <string name="removeImage">Odstranit obrázek</string>
+
+    <!-- Search -->
+    <string name="searchPlaceholder">Jaké vozidlo hledáte?</string>
+
+    <!-- Tracking -->
+    <string name="currentState">Aktuální stav</string>
+    <string name="stateHistory">Historie stavu</string>
+    <string name="noMessageProvided">Nebyla poskytnuta žádná zpráva</string>
+    <string name="timeRemaining">Zbývající čas</string>
+    <string name="trackingDetails">Podrobnosti</string>
+    <string name="trackingId">Sledovací\nID</string>
+    <string name="startDate">Datum začátku</string>
+    <string name="endDate">Datum ukončení</string>
+    <string name="history">Historie</string>
+    <string name="historyEmpty">Není k dispozici žádná historie sledování.</string>
+
+    <!-- User -->
+    <string name="currentDistance">Aktuální vzdálenost</string>
+    <string name="userNotLoggedIn">Uživatel není přihlášen</string>
+
+    <!-- Brand -->
+    <string name="unknownBrand">Neznámá značka</string>
+</resources>

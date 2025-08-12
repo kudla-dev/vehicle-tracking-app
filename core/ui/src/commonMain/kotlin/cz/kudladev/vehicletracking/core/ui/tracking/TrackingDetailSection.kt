@@ -19,7 +19,13 @@ import androidx.compose.ui.unit.dp
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
 import cz.kudladev.vehicletracking.core.ui.util.toFormattedString
 import kotlinx.datetime.LocalDateTime
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import vehicletracking.core.ui.generated.resources.Res
+import vehicletracking.core.ui.generated.resources.endDate
+import vehicletracking.core.ui.generated.resources.startDate
+import vehicletracking.core.ui.generated.resources.trackingDetails
+import vehicletracking.core.ui.generated.resources.trackingId
 
 @Composable
 fun TrackingDetailSection(
@@ -32,15 +38,15 @@ fun TrackingDetailSection(
         modifier = modifier,
     ) {
         Text(
-            text = "Details",
+            text = stringResource(Res.string.trackingDetails),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.SemiBold,
             fontStyle = FontStyle.Italic,
         )
         Spacer(modifier = Modifier.height(24.dp))
-        TrackingDetailSectionItem("Tracking\nID", trackingId)
-        TrackingDetailSectionItem("Start Date", startDate.toFormattedString())
-        TrackingDetailSectionItem("End Date", endDate.toFormattedString())
+        TrackingDetailSectionItem(stringResource(Res.string.trackingId), trackingId)
+        TrackingDetailSectionItem(stringResource(Res.string.startDate), startDate.toFormattedString())
+        TrackingDetailSectionItem(stringResource(Res.string.endDate), endDate.toFormattedString())
     }
 }
 
@@ -62,7 +68,7 @@ private fun TrackingDetailSectionItem(
             modifier = Modifier.weight(1f),
             text = title,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
         )
         Text(
             modifier = Modifier.weight(3f),

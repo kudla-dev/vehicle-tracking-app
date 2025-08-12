@@ -33,8 +33,13 @@ import cz.kudladev.vehicletracking.core.ui.vehicle.*
 import cz.kudladev.vehicletracking.feature.vehicledetail.VehicleDetailAction.OnStartEndDateTimeChange
 import cz.kudladev.vehicletracking.model.UiState
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
+import vehicletracking.feature.vehicle_detail.generated.resources.Res
+import vehicletracking.feature.vehicle_detail.generated.resources.calendarError
+import vehicletracking.feature.vehicle_detail.generated.resources.reserveAction
+import vehicletracking.feature.vehicle_detail.generated.resources.trackingCreationLoading
 
 @Serializable
 data class VehicleDetails(val vehicleId: Int? = null)
@@ -123,7 +128,7 @@ fun VehicleDetailScreen(
                             when (state.calendar) {
                                 is UiState.Error -> {
                                     Text(
-                                        text = "Error loading calendar: ${state.calendar.message}",
+                                        text = stringResource(Res.string.calendarError),
                                         color = MaterialTheme.colorScheme.error,
                                         modifier = Modifier.padding(16.dp)
                                     )
@@ -190,7 +195,7 @@ fun VehicleDetailScreen(
                         onClick = {
                             onAction(VehicleDetailAction.CreateTracking)
                         },
-                        text = "Reserve"
+                        text = stringResource(Res.string.reserveAction)
                     )
                 }
             }
@@ -202,7 +207,7 @@ fun VehicleDetailScreen(
         }
     }
     LoadingDialog(
-        title = "Creating a new tracking...",
+        title = stringResource(Res.string.trackingCreationLoading),
         isLoading = state.trackingCreatingState is UiState.Loading
     )
 }

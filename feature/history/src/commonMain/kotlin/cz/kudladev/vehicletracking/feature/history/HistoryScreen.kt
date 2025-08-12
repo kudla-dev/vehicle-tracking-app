@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
@@ -26,11 +27,12 @@ import cz.kudladev.vehicletracking.core.ui.tracking.TrackingItem
 import cz.kudladev.vehicletracking.core.ui.tracking.TrackingItemSkeleton
 import cz.kudladev.vehicletracking.core.ui.user.UserDistanceProgress
 import cz.kudladev.vehicletracking.model.Tracking
-import cz.kudladev.vehicletracking.model.UiState
 import cz.kudladev.vehicletracking.model.User
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import vehicletracking.feature.history.generated.resources.*
 
 @Serializable
 data object History
@@ -82,7 +84,7 @@ fun HistoryScreen(
                 LargeTopAppBar(
                     title = {
                         Text(
-                            "History",
+                            stringResource(Res.string.historyTitle),
                             fontStyle = FontStyle.Italic
 
                         )
@@ -103,7 +105,7 @@ fun HistoryScreen(
                 when (it) {
                     is LoadState.Error -> {
                         Text(
-                            text = "Error loading trackings: ${it.error}",
+                            text = stringResource(Res.string.historyError, it.error.message?: stringResource(Res.string.historyEmpty)),
                             modifier = Modifier.padding(combinedPadding)
                         )
                     }
@@ -134,14 +136,20 @@ fun HistoryScreen(
                                 ) {
                                     Image(
                                         painter = painterResource(Images.NotFound),
-                                        contentDescription = "No trackings found",
+                                        contentDescription = stringResource(Res.string.historyEmpty),
                                         modifier = Modifier.size(64.dp)
                                     )
                                     Text(
-                                        text = "No trackings found",
+                                        text = stringResource(Res.string.historyEmpty),
                                         modifier = Modifier.padding(top = 8.dp),
                                         style = MaterialTheme.typography.titleSmall,
                                         fontStyle = FontStyle.Italic
+                                    )
+                                    Text(
+                                        text = stringResource(Res.string.historyEmptyDescription),
+                                        modifier = Modifier.padding(top = 4.dp),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        textAlign = TextAlign.Center,
                                     )
                                 }
                             }

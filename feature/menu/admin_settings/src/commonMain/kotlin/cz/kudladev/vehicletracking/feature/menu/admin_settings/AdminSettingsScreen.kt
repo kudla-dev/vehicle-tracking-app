@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.kudladev.vehicletracking.core.designsystem.BackButton
@@ -24,7 +25,12 @@ import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
 import cz.kudladev.vehicletracking.core.ui.menu.MenuSection
 import cz.kudladev.vehicletracking.core.ui.menu.MenuSectionItem
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import vehicletracking.feature.menu.admin_settings.generated.resources.Res
+import vehicletracking.feature.menu.admin_settings.generated.resources.adminSettingsTitle
+import vehicletracking.feature.menu.admin_settings.generated.resources.defaultPlace
+import vehicletracking.feature.menu.admin_settings.generated.resources.requestNotification
 
 @Serializable
 data object AdminSettings
@@ -58,7 +64,10 @@ fun AdminSettingsScreen(
         topBar = {
             LargeTopAppBar(
                 title = {
-                    Text("Admin Settings")
+                    Text(
+                        stringResource(Res.string.adminSettingsTitle),
+                        fontStyle = FontStyle.Italic,
+                    )
                 },
                 navigationIcon = {
                     BackButton(
@@ -84,14 +93,14 @@ fun AdminSettingsScreen(
                 MenuSection {
                     MenuSectionItem(
                         icon = Icons.TwoTone.HomeWork,
-                        title = "Default place",
+                        title = stringResource(Res.string.defaultPlace),
                         action = {
 
                         }
                     )
                     MenuSectionItem(
                         icon = Icons.TwoTone.Mail,
-                        title = "Request notifications",
+                        title = stringResource(Res.string.requestNotification),
                         action = {
 
                         },

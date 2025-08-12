@@ -1,0 +1,15 @@
+<resources>
+    <string name="vehiclesTitle">Vehicles</string>
+    <string name="vehiclesManageTitle">Manage Vehicles</string>
+    <string name="vehiclesSearchResults">Search results for "%1$s"</string>
+
+    <string name="changeView">Change View</string>
+    <string name="addVehicle">Add Vehicle</string>
+
+    <string name="vehicleError">Error while loading vehicles</string>
+
+    <string name="vehicleEmpty">No vehicles</string>
+    <string name="vehicleEmptyDescription">No vehicle found</string>
+
+
+</resources>

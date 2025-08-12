@@ -1,0 +1,13 @@
+<resources>
+    <string name="vehiclesTitle">Vozidla</string>
+    <string name="vehiclesManageTitle">Správa vozidel</string>
+    <string name="vehiclesSearchResults">Výsledky hledání pro „%1$s“</string>
+
+    <string name="changeView">Změnit zobrazení</string>
+    <string name="addVehicle">Přidat vozidlo</string>
+
+    <string name="vehicleError">Chyba při načítání vozidel</string>
+
+    <string name="vehicleEmpty">Žádná vozidla</string>
+    <string name="vehicleEmptyDescription">Nebylo nalezeno žádné vozidlo</string>
+</resources>

@@ -1,0 +1,11 @@
+<resources>
+
+    <string name="trackingDetailTitle">Tracking Detail</string>
+    <string name="pickUp">Pick-up</string>
+    <string name="return">Return</string>
+    <string name="imagesFromPickUp">Images from pick-up</string>
+    <string name="imagesFromReturn">Images from return</string>
+
+    <string name="loadingTrackingDetails">Loading tracking details...</string>
+
+</resources>

@@ -108,6 +108,9 @@ android {
     namespace = "cz.kudladev.vehicletracking"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
+//    androidResources {
+//        generateLocaleConfig = true
+//    }
     defaultConfig {
         applicationId = "cz.kudladev.vehicletracking"
         minSdk = libs.versions.android.minSdk.get().toInt()

@@ -27,7 +27,11 @@ import cz.kudladev.vehicletracking.core.designsystem.Image
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
 import cz.kudladev.vehicletracking.core.ui.util.toFormattedString
 import cz.kudladev.vehicletracking.model.Tracking
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import vehicletracking.core.ui.generated.resources.Res
+import vehicletracking.core.ui.generated.resources.history
+import vehicletracking.core.ui.generated.resources.historyEmpty
 
 @Composable
 fun TrackingHistory(
@@ -40,7 +44,7 @@ fun TrackingHistory(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = "History",
+            text = stringResource(Res.string.history),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.SemiBold,
             fontStyle = FontStyle.Italic,
@@ -48,7 +52,7 @@ fun TrackingHistory(
         Spacer(modifier = Modifier.height(16.dp))
         if (trackingHistory.isEmpty()) {
             Text(
-                text = "No tracking history available.",
+                text = stringResource(Res.string.historyEmpty),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
@@ -95,7 +99,7 @@ fun TrackingHistoryItem(tracking: Tracking, onClick: (Tracking) -> Unit) {
                     .padding(start = 8.dp, end = 8.dp)
             ){
                 Badge(
-                    text = lastTracking.state.displayName,
+                    text = stringResource(lastTracking.state.displayName),
                     icon = lastTracking.state.activeIcon,
                 )
             }

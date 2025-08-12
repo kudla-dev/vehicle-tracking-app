@@ -1,0 +1,7 @@
+<resources>
+
+    <string name="adminSettingsTitle">Admin Settings</string>
+    <string name="defaultPlace">Default place</string>
+    <string name="requestNotification">Request notification</string>
+
+</resources>

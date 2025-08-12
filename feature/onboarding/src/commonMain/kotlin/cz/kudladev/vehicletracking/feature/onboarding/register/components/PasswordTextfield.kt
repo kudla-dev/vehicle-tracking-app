@@ -192,7 +192,7 @@ fun PasswordRule(
                             .rotate(-rotate),
                         imageVector = Icons.Default.Close,
                         contentDescription = null,
-                        tint = if (showError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = if (showError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -200,7 +200,7 @@ fun PasswordRule(
         Text(
             text = rule,
             style = MaterialTheme.typography.bodySmall,
-            color = if (showError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+            color = if (showError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

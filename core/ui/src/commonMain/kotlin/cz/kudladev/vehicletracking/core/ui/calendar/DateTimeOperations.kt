@@ -17,6 +17,27 @@ import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.until
+import org.jetbrains.compose.resources.stringResource
+import vehicletracking.core.ui.generated.resources.Res
+import vehicletracking.core.ui.generated.resources.april
+import vehicletracking.core.ui.generated.resources.august
+import vehicletracking.core.ui.generated.resources.december
+import vehicletracking.core.ui.generated.resources.february
+import vehicletracking.core.ui.generated.resources.friday
+import vehicletracking.core.ui.generated.resources.january
+import vehicletracking.core.ui.generated.resources.july
+import vehicletracking.core.ui.generated.resources.june
+import vehicletracking.core.ui.generated.resources.march
+import vehicletracking.core.ui.generated.resources.may
+import vehicletracking.core.ui.generated.resources.monday
+import vehicletracking.core.ui.generated.resources.november
+import vehicletracking.core.ui.generated.resources.october
+import vehicletracking.core.ui.generated.resources.saturday
+import vehicletracking.core.ui.generated.resources.september
+import vehicletracking.core.ui.generated.resources.sunday
+import vehicletracking.core.ui.generated.resources.thursday
+import vehicletracking.core.ui.generated.resources.tuesday
+import vehicletracking.core.ui.generated.resources.wednesday
 
 object DateTimeOperations {
 
@@ -257,6 +278,38 @@ data class DateTimePickerDefaults(
             saturday = listOfDays[5],
             sunday = listOfDays[6]
         )
+    }
+    companion object {
+        @Composable
+        fun localizedMonthNames(): MonthNames {
+            return MonthNames(
+                january = stringResource(Res.string.january),
+                february = stringResource(Res.string.february),
+                march = stringResource(Res.string.march),
+                april = stringResource(Res.string.april),
+                may = stringResource(Res.string.may),
+                june = stringResource(Res.string.june),
+                july = stringResource(Res.string.july),
+                august = stringResource(Res.string.august),
+                september = stringResource(Res.string.september),
+                october = stringResource(Res.string.october),
+                november = stringResource(Res.string.november),
+                december = stringResource(Res.string.december)
+            )
+        }
+
+        @Composable
+        fun localizedDayOfWeekNames(): DayOfWeekNames {
+            return DayOfWeekNames(
+                monday = stringResource(Res.string.monday),
+                tuesday = stringResource(Res.string.tuesday),
+                wednesday = stringResource(Res.string.wednesday),
+                thursday = stringResource(Res.string.thursday),
+                friday = stringResource(Res.string.friday),
+                saturday = stringResource(Res.string.saturday),
+                sunday = stringResource(Res.string.sunday)
+            )
+        }
     }
 }
 

@@ -1,0 +1,8 @@
+<resources>
+    <string name="trackingTitle">Aktuální sledování</string>
+
+    <string name="trackingError">Chyba při načítání sledování</string>
+    <string name="trackingEmpty">Jejda! Zdá se, že není žádné aktivní sledování.</string>
+
+    <string name="confirmReturn">Potvrdit vrácení</string>
+</resources>

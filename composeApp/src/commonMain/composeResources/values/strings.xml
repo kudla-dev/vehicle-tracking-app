@@ -1,0 +1,7 @@
+<resources>
+    <string name="bottomBarVehicles">Vehicles</string>
+    <string name="bottomBarFavourites">Favourites</string>
+    <string name="bottomBarTracking">Tracking</string>
+    <string name="bottomBarHistory">History</string>
+    <string name="bottomBarMenu">Menu</string>
+</resources>

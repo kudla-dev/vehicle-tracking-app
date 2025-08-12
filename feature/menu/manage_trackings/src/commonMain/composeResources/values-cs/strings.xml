@@ -1,0 +1,10 @@
+<resources>
+    <string name="manageTrackingsActiveTitle">Aktivní sledování</string>
+    <string name="manageTrackingsNotStartedTitle">Sledování připravená ke spuštění</string>
+    <string name="manageTrackingsRequestedTitle">Požadovaná sledování</string>
+    <string name="manageTrackingsHistoryTitle">Historie sledování</string>
+
+    <string name="manageTrackingsError">Chyba při načítání sledování</string>
+    <string name="manageTrackingsEmpty">Nebyla nalezena žádná sledování</string>
+    <string name="manageTrackingsEmptyDescription">Ale ne! Nepodařilo se nám najít žádná sledování.</string>
+</resources>

@@ -28,7 +28,10 @@ import cz.kudladev.vehicletracking.core.designsystem.Image
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
 import cz.kudladev.vehicletracking.model.Brand
 import cz.kudladev.vehicletracking.model.Vehicle
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import vehicletracking.core.ui.generated.resources.Res
+import vehicletracking.core.ui.generated.resources.unknownBrand
 
 @Composable
 fun VehicleHeader(
@@ -49,7 +52,7 @@ fun VehicleHeader(
                 .weight(1f)
         ) {
             Text(
-                text = vehicle.brand?.name ?: "Unknown Brand",
+                text = vehicle.brand?.name ?: stringResource(Res.string.unknownBrand),
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis

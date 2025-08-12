@@ -1,0 +1,12 @@
+<resources>
+
+    <string name="manageTrackingsActiveTitle">Active Trackings</string>
+    <string name="manageTrackingsNotStartedTitle">Ready to Start Trackings</string>
+    <string name="manageTrackingsRequestedTitle">Requested Trackings</string>
+    <string name="manageTrackingsHistoryTitle">Trackings History</string>
+
+    <string name="manageTrackingsError">Error while loading trackings</string>
+    <string name="manageTrackingsEmpty">No trackings found</string>
+    <string name="manageTrackingsEmptyDescription">Oh no! We couldn't find any trackings.</string>
+
+</resources>

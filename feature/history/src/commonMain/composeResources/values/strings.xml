@@ -1,0 +1,8 @@
+<resources>
+    <string name="historyTitle">History</string>
+
+    <string name="historyError">Error while loading history: %1$s</string>
+    <string name="historyEmpty">It seems you have no history yet.</string>
+    <string name="historyEmptyDescription">Finish at least one tracking to see it here.</string>
+    
+</resources>

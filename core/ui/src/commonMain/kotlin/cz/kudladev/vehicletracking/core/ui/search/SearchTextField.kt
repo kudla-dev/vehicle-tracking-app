@@ -24,6 +24,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import cz.kudladev.vehicletracking.core.ui.cancelString
+import cz.kudladev.vehicletracking.core.ui.clearString
+import cz.kudladev.vehicletracking.core.ui.searchString
+import org.jetbrains.compose.resources.stringResource
+import vehicletracking.core.ui.generated.resources.Res
+import vehicletracking.core.ui.generated.resources.searchPlaceholder
 
 @Composable
 fun SearchTextField(
@@ -57,7 +63,7 @@ fun SearchTextField(
             ),
             placeholder = {
                 Text(
-                    "What vehicle are you looking for?",
+                    stringResource(Res.string.searchPlaceholder),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                     maxLines = 1,
@@ -68,7 +74,7 @@ fun SearchTextField(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = "Search",
+                    contentDescription = searchString(),
                 )
             },
             trailingIcon = {
@@ -80,7 +86,7 @@ fun SearchTextField(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Clear",
+                            contentDescription = clearString(),
                         )
                     }
                 }
@@ -101,7 +107,7 @@ fun SearchTextField(
             onClick = onCancel
         ) {
             Text(
-                text = "Cancel",
+                text = cancelString(),
                 color = MaterialTheme.colorScheme.primary,
                 maxLines = 1,
                 minLines = 1,

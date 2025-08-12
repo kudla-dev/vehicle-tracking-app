@@ -22,6 +22,9 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
+import vehicletracking.core.ui.generated.resources.Res
+import vehicletracking.core.ui.generated.resources.timeRemaining
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -53,7 +56,7 @@ fun TimeRemaining(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = "Time Remaining",
+            text = stringResource(Res.string.timeRemaining),
             style = MaterialTheme.typography.titleSmall,
         )
         LinearProgressIndicator(

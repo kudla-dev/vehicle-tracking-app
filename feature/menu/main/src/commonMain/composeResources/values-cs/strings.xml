@@ -1,0 +1,19 @@
+<resources>
+    <string name="menuTitle">Menu</string>
+
+    <string name="accountSection">Účet</string>
+    <string name="personalData">Osobní údaje</string>
+    <string name="changePassword">Změnit heslo</string>
+    <string name="logout">Odhlásit se</string>
+
+    <string name="adminSection">Admin</string>
+    <string name="manageUsers">Správa uživatelů</string>
+    <string name="manageVehicles">Správa vozidel</string>
+    <string name="trackingHistory">Historie sledování</string>
+    <string name="adminSettings">Nastavení administrátora</string>
+
+    <string name="trackingsSection">Sledování</string>
+    <string name="trackingsNewRequest">Nové žádosti</string>
+    <string name="trackingsReadyToStart">Sledování připravená ke spuštění</string>
+    <string name="trackingsActive">Aktivní sledování</string>
+</resources>

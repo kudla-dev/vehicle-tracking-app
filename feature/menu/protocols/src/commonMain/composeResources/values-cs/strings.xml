@@ -1,0 +1,11 @@
+<resources>
+    <string name="pickUpProtocolTitle">Protokol převzetí</string>
+    <string name="returnProtocolTitle">Protokol vrácení</string>
+
+    <string name="cameraPermissionDenied">Přístup ke kameře byl odepřen. Povolte prosím přístup v nastavení.</string>
+
+    <string name="retake">Pořídit znovu</string>
+
+    <string name="currentMileage">Aktuální stav tachometru</string>
+    <string name="additionalNotes">Doplňující poznámky</string>
+</resources>

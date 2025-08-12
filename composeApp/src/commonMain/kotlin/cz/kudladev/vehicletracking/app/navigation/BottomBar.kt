@@ -31,12 +31,20 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import cz.kudladev.vehicletracking.app.AppState
 import cz.kudladev.vehicletracking.app.navigation.core.*
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
+import vehicletracking.composeapp.generated.resources.Res
+import vehicletracking.composeapp.generated.resources.bottomBarFavourites
+import vehicletracking.composeapp.generated.resources.bottomBarHistory
+import vehicletracking.composeapp.generated.resources.bottomBarMenu
+import vehicletracking.composeapp.generated.resources.bottomBarTracking
+import vehicletracking.composeapp.generated.resources.bottomBarVehicles
 import kotlin.reflect.KClass
 
 enum class BottomBarDestinations(
     val unSelectedIcon: ImageVector,
     val selectedIcon: ImageVector,
-    val label: String,
+    val label: StringResource,
     @Serializable
     val route: KClass<*>,
     val baseRoute: KClass<*> = route,
@@ -44,31 +52,31 @@ enum class BottomBarDestinations(
     VehicleListDest(
         unSelectedIcon = Icons.AutoMirrored.Default.List,
         selectedIcon = Icons.AutoMirrored.Filled.List,
-        label = "Vehicles",
+        label = Res.string.bottomBarVehicles,
         route = VehicleRoot::class,
     ),
     FavouriteDest(
         unSelectedIcon = Icons.Outlined.Favorite,
         selectedIcon = Icons.Filled.Favorite,
-        label = "Favourite",
+        label = Res.string.bottomBarFavourites,
         route = FavouriteRoot::class,
     ),
     CurrentTrackingDest(
         unSelectedIcon = Icons.Outlined.DirectionsCar,
         selectedIcon = Icons.Filled.DirectionsCar,
-        label = "Tracking",
+        label = Res.string.bottomBarTracking,
         route = TrackingRoot::class,
     ),
     HistoryDest(
         unSelectedIcon = Icons.Outlined.History,
         selectedIcon = Icons.Filled.History,
-        label = "History",
+        label = Res.string.bottomBarHistory,
         route = HistoryRoot::class,
     ),
     MenuDest(
         unSelectedIcon = Icons.Outlined.Menu,
         selectedIcon = Icons.Filled.Menu,
-        label = "Menu",
+        label = Res.string.bottomBarMenu,
         route = MenuRoot::class,
     ),
 }
@@ -122,12 +130,12 @@ fun RowScope.BottomBarItem(
         icon = {
             Icon(
                 imageVector = if (isSelected) destination.selectedIcon else destination.unSelectedIcon,
-                contentDescription = destination.label
+                contentDescription = stringResource(destination.label)
             )
         },
         label = {
             Text(
-                text = destination.label,
+                text = stringResource(destination.label),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.labelSmall,

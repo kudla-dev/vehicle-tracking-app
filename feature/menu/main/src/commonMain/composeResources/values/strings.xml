@@ -1,0 +1,21 @@
+<resources>
+    <string name="menuTitle">Menu</string>
+
+    <string name="accountSection">Account</string>
+    <string name="personalData">Personal data</string>
+    <string name="changePassword">Change password</string>
+    <string name="logout">Logout</string>
+
+    <string name="adminSection">Admin</string>
+    <string name="manageUsers">Manage users</string>
+    <string name="manageVehicles">Manage vehicles</string>
+    <string name="trackingHistory">Tracking history</string>
+    <string name="adminSettings">Admin settings</string>
+
+    <string name="trackingsSection">Trackings</string>
+    <string name="trackingsNewRequest">New requests</string>
+    <string name="trackingsReadyToStart">Ready to start trackings</string>
+    <string name="trackingsActive">Active trackings</string>
+
+
+</resources>

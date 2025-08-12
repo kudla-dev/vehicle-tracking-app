@@ -1,0 +1,9 @@
+<resources>
+    <string name="trackingDetailTitle">Detail sledování</string>
+    <string name="pickUp">Převzít</string>
+    <string name="return">Vrátit</string>
+    <string name="imagesFromPickUp">Obrázky z převzetí</string>
+    <string name="imagesFromReturn">Obrázky z vrácení</string>
+
+    <string name="loadingTrackingDetails">Načítání detailů sledování...</string>
+</resources>

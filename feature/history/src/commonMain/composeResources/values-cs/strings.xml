@@ -1,0 +1,7 @@
+<resources>
+    <string name="historyTitle">Historie</string>
+
+    <string name="historyError">Chyba při načítání historie: %1$s</string>
+    <string name="historyEmpty">Zdá se, že zatím nemáte žádnou historii.</string>
+    <string name="historyEmptyDescription">Dokončete alespoň jedno sledování, aby se zde zobrazilo.</string>
+</resources>

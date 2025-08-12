@@ -1,0 +1,13 @@
+<resources>
+
+    <string name="pickUpProtocolTitle">Pick-up protocol</string>
+    <string name="returnProtocolTitle">Return protocol</string>
+
+    <string name="cameraPermissionDenied">Camera permission denied. Please allow camera access in settings.</string>
+
+    <string name="retake">Retake</string>
+
+    <string name="currentMileage">Current mileage</string>
+    <string name="additionalNotes">Additional notes</string>
+
+</resources>

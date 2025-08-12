@@ -43,9 +43,9 @@ TextFieldDefaults.colors().copy(
         handleColor = MaterialTheme.colorScheme.primary,
         backgroundColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
     ),
-    focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-    unfocusedIndicatorColor = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.5f),
-    disabledIndicatorColor = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.12f),
+    focusedIndicatorColor = MaterialTheme.colorScheme.secondary,
+    unfocusedIndicatorColor = MaterialTheme.colorScheme.secondary,
+    disabledIndicatorColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f),
     errorIndicatorColor = MaterialTheme.colorScheme.error,
     focusedLeadingIconColor = MaterialTheme.colorScheme.onSecondary,
     unfocusedLeadingIconColor = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.7f),
