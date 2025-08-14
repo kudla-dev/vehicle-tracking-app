@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.TrackChanges
 import androidx.compose.material.icons.twotone.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -28,6 +29,7 @@ import cz.kudladev.vehicletracking.model.Role
 import cz.kudladev.vehicletracking.model.User
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 import vehicletracking.feature.menu.main.generated.resources.Res
 import vehicletracking.feature.menu.main.generated.resources.accountSection
 import vehicletracking.feature.menu.main.generated.resources.adminSection
@@ -48,6 +50,7 @@ import vehicletracking.feature.menu.main.generated.resources.trackingsSection
 fun MenuScreenRoot(
     paddingValues: PaddingValues,
     userStateHolder: UserStateHolder = koinInject(),
+    viewModel: MenuScreenViewModel = koinViewModel(),
     onAdminSettings: () -> Unit,
     onManageVehicles: () -> Unit,
     onActiveTrackings: () -> Unit,
@@ -56,9 +59,11 @@ fun MenuScreenRoot(
     onTrackingHistory: () -> Unit,
 ) {
     val user = userStateHolder.user.collectAsStateWithLifecycle().value
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     MenuScreen(
         paddingValues = paddingValues,
+        state = state,
         user = user,
         onAdminSettings = onAdminSettings,
         onManageVehicles = onManageVehicles,
@@ -73,6 +78,7 @@ fun MenuScreenRoot(
 @Composable
 private fun MenuScreen(
     paddingValues: PaddingValues,
+    state: MenuScreenState,
     user: User?,
     onAdminSettings: () -> Unit,
     onManageVehicles: () -> Unit,
@@ -138,6 +144,7 @@ private fun MenuScreen(
                 }
                 if (user!!.role == Role.ADMIN){
                     trackingSection(
+                        state = state,
                         onActiveTrackings = onActiveTrackings,
                         onNonStartedTrackings= onNonStartedTrackings,
                         onNewRequestsTrackings = onNewRequestsTrackings
@@ -231,6 +238,7 @@ private fun LazyListScope.adminSection(
 }
 
 private fun LazyListScope.trackingSection(
+    state: MenuScreenState,
     onActiveTrackings: () -> Unit,
     onNonStartedTrackings: () -> Unit,
     onNewRequestsTrackings: () -> Unit,
@@ -242,6 +250,7 @@ private fun LazyListScope.trackingSection(
             MenuSectionItem(
                 icon = Icons.TwoTone.MarkunreadMailbox,
                 title = stringResource(Res.string.trackingsNewRequest),
+                badgeCount = state.newRequestsCount,
                 onClick = {
                     onNewRequestsTrackings()
                 },
@@ -249,6 +258,7 @@ private fun LazyListScope.trackingSection(
             MenuSectionItem(
                 icon = Icons.TwoTone.SportsScore,
                 title = stringResource(Res.string.trackingsReadyToStart),
+                badgeCount = state.readyToStartCount,
                 onClick = {
                     onNonStartedTrackings()
                 }
@@ -256,6 +266,7 @@ private fun LazyListScope.trackingSection(
             MenuSectionItem(
                 icon = Icons.TwoTone.Motorcycle,
                 title = stringResource(Res.string.trackingsActive),
+                badgeCount = state.activeCount,
                 onClick = {
                     onActiveTrackings()
                 },

@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import org.jetbrains.compose.resources.stringResource
 import vehicletracking.core.ui.generated.resources.Res
 import vehicletracking.core.ui.generated.resources.back
+import vehicletracking.core.ui.generated.resources.backView
 import vehicletracking.core.ui.generated.resources.brand
 import vehicletracking.core.ui.generated.resources.clear
 import vehicletracking.core.ui.generated.resources.color
@@ -104,7 +105,7 @@ fun phoneNumberExampleString(): String = stringResource(Res.string.phoneNumberEx
 fun frontViewString(): String = stringResource(Res.string.frontView)
 
 @Composable
-fun backViewString(): String = stringResource(Res.string.back)
+fun backViewString(): String = stringResource(Res.string.backView)
 
 @Composable
 fun leftViewString(): String = stringResource(Res.string.leftView)

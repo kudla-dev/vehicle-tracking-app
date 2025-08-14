@@ -14,6 +14,6 @@
 
     <string name="trackingsSection">Sledování</string>
     <string name="trackingsNewRequest">Nové žádosti</string>
-    <string name="trackingsReadyToStart">Sledování připravená ke spuštění</string>
-    <string name="trackingsActive">Aktivní sledování</string>
+    <string name="trackingsReadyToStart">Připravené ke spuštění</string>
+    <string name="trackingsActive">Aktivní</string>
 </resources>

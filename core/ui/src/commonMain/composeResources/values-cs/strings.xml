@@ -62,13 +62,13 @@
     <string name="nextMonth">Další měsíc</string>
     <string name="selectTime">Vyberte čas</string>
 
-    <string name="monday">P</string>
-    <string name="tuesday">Ú</string>
-    <string name="wednesday">S</string>
-    <string name="thursday">Č</string>
-    <string name="friday">P</string>
-    <string name="saturday">S</string>
-    <string name="sunday">N</string>
+    <string name="monday">Pondělí</string>
+    <string name="tuesday">Úterý</string>
+    <string name="wednesday">Středa</string>
+    <string name="thursday">Čtvrtek</string>
+    <string name="friday">Pátek</string>
+    <string name="saturday">Sobota</string>
+    <string name="sunday">Neděle</string>
 
     <string name="january">Leden</string>
     <string name="february">Únor</string>
@@ -113,6 +113,42 @@
     <string name="endDate">Datum ukončení</string>
     <string name="history">Historie</string>
     <string name="historyEmpty">Není k dispozici žádná historie sledování.</string>
+
+    <string name="invalid_time_range">Neplatný časový rozsah</string>
+    <string name="not_started_yet">Ještě nezačalo</string>
+    <string name="ended">Ukončeno</string>
+
+    <!-- Czech has complex plural forms -->
+    <plurals name="months">
+        <item quantity="one">1 měsíc</item>
+        <item quantity="few">%1$d měsíce</item>
+        <item quantity="many">%1$d měsíců</item>
+        <item quantity="other">%1$d měsíců</item>
+    </plurals>
+    <plurals name="days">
+        <item quantity="one">1 den</item>
+        <item quantity="few">%1$d dny</item>
+        <item quantity="many">%1$d dnů</item>
+        <item quantity="other">%1$d dnů</item>
+    </plurals>
+    <plurals name="hours">
+        <item quantity="one">1 hodina</item>
+        <item quantity="few">%1$d hodiny</item>
+        <item quantity="many">%1$d hodin</item>
+        <item quantity="other">%1$d hodin</item>
+    </plurals>
+    <plurals name="minutes">
+        <item quantity="one">1 minuta</item>
+        <item quantity="few">%1$d minuty</item>
+        <item quantity="many">%1$d minut</item>
+        <item quantity="other">%1$d minut</item>
+    </plurals>
+    <plurals name="seconds">
+        <item quantity="one">1 sekunda</item>
+        <item quantity="few">%1$d sekundy</item>
+        <item quantity="many">%1$d sekund</item>
+        <item quantity="other">%1$d sekund</item>
+    </plurals>
 
     <!-- User -->
     <string name="currentDistance">Aktuální vzdálenost</string>

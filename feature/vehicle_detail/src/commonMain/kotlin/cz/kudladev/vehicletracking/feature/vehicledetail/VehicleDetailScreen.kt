@@ -138,7 +138,9 @@ fun VehicleDetailScreen(
                                         range = true,
                                         dateTimePickerDefaults = DateTimePickerDefaults(
                                             disablePastDates = true,
-                                            disabledDatesWithTimeSlot = state.calendar.data
+                                            disabledDatesWithTimeSlot = state.calendar.data,
+                                            monthNames = DateTimePickerDefaults.localizedMonthNames(),
+                                            dayOfWeekNames = DateTimePickerDefaults.localizedDayOfWeekNames()
                                         ),
                                         onRangeSelected = { start, end ->
                                             onAction(OnStartEndDateTimeChange(start, end))

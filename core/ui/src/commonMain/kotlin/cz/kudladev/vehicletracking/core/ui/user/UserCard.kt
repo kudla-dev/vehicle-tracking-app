@@ -1,8 +1,11 @@
 package cz.kudladev.vehicletracking.core.ui.user
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -35,21 +38,35 @@ fun UserCard(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            Text(
-                text = stringResource(user.role.displayName).uppercase(),
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
-            )
-            Text(
-                text = user.fullName,
-                style = MaterialTheme.typography.titleMedium
-            )
-            Text(
-                text = user.email,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                UserProfile(
+                    modifier = Modifier
+                        .size(64.dp),
+                    user = user,
+                    onClick = onClick
+                )
+                Column {
+                    Text(
+                        text = stringResource(user.role.displayName).uppercase(),
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                    )
+                    Text(
+                        text = user.fullName,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+//                    Text(
+//                        text = user.email,
+//                        style = MaterialTheme.typography.labelMedium,
+//                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+//                    )
+                }
+            }
             UserDistanceProgress(
                 modifier = Modifier.padding(top = 8.dp),
                 distance = user.overallDistance,
@@ -67,8 +84,8 @@ internal val testUser = User(
     email = "john.doe@gmail.com",
     phoneNumber = "1234567890",
     role = Role.USER,
-    maximumDistance = 0,
-    overallDistance = 0
+    maximumDistance = 2000,
+    overallDistance = 500
 )
 
 @Preview

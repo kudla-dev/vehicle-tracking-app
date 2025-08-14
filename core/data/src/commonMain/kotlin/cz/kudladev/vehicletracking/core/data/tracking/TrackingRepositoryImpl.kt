@@ -72,6 +72,14 @@ class TrackingRepositoryImpl(
         }
     }
 
+    override suspend fun getCountByState(state: TrackingState): Result<Int, ErrorMessage> {
+        return safeCall<Int> {
+            httpClient.get("/trackings/${state.state}/count")
+        }.mapSuccess { response ->
+            response
+        }
+    }
+
     override suspend fun uploadImage(
         imageData: ByteArray,
         trackingId: String,

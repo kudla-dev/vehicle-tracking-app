@@ -78,6 +78,8 @@ class AuthRepositoryImpl(
             httpClient.post("/auth")
         }
 
+        println("response: $response")
+
         return when (response) {
             is Result.Success -> {
                 Result.Success(response.data.toDomain())

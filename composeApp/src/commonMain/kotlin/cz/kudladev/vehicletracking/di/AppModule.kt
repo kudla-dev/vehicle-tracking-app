@@ -3,6 +3,7 @@ package cz.kudladev.vehicletracking.di
 import cz.kudladev.vehicletracking.core.data.di.dataModule
 import cz.kudladev.vehicletracking.feature.history.di.historyModule
 import cz.kudladev.vehicletracking.feature.menu.admin_settings.di.adminSettingsModule
+import cz.kudladev.vehicletracking.feature.menu.main.di.menuModule
 import cz.kudladev.vehicletracking.feature.menu.manage_trackings.di.manageTrackingsModule
 import cz.kudladev.vehicletracking.feature.menu.manage_vehicles.di.addEditVehicleModule
 import cz.kudladev.vehicletracking.feature.menu.protocols.di.protocolsModule
@@ -28,6 +29,7 @@ val featureModule = module {
     includes(manageTrackingsModule)
     includes(trackingDetailModule)
     includes(protocolsModule)
+    includes(menuModule)
 }
 val appModules = listOf(
     dataModule,

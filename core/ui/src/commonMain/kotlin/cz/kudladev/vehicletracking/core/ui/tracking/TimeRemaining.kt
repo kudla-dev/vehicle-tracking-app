@@ -22,11 +22,19 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import vehicletracking.core.ui.generated.resources.Res
+import vehicletracking.core.ui.generated.resources.days
+import vehicletracking.core.ui.generated.resources.ended
+import vehicletracking.core.ui.generated.resources.hours
+import vehicletracking.core.ui.generated.resources.invalid_time_range
+import vehicletracking.core.ui.generated.resources.minutes
+import vehicletracking.core.ui.generated.resources.months
+import vehicletracking.core.ui.generated.resources.not_started_yet
+import vehicletracking.core.ui.generated.resources.seconds
 import vehicletracking.core.ui.generated.resources.timeRemaining
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun TimeRemaining(
@@ -49,7 +57,6 @@ fun TimeRemaining(
     val endInstant = endTime.toInstant(timeZone)
 
     val progressPercentage = calculateProgressPercentage(startInstant, endInstant, currentInstant)
-    val remainingTimeText = formatRemainingTime(startInstant, endInstant, currentInstant)
 
     Column(
         modifier = modifier,
@@ -67,7 +74,7 @@ fun TimeRemaining(
             strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
         )
         Text(
-            text = remainingTimeText,
+            text = formatRemainingTime(startInstant, endInstant, currentInstant),
             style = MaterialTheme.typography.labelMedium,
             modifier = Modifier.fillMaxWidth()
         )
@@ -101,27 +108,29 @@ private fun calculateProgressPercentage(
         .coerceIn(0f, 1f) * 100f
 }
 
+@Composable
 private fun formatRemainingTime(
     startInstant: Instant,
     endInstant: Instant,
     currentInstant: Instant
 ): String {
     if (endInstant <= startInstant) {
-        return "Invalid time range"
+        return stringResource(Res.string.invalid_time_range)
     }
 
     if (currentInstant < startInstant) {
-        return "Not started yet"
+        return stringResource(Res.string.not_started_yet)
     }
 
     if (currentInstant >= endInstant) {
-        return "Ended"
+        return stringResource(Res.string.ended)
     }
 
     val remainingDuration = endInstant.minus(currentInstant)
     return formatDuration(remainingDuration)
 }
 
+@Composable
 private fun formatDuration(duration: Duration): String {
     val totalSeconds = duration.inWholeSeconds
 
@@ -138,11 +147,25 @@ private fun formatDuration(duration: Duration): String {
     // Create parts list and filter out zero values
     val parts = mutableListOf<String>()
 
-    if (months > 0) parts.add(if (months == 1L) "1 month" else "$months months")
-    if (days > 0) parts.add(if (days == 1L) "1 day" else "$days days")
-    if (hours > 0) parts.add(if (hours == 1L) "1 hour" else "$hours hours")
-    if (minutes > 0) parts.add(if (minutes == 1L) "1 minute" else "$minutes minutes")
-    if (seconds > 0 || parts.isEmpty()) parts.add(if (seconds == 1L) "1 second" else "$seconds seconds")
+    if (months > 0) {
+        parts.add(pluralStringResource(Res.plurals.months, months.toInt(), months.toInt()))
+    }
+
+    if (days > 0) {
+        parts.add(pluralStringResource(Res.plurals.days, days.toInt(), days.toInt()))
+    }
+
+    if (hours > 0) {
+        parts.add(pluralStringResource(Res.plurals.hours, hours.toInt(), hours.toInt()))
+    }
+
+    if (minutes > 0) {
+        parts.add(pluralStringResource(Res.plurals.minutes, minutes.toInt(), minutes.toInt()))
+    }
+
+    if (seconds > 0 || parts.isEmpty()) {
+        parts.add(pluralStringResource(Res.plurals.seconds, seconds.toInt(), seconds.toInt()))
+    }
 
     // Take only the most significant parts based on duration magnitude
     val significantParts = parts.take(minOf(parts.size, if (months > 0) 2 else 3))

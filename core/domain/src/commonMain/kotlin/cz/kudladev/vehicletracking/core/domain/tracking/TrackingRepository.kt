@@ -23,6 +23,10 @@ interface TrackingRepository {
         tachometer: Int? = null,
     ): Result<Tracking, ErrorMessage>
 
+    suspend fun getCountByState(
+        state: TrackingState,
+    ): Result<Int, ErrorMessage>
+
     suspend fun uploadImage(
         imageData: ByteArray,
         trackingId: String,

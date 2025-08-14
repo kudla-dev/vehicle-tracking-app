@@ -20,7 +20,8 @@ data class User(
     val phoneNumber: String,
     val role: Role,
     val maximumDistance: Int,
-    val overallDistance: Int
+    val overallDistance: Int,
+    val profilePicture: ImageWithUrl? = null
 )
 
 enum class Role(
