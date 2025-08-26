@@ -10,6 +10,8 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import cz.kudladev.vehicletracking.core.domain.vehicles.VehicleRepository
 import cz.kudladev.vehicletracking.model.ErrorMessage
+import cz.kudladev.vehicletracking.model.ImageUploadState
+import cz.kudladev.vehicletracking.model.ImageWithUrl
 import cz.kudladev.vehicletracking.model.onError
 import cz.kudladev.vehicletracking.model.onSuccess
 import kotlinx.coroutines.channels.awaitClose
@@ -17,6 +19,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
+import java.io.File
 import java.util.UUID
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -207,5 +210,121 @@ actual class ImageService(
             .enqueue(workRequest)
     }
 
+    private val workConstraints = Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .build()
+
+    private fun saveTempPhoto(
+        imageData: ByteArray,
+        fileName: String
+    ): File {
+        val file = context.getFileStreamPath(fileName)
+        context.openFileOutput(fileName, Context.MODE_PRIVATE).use { outputStream ->
+            outputStream.write(imageData)
+        }
+        return file
+    }
+
+    actual suspend fun enqueueBackgroundUpload(
+        imageData: ByteArray,
+        trackingId: String,
+        position: Int,
+        state: String,
+        temp: Int
+    ) {
+        val tempFile = saveTempPhoto(imageData, "temp_image_${trackingId}_${state}_${position}.jpg")
+
+        val workRequest = OneTimeWorkRequestBuilder<TrackingImageWorker>()
+            .setConstraints(workConstraints)
+            .setInputData(
+                workDataOf(
+                    "imagePath" to tempFile.absolutePath,
+                    "trackingId" to trackingId,
+                    "position" to position,
+                    "state" to state,
+                )
+            )
+            .addTag("tracking_image_upload_${trackingId}_$state")
+            .build()
+
+        WorkManager
+            .getInstance(context)
+            .enqueue(workRequest)
+    }
+
+    actual fun getUploadStatusByTag(tag: String): Flow<List<ImageUploadState>> = callbackFlow {
+        val workInfoFlow = WorkManager
+            .getInstance(context)
+            .getWorkInfosByTagFlow(tag)
+
+        println("Listening for work infos with tag: $tag")
+
+
+        workInfoFlow.collect { workInfos ->
+            println("Received work infos for tag $tag: ${workInfos.size} items")
+            println("Work infos: $workInfos")
+            val works = workInfos
+                .sortedBy { it.id }
+                .map { work ->
+                val imageID = work.outputData.getString("imageID") ?: ""
+                val imageUrl = work.outputData.getString("imageUrl") ?: ""
+                val imagePosition = work.outputData.getInt("imagePosition", -1)
+                val error = work.outputData.getString("error")
+
+
+                when (work.state) {
+                    WorkInfo.State.ENQUEUED -> {
+                        ImageUploadState.Queued
+                    }
+                    WorkInfo.State.RUNNING -> {
+                        val imageUri = work.progress.getString("imageUri") ?: ""
+                        val progress = work.progress.getFloat("progress", 0f)
+                        val imageBytes = uriToImage(imageUri)
+                        println("ImageURI: $imageUri")
+                        ImageUploadState.Uploading(
+                            imageUri = imageBytes,
+                            progress = progress
+                        )
+                    }
+                    WorkInfo.State.SUCCEEDED -> {
+                        ImageUploadState.Completed(
+                            imageURL = ImageWithUrl(
+                                url = imageUrl,
+                                id = imageID,
+                                position = imagePosition
+                            )
+                        )
+                    }
+                    WorkInfo.State.FAILED -> {
+                        val imageUri = work.outputData.getString("imageUri") ?: ""
+                        ImageUploadState.Failed(
+                            errorMessage = ErrorMessage(
+                                error = "Upload image failed",
+                                message = error ?: "Unknown error",
+                                path = imageUri,
+                                status = 500,
+                                timestamp = ""
+                            )
+                        )
+                    }
+                    else -> {
+                        val imageUri = work.outputData.getString("imageUri") ?: ""
+                        ImageUploadState.Canceled(
+                            imageUri = imageUri
+                        )
+                    }
+                }
+            }
+            trySend(works)
+
+//            val allFinished = workInfos.all { it.state.isFinished }
+//            if (allFinished) {
+//                close()
+//            }
+        }
+        awaitClose {
+            println("Stopped listening for work infos with tag: $tag")
+        }
+    }
 
 }

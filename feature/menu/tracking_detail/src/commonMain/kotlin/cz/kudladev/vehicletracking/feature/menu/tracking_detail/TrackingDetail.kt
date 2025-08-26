@@ -4,10 +4,13 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -17,9 +20,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.kudladev.vehicletracking.core.designsystem.BackButton
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
-import cz.kudladev.vehicletracking.core.ui.image.SummaryImage
+import cz.kudladev.vehicletracking.core.ui.backViewString
+import cz.kudladev.vehicletracking.core.ui.frontViewString
+import cz.kudladev.vehicletracking.core.ui.image.SummaryImageSectionItem
+import cz.kudladev.vehicletracking.core.ui.leftViewString
 import cz.kudladev.vehicletracking.core.ui.rejectString
+import cz.kudladev.vehicletracking.core.ui.rightViewString
 import cz.kudladev.vehicletracking.core.ui.submitString
+import cz.kudladev.vehicletracking.core.ui.tachometerReadingString
 import cz.kudladev.vehicletracking.core.ui.tracking.CurrentState
 import cz.kudladev.vehicletracking.core.ui.tracking.StateHistory
 import cz.kudladev.vehicletracking.core.ui.tracking.TrackingDetailSection
@@ -35,6 +43,7 @@ import vehicletracking.feature.menu.tracking_detail.generated.resources.loadingT
 import vehicletracking.feature.menu.tracking_detail.generated.resources.pickUp
 import vehicletracking.feature.menu.tracking_detail.generated.resources.`return`
 import vehicletracking.feature.menu.tracking_detail.generated.resources.trackingDetailTitle
+import kotlin.math.max
 
 @Serializable
 data class TrackingDetail(val trackingId: String)
@@ -166,6 +175,13 @@ private fun TrackingDetailScreen(
             start = innerPadding.calculateStartPadding(LocalLayoutDirection.current) + 16.dp,
             end = innerPadding.calculateEndPadding(LocalLayoutDirection.current) + 16.dp,
         )
+        val summaryImageTitles = listOf(
+            frontViewString(),
+            backViewString(),
+            leftViewString(),
+            rightViewString(),
+            tachometerReadingString()
+        )
         Crossfade(
             targetState = state.tracking
         ){
@@ -234,22 +250,57 @@ private fun TrackingDetailScreen(
 
                                     }
                                     is UiState.Success -> {
+
                                         item {
                                             Text(
                                                 stringResource(Res.string.imagesFromPickUp),
                                                 style = MaterialTheme.typography.titleLarge
                                             )
+
                                         }
-                                        items(state.tracking.data.stateLogs.last().images ?: emptyList()){
-                                            SummaryImage(
-                                                image = it,
+                                        items(state.activeImage) { image ->
+                                            SummaryImageSectionItem(
+                                                beforeImage = image,
+                                                title = summaryImageTitles.getOrNull(state.activeImage.indexOf(image)) ?: "",
+                                                onRetryBeforeImage = {
+//                                                    onAction(TrackingDetailAction.RetryImageUpload(it.data.id, image.id))
+                                                }
                                             )
                                         }
                                     }
                                     else -> {}
                                 }
                             }
-                            TrackingState.RETURNED -> TODO()
+                            TrackingState.RETURNED -> {
+                                when (state.tracking) {
+                                    is UiState.Error -> {
+
+                                    }
+                                    is UiState.Success -> {
+                                        item {
+                                            Text(
+                                                stringResource(Res.string.imagesFromPickUp),
+                                                style = MaterialTheme.typography.titleLarge
+                                            )
+
+                                        }
+                                        items(max(state.activeImage.size, state.returnImage.size)) { index ->
+                                            SummaryImageSectionItem(
+                                                beforeImage = state.activeImage.getOrNull(index),
+                                                afterImage = state.returnImage.getOrNull(index),
+                                                title = summaryImageTitles.getOrNull(index) ?: "",
+                                                onRetryBeforeImage = {
+
+                                                },
+                                                onRetryAfterImage = {
+
+                                                }
+                                            )
+                                        }
+                                    }
+                                    else -> {}
+                                }
+                            }
                             TrackingState.REJECTED -> TODO()
                             TrackingState.FAILED -> TODO()
                             TrackingState.COMPLETED -> TODO()
@@ -268,7 +319,4 @@ private fun TrackingDetailScreen(
             }
         }
     }
-
-
-
 }

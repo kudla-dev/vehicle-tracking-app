@@ -9,14 +9,13 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.StringResource
 import vehicletracking.model.generated.resources.*
 
-@Serializable
 data class TrackingLog(
     val trackingId: String? = null,
     val state: TrackingState,
     val message: String? = null,
     val assignedBy: User? = null,
     val assignedAt: LocalDateTime? = null,
-    val images: List<Image>? = null,
+    val images: List<ImageUploadState>? = null,
 )
 
 

@@ -36,13 +36,10 @@ data class ImageWithBytes(
 }
 
 // core/domain/images/ImageUploadStatus.kt
-data class ImageUploadStatus(
-    val id: String,
-    val progress: Float,
-    val state: ImageUploadState,
-    val errorMessage: ErrorMessage? = null
-)
-
-enum class ImageUploadState {
-    QUEUED, UPLOADING, COMPLETED, FAILED, CANCELED
+sealed class ImageUploadState {
+    data object Queued : ImageUploadState()
+    data class Uploading(val imageUri: ByteArray?, val progress: Float) : ImageUploadState()
+    data class Completed(val imageURL: ImageWithUrl) : ImageUploadState()
+    data class Failed(val errorMessage: ErrorMessage) : ImageUploadState()
+    data class Canceled(val imageUri: String) : ImageUploadState()
 }

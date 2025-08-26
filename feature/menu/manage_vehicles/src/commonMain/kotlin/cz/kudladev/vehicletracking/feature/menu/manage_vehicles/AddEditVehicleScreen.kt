@@ -47,7 +47,6 @@ import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleImages
 import cz.kudladev.vehicletracking.core.ui.yearString
 import cz.kudladev.vehicletracking.model.Brand
 import cz.kudladev.vehicletracking.model.ImageUploadState
-import cz.kudladev.vehicletracking.model.ImageUploadStatus
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -76,7 +75,7 @@ fun AddEditVehicleRoot(
 
     LaunchedEffect(uploadStatus, state.resultState) {
         println("Upload status changed: $uploadStatus and result state: ${state.resultState}")
-        if (uploadStatus.isNotEmpty() && uploadStatus.size == state.images.size && uploadStatus.all { status -> status.state == ImageUploadState.COMPLETED } && state.resultState !is AddEditResultState.Error) {
+        if (uploadStatus.isNotEmpty() && uploadStatus.size == state.images.size && uploadStatus.all { status -> status is ImageUploadState.Completed } && state.resultState !is AddEditResultState.Error) {
             viewModel.onAction(AddEditVehicleAction.ClearRecentUploads)
             onBack()
         }
@@ -94,7 +93,7 @@ fun AddEditVehicleRoot(
 @Composable
 fun AddEditVehicleScreen(
     state: AddEditVehicleState,
-    uploadStatus: List<ImageUploadStatus>,
+    uploadStatus: List<ImageUploadState>,
     onAction: (AddEditVehicleAction) -> Unit,
     paddingValues: PaddingValues,
     onBack: () -> Unit,
@@ -523,7 +522,7 @@ fun AddEditVehicleScreen(
     if (uploadStatus.isNotEmpty()) {
         UploadDialog(
             images = uploadStatus.size,
-            uploadedImages = uploadStatus.count { it.state == ImageUploadState.COMPLETED }.toFloat(),
+            uploadedImages = uploadStatus.count { it is ImageUploadState.Completed }.toFloat(),
         )
     }
 }

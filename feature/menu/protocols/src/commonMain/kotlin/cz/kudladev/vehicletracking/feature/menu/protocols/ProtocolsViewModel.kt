@@ -20,7 +20,7 @@ class ProtocolsViewModel(
     val trackingId = savedStateHandle.toRoute<Protocols>().trackingId
     val trackingState = savedStateHandle.toRoute<Protocols>().trackingState
 
-    val uploadStatus = imageRepository.getUploadStatus()
+    val uploadStatus = imageRepository.getUploadStatus("tracking_image_upload_${trackingId}_${trackingState.state}")
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000L),
@@ -99,7 +99,7 @@ class ProtocolsViewModel(
         additionalNotes: String
     ) = viewModelScope.launch {
         _state.update { it.copy(
-            tracking = UiState.Loading
+            updatedTracking = UiState.Loading
         ) }
         trackingRepository
             .updateTracking(
@@ -110,7 +110,7 @@ class ProtocolsViewModel(
             )
             .onSuccess { tracking ->
                 _state.update { it.copy(
-                    tracking = UiState.Success(tracking)
+                    updatedTracking = UiState.Success(tracking)
                 ) }
                 println("Tracking updated successfully: $tracking")
                 var position = 0

@@ -3,7 +3,6 @@ package cz.kudladev.vehicletracking.feature.tracking
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -21,7 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -31,16 +29,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.rememberAsyncImagePainter
-import com.skydoves.landscapist.coil3.CoilImage
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
 import cz.kudladev.vehicletracking.core.designsystem.PrimaryButton
 import cz.kudladev.vehicletracking.core.designsystem.theme.Images
 import cz.kudladev.vehicletracking.core.ui.backViewString
 import cz.kudladev.vehicletracking.core.ui.errorString
 import cz.kudladev.vehicletracking.core.ui.frontViewString
-import cz.kudladev.vehicletracking.core.ui.image.SummaryImage
+import cz.kudladev.vehicletracking.core.ui.image.SummaryImageSectionItem
 import cz.kudladev.vehicletracking.core.ui.leftViewString
+import cz.kudladev.vehicletracking.core.ui.others.LoadingDialog
 import cz.kudladev.vehicletracking.core.ui.rightViewString
 import cz.kudladev.vehicletracking.core.ui.tachometerReadingString
 import cz.kudladev.vehicletracking.core.ui.tracking.CurrentState
@@ -53,7 +50,6 @@ import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleHeader
 import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleHeaderSkeleton
 import cz.kudladev.vehicletracking.model.TrackingState
 import cz.kudladev.vehicletracking.model.UiState
-import cz.kudladev.vehicletracking.model.Vehicle
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -277,9 +273,9 @@ private fun TrackingScreen(
                                     lastState?.let { state ->
                                         if (state.state == TrackingState.RETURNED || state.state == TrackingState.ACTIVE || state.state == TrackingState.COMPLETED) {
                                             itemsIndexed(summaryImageTitles) { index,page ->
-                                                SummaryImage(
-                                                    image = activeState?.images?.getOrNull(index),
-                                                    nextImage = nextImages?.getOrElse(index) { null },
+                                                SummaryImageSectionItem(
+                                                    beforeImage = activeState?.images?.getOrNull(index),
+                                                    afterImage = nextImages?.getOrElse(index) { null },
                                                     title = page,
                                                 )
                                             }
@@ -315,4 +311,9 @@ private fun TrackingScreen(
             }
         }
     }
+
+    LoadingDialog(
+        title = "Confirming return",
+        isLoading = state.confirmTracking is UiState.Loading,
+    )
 }

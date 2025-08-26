@@ -2,6 +2,7 @@ package cz.kudladev.vehicletracking.core.data.tracking.models
 
 import cz.kudladev.vehicletracking.core.data.auth.models.UserResponse
 import cz.kudladev.vehicletracking.core.data.auth.models.toDomain
+import cz.kudladev.vehicletracking.model.ImageUploadState
 import cz.kudladev.vehicletracking.model.ImageWithUrl
 import cz.kudladev.vehicletracking.model.TrackingLog
 import cz.kudladev.vehicletracking.model.toTrackingState
@@ -29,7 +30,7 @@ fun TrackingLogDTO.toDomain(): TrackingLog {
         message = message,
         assignedBy = assignedBy.toDomain(),
         assignedAt = assignedAt.fromInstantToLocalDateTime(),
-        images = images ?: emptyList()
+        images = images?.map { ImageUploadState.Completed(it) } ?: emptyList()
     )
 }
 

@@ -81,8 +81,9 @@ class TrackingScreenViewModel(
             )
             .onSuccess { result ->
                 _state.update { it.copy(
-                    confirmTracking = UiState.Success(true)
+                    confirmTracking = UiState.Success(true),
                 ) }
+                getCurrentTracking()
             }
             .onError { error ->
                 _state.update { it.copy(

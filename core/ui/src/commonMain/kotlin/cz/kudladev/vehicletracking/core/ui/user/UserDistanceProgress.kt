@@ -26,6 +26,8 @@ fun UserDistanceProgress(
     distance: Int,
     maximumDistance: Int,
 ){
+    val distanceOverflow = distance >= maximumDistance
+
     Column(
         modifier = modifier
     ) {
@@ -43,7 +45,7 @@ fun UserDistanceProgress(
             Text(
                 text = "$distance Km / $maximumDistance Km",
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurface
+                color = if (distanceOverflow) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
             )
         }
         Box(
@@ -66,11 +68,37 @@ fun UserDistanceProgress(
 
 @Preview
 @Composable
-fun UserDistanceProgressPreview() {
+private fun UserDistanceHalfProgressPreview() {
     AppTheme {
         Surface {
             UserDistanceProgress(
                 distance = 1000,
+                maximumDistance = 2000
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun UserDistanceFullProgressPreview() {
+    AppTheme {
+        Surface {
+            UserDistanceProgress(
+                distance = 2000,
+                maximumDistance = 2000
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun UserDistanceOverflowProgressPreview() {
+    AppTheme {
+        Surface {
+            UserDistanceProgress(
+                distance = 2500,
                 maximumDistance = 2000
             )
         }

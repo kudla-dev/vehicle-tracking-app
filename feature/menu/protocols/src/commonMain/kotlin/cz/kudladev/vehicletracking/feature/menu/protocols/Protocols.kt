@@ -17,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
@@ -36,9 +35,7 @@ import com.skydoves.landscapist.coil3.CoilImage
 import cz.kudladev.vehicletracking.core.designsystem.BackButton
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
 import cz.kudladev.vehicletracking.core.designsystem.OutlinedTextField
-import cz.kudladev.vehicletracking.core.designsystem.PrimaryButton
-import cz.kudladev.vehicletracking.core.ui.image.SummaryImage
-import cz.kudladev.vehicletracking.core.ui.image.UploadDialog
+import cz.kudladev.vehicletracking.core.ui.image.SummaryImageSectionItem
 import cz.kudladev.vehicletracking.core.ui.nextString
 import cz.kudladev.vehicletracking.core.ui.submitString
 import cz.kudladev.vehicletracking.core.ui.util.toImageBitmap
@@ -78,10 +75,11 @@ fun ProtocolsRoot(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val uploadStatus by viewModel.uploadStatus.collectAsStateWithLifecycle()
 
-    LaunchedEffect(uploadStatus, state.tracking) {
-        println("Upload status changed: $uploadStatus and result state: ${state.tracking}")
-        if (uploadStatus.isNotEmpty() && uploadStatus.size == state.images.size && uploadStatus.all { status -> status.state == ImageUploadState.COMPLETED } && state.tracking !is UiState.Error) {
-            viewModel.onAction(ProtocolsAction.ClearRecentUploads)
+    LaunchedEffect(state.updatedTracking) {
+        println("Upload status changed: $uploadStatus and result state: ${state.updatedTracking}")
+//        uploadStatus.isNotEmpty() && uploadStatus.size == state.images.size && uploadStatus.all { status -> status is ImageUploadState.Completed } &&
+        if (state.updatedTracking is UiState.Success) {
+//            viewModel.onAction(ProtocolsAction.ClearRecentUploads)
             onBack()
         }
     }
@@ -104,7 +102,7 @@ fun ProtocolsScreen(
     type: ProtocolsType,
     paddingValues: PaddingValues,
     onBack: () -> Unit,
-    uploadStatus: List<ImageUploadStatus>,
+    uploadStatus: List<ImageUploadState>,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -257,12 +255,12 @@ fun ProtocolsScreen(
         }
     }
 
-    if (uploadStatus.isNotEmpty()) {
-        UploadDialog(
-            images = uploadStatus.size,
-            uploadedImages = uploadStatus.count { it.state == ImageUploadState.COMPLETED }.toFloat(),
-        )
-    }
+//    if (uploadStatus.isNotEmpty()) {
+//        UploadDialog(
+//            images = uploadStatus.size,
+//            uploadedImages = uploadStatus.count { it is ImageUploadState.Completed }.toFloat(),
+//        )
+//    }
 }
 
 @Composable
@@ -427,11 +425,11 @@ fun SummaryProtocol(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         itemsIndexed(ProtocolsScreenPage.viewPages()) { index,page ->
-            SummaryImage(
-                image = state.images[page],
-                nextImage = nextImages?.getOrElse(index) { null },
-                title = page.title,
-            )
+//            SummaryImageSectionItem(
+//                beforeImage = state.images[page],
+//                afterImage = nextImages?.getOrElse(index) { null },
+//                title = page.title,
+//            )
         }
         item {
             OutlinedTextField(

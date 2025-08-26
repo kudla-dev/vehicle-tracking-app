@@ -1,13 +1,16 @@
 package cz.kudladev.vehicletracking.core.data.images.model
 
+import kotlinx.serialization.Serializable
+
 interface Image {
 
 }
 
+@Serializable
 data class ImageWithUrl(
     val id: String? = null,
     val url: String? = null,
-    val position: Int
+    val position: Int? = null
 ): Image
 
 data class ImageWithBytes(

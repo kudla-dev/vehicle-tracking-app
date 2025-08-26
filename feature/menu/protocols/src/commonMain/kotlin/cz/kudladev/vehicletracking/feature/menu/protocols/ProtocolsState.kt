@@ -1,6 +1,7 @@
 package cz.kudladev.vehicletracking.feature.menu.protocols
 
 import cz.kudladev.vehicletracking.model.Image
+import cz.kudladev.vehicletracking.model.ImageUploadState
 import cz.kudladev.vehicletracking.model.Tracking
 import cz.kudladev.vehicletracking.model.UiState
 
@@ -10,6 +11,7 @@ data class ProtocolsState(
     val tachometerReading: String = "",
     val additionalNotes: String = "",
     val tracking: UiState<Tracking> = UiState.Idle,
+    val updatedTracking: UiState<Tracking> = UiState.Idle,
 )
 
 enum class ProtocolsScreenPage(val instruction: String,val title: String) {

@@ -7,6 +7,7 @@ import cz.kudladev.vehicletracking.core.data.tracking.models.toDomain
 import cz.kudladev.vehicletracking.core.domain.tracking.TrackingRepository
 import cz.kudladev.vehicletracking.core.domain.vehicles.ProgressUpdate
 import cz.kudladev.vehicletracking.model.ErrorMessage
+import cz.kudladev.vehicletracking.model.ImageWithUrl
 import cz.kudladev.vehicletracking.model.Result
 import cz.kudladev.vehicletracking.model.Tracking
 import cz.kudladev.vehicletracking.model.TrackingState
@@ -86,7 +87,7 @@ class TrackingRepositoryImpl(
         position: Int,
         state: String
     ): Flow<Result<ProgressUpdate, ErrorMessage>> = channelFlow {
-        safeCall<TrackingResponse> {
+        safeCall<ImageWithUrl> {
             httpClient.submitFormWithBinaryData(
                 url = "/trackings/$trackingId/logs/$state/images?position=$position",
                 formData = formData {
@@ -102,6 +103,12 @@ class TrackingRepositoryImpl(
                     }
                 }
             }
+        }.mapSuccess { response ->
+            send(Result.Success( data = ProgressUpdate(
+                byteSent = 0,
+                totalBytes = 0,
+                imageURL = response
+            )))
         }
     }
 

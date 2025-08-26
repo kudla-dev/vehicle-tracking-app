@@ -1,6 +1,7 @@
 package cz.kudladev.vehicletracking.core.data.images
 
 import cz.kudladev.vehicletracking.model.ErrorMessage
+import cz.kudladev.vehicletracking.model.ImageUploadState
 import kotlinx.coroutines.flow.Flow
 
 expect class ImageService {
@@ -16,6 +17,14 @@ expect class ImageService {
         trackingId: String,
         position: Int,
         state: String
+    )
+
+    suspend fun enqueueBackgroundUpload(
+        imageData: ByteArray,
+        trackingId: String,
+        position: Int,
+        state: String,
+        temp: Int = 0
     )
 
     suspend fun enqueueBackgroundUpload(
@@ -35,6 +44,8 @@ expect class ImageService {
      * @return Flow of upload statuses
      */
     fun getUploadStatus(): Flow<List<UploadStatus>>
+
+    fun getUploadStatusByTag(tag: String): Flow<List<ImageUploadState>>
 
 
     fun clearUploadStatus()

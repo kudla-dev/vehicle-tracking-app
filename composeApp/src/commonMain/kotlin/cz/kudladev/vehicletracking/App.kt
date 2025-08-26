@@ -39,6 +39,7 @@ fun getAsyncImageLoader(
     httpClient: HttpClient,
 ) =
     ImageLoader.Builder(context)
+        .diskCachePolicy(CachePolicy.DISABLED)
         .memoryCachePolicy(CachePolicy.ENABLED)
         .memoryCache {
             MemoryCache.Builder()

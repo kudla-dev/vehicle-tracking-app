@@ -2,6 +2,7 @@ package cz.kudladev.vehicletracking.core.domain.vehicles
 
 import cz.kudladev.vehicletracking.model.Vehicle
 import cz.kudladev.vehicletracking.model.ErrorMessage
+import cz.kudladev.vehicletracking.model.ImageWithUrl
 import cz.kudladev.vehicletracking.model.Result
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
@@ -71,4 +72,5 @@ interface VehicleRepository {
 data class ProgressUpdate(
     val byteSent: Long,
     val totalBytes: Long,
+    val imageURL: ImageWithUrl? = null,
 )

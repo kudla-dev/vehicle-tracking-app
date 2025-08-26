@@ -151,10 +151,13 @@ class VehicleRepositoryImpl(
                     })
                     append("position", position.toString())
                 }
-            ){
+            ){ this
                 onUpload { bytesSentTotal, totalBytes ->
                    if ((totalBytes ?: 0L) > 0L) {
-                          send(Result.Success(ProgressUpdate(bytesSentTotal, totalBytes ?: 0L)))
+                          send(Result.Success(ProgressUpdate(
+                              byteSent = bytesSentTotal,
+                              totalBytes = totalBytes ?: 0L,
+                          )))
                    }
                 }
             }

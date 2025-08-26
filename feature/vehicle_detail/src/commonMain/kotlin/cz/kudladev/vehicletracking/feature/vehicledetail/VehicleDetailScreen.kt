@@ -167,7 +167,10 @@ fun VehicleDetailScreen(
                             )
                         }
                         item {
-                            VehicleDetailTitleSkeleton()
+                            VehicleDetailTitleSkeleton(
+                                modifier = Modifier
+                                    .padding(bottom = 16.dp)
+                            )
                         }
                         item {
                             VehicleSpecificationSectionSkeleton()
@@ -219,12 +222,11 @@ fun VehicleDetailScreen(
 @Composable
 private fun VehicleDetailTitleLoadingPreview() {
     AppTheme {
-        VehicleDetailRoot(
-            paddingValues = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-            onCreate = {
-
-            },
-            onBack = {}
+        VehicleDetailScreen(
+            paddingValues = PaddingValues(),
+            onBackClick = {},
+            state = VehicleDetailState(),
+            onAction = {}
         )
     }
 
