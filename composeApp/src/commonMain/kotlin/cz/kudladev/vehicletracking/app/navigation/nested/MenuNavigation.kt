@@ -1,5 +1,6 @@
 package cz.kudladev.vehicletracking.app.navigation.nested
 
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -43,6 +44,7 @@ data class Search(
     val type: String = "vehicle",
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MenuNavigation(
     appState: AppState,
@@ -56,6 +58,7 @@ fun MenuNavigation(
          composable<Menu>{
             MenuScreenRoot(
                 paddingValues = appState.paddingValues,
+                bottomAppBarScrollBehavior = appState.bottomAppBarScrollBehavior,
                 onAdminSettings = {
                     navController.navigate(AdminSettings)
                 },
@@ -81,7 +84,8 @@ fun MenuNavigation(
         }
         composable<Tracking> {
             TrackingScreenRoot(
-                appState.paddingValues,
+                paddingValues = appState.paddingValues,
+                scrollBehaviour = appState.bottomAppBarScrollBehavior,
                 onVehicleClick = { vehicleId ->
                     navController.navigate(
                         VehicleDetails(vehicleId = vehicleId)
@@ -92,6 +96,7 @@ fun MenuNavigation(
         composable<AdminSettings> {
             AdminSettingsRoot(
                 paddingValues = appState.paddingValues,
+                bottomAppBarScrollBehavior = appState.bottomAppBarScrollBehavior,
                 onBack = {
                     navController.navigateUp()
                 }
@@ -100,6 +105,7 @@ fun MenuNavigation(
         composable<ManageVehiclesAddEdit> {
             AddEditVehicleRoot(
                 paddingValues = appState.paddingValues,
+                bottomAppBarScrollBehavior = appState.bottomAppBarScrollBehavior,
                 onBack = {
                     navController.navigateUp()
                 }
@@ -109,6 +115,7 @@ fun MenuNavigation(
             val type = it.toRoute<ManageTrackings>().type
             ManageTrackingsRoot(
                 paddingValues = appState.paddingValues,
+                bottomAppBarScrollBehavior = appState.bottomAppBarScrollBehavior,
                 type = type,
                 onBack = {
                     navController.navigateUp()
@@ -121,6 +128,7 @@ fun MenuNavigation(
         composable<TrackingDetail> {
             TrackingDetailRoot(
                 paddingValues = appState.paddingValues,
+                bottomAppBarScrollBehavior = appState.bottomAppBarScrollBehavior,
                 onBack = {
                     navController.navigateUp()
                 },
@@ -135,11 +143,13 @@ fun MenuNavigation(
         composable<History> {
             HistoryScreenRoot(
                 paddingValues = appState.paddingValues,
+                bottomAppBarScrollBehavior = appState.bottomAppBarScrollBehavior,
             )
         }
         composable<Favourites> {
             FavouritesScreenRoot(
                 paddingValues = appState.paddingValues,
+                bottomAppBarScrollBehavior = appState.bottomAppBarScrollBehavior,
             )
         }
         composable<Protocols> {
@@ -147,6 +157,7 @@ fun MenuNavigation(
             ProtocolsRoot(
                 type = type,
                 paddingValues = appState.paddingValues,
+                bottomAppBarScrollBehavior = appState.bottomAppBarScrollBehavior,
                 onBack = {
                     navController.navigateUp()
                 }
@@ -159,6 +170,7 @@ fun MenuNavigation(
             VehicleListScreenRoot(
                 vehicleListViewModel = vehicleListViewModel,
                 paddingValues = appState.paddingValues,
+                bottomAppBarScrollBehavior = appState.bottomAppBarScrollBehavior,
                 onSearch = { type ->
                     navController.navigate(Search(type))
                 },
@@ -188,6 +200,7 @@ fun MenuNavigation(
         composable<VehicleDetails> {
             VehicleDetailRoot(
                 paddingValues = appState.paddingValues,
+                bottomAppBarScrollBehavior = appState.bottomAppBarScrollBehavior,
                 onBack = { navController.navigateUp() },
                 onCreate = {
                     appState.navigateToCurrentTrackingRoot()
@@ -198,6 +211,7 @@ fun MenuNavigation(
             val type = backStackEntry.toRoute<Search>().type
             SearchScreenRoot(
                 paddingValues = appState.paddingValues,
+                bottomAppBarScrollBehavior = appState.bottomAppBarScrollBehavior,
                 searchType = type,
                 onCancel = {
                     navController.navigateUp()

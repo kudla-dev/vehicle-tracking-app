@@ -2,8 +2,6 @@ package cz.kudladev.vehicletracking.app.navigation.core
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -16,8 +14,6 @@ import cz.kudladev.vehicletracking.feature.favourite.Favourites
 import cz.kudladev.vehicletracking.feature.history.History
 import cz.kudladev.vehicletracking.feature.tracking.Tracking
 import cz.kudladev.vehicletracking.feature.vehicles.VehicleList
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
 @Serializable

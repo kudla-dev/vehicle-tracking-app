@@ -7,7 +7,7 @@ import cz.kudladev.vehicletracking.model.UiState
 
 data class ProtocolsState(
     val page: ProtocolsScreenPage = ProtocolsScreenPage.FRONT,
-    val images: Map<ProtocolsScreenPage, Image> = emptyMap(),
+    val images: Map<ProtocolsScreenPage, ImageUploadState> = emptyMap(),
     val tachometerReading: String = "",
     val additionalNotes: String = "",
     val tracking: UiState<Tracking> = UiState.Idle,

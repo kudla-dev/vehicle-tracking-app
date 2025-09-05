@@ -2,6 +2,7 @@ package cz.kudladev.vehicletracking
 
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.compose.setSingletonImageLoaderFactory
@@ -13,6 +14,7 @@ import coil3.util.DebugLogger
 import cz.kudladev.vehicletracking.app.navigation.core.VehicleTracking
 import cz.kudladev.vehicletracking.app.rememberAppState
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
+import cz.kudladev.vehicletracking.core.domain.SnackbarController
 import io.ktor.client.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
@@ -27,6 +29,12 @@ fun App() {
     }
 
     val appState = rememberAppState()
+
+    LaunchedEffect(true) {
+        SnackbarController.events.collect { event ->
+            appState.showSnackbar(event)
+        }
+    }
 
     AppTheme {
         VehicleTracking(appState)

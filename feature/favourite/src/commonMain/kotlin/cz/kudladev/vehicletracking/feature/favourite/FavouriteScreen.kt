@@ -3,6 +3,7 @@ package cz.kudladev.vehicletracking.feature.favourite
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.BottomAppBarScrollBehavior
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -20,13 +21,16 @@ import vehicletracking.feature.favourite.generated.resources.favouriteTitle
 @Serializable
 data object Favourites
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavouritesScreenRoot(
     paddingValues: PaddingValues,
+    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior
 ) {
 
     FavouritesScreen(
         paddingValues = paddingValues,
+        bottomAppBarScrollBehavior = bottomAppBarScrollBehavior
     )
 }
 
@@ -34,13 +38,15 @@ fun FavouritesScreenRoot(
 @Composable
 private fun FavouritesScreen(
     paddingValues: PaddingValues,
+    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .nestedScroll(scrollBehavior.nestedScrollConnection),
+            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+            .nestedScroll(bottomAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             LargeTopAppBar(
                 title = {
@@ -49,7 +55,7 @@ private fun FavouritesScreen(
                         fontStyle = FontStyle.Italic
                     )
                 },
-                scrollBehavior = scrollBehavior,
+                scrollBehavior = topAppBarScrollBehavior,
             )
         },
     ) {

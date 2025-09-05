@@ -15,6 +15,7 @@ import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
 import cz.kudladev.vehicletracking.core.designsystem.PrimaryButton
 import cz.kudladev.vehicletracking.core.designsystem.theme.Images
+import cz.kudladev.vehicletracking.core.domain.SnackbarController
 import cz.kudladev.vehicletracking.core.ui.backViewString
 import cz.kudladev.vehicletracking.core.ui.errorString
 import cz.kudladev.vehicletracking.core.ui.frontViewString
@@ -48,8 +50,11 @@ import cz.kudladev.vehicletracking.core.ui.tracking.TimeRemaining
 import cz.kudladev.vehicletracking.core.ui.tracking.TrackingDetailSection
 import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleHeader
 import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleHeaderSkeleton
+import cz.kudladev.vehicletracking.model.Snackbar
+import cz.kudladev.vehicletracking.model.SnackbarStyle
 import cz.kudladev.vehicletracking.model.TrackingState
 import cz.kudladev.vehicletracking.model.UiState
+import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -63,31 +68,47 @@ import vehicletracking.feature.tracking.generated.resources.trackingTitle
 @Serializable
 data object Tracking
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrackingScreenRoot(
     paddingValues: PaddingValues,
+    scrollBehaviour: BottomAppBarScrollBehavior,
     viewModel: TrackingScreenViewModel = koinViewModel(),
     onVehicleClick: (Int) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    LaunchedEffect(state.confirmTracking) {
+        if (state.confirmTracking is UiState.Success) {
+            SnackbarController.sendEvent(
+                Snackbar(
+                    title = "Tracking confirmed",
+                    snackbarStyle = SnackbarStyle.SUCCESS
+                )
+            )
+            viewModel.onAction(TrackingScreenAction.ReturnAcknowledge)
+        }
+    }
+
     TrackingScreen(
         paddingValues = paddingValues,
+        bottomAppBarScrollBehavior = scrollBehaviour,
         state = state,
         onVehicleClick = onVehicleClick,
         onAction = viewModel::onAction
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalHazeMaterialsApi::class)
 @Composable
 private fun TrackingScreen(
     paddingValues: PaddingValues,
+    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior,
     state: TrackingScreenState,
     onVehicleClick: (Int) -> Unit,
     onAction: (TrackingScreenAction) -> Unit
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val pullToRefreshState = rememberPullToRefreshState()
 
     val localHapticFeedback = LocalHapticFeedback.current
@@ -105,7 +126,8 @@ private fun TrackingScreen(
         Scaffold(
             modifier = Modifier
                 .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection),
+                .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+                .nestedScroll(bottomAppBarScrollBehavior.nestedScrollConnection),
             topBar = {
                 LargeTopAppBar(
                     title = {
@@ -114,7 +136,7 @@ private fun TrackingScreen(
                             fontStyle = FontStyle.Italic
                         )
                     },
-                    scrollBehavior = scrollBehavior,
+                    scrollBehavior = topAppBarScrollBehavior,
                 )
             },
         ) { innerPadding ->
@@ -129,7 +151,7 @@ private fun TrackingScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(combinedPadding)
+                            .padding(paddingValues.calculateBottomPadding())
                             .verticalScroll(rememberScrollState()),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -156,28 +178,6 @@ private fun TrackingScreen(
                         )
                     }
                 }
-                UiState.Loading -> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(combinedPadding),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        VehicleHeaderSkeleton(
-                            modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
-                        )
-                        CurrentStateSkeleton(
-                            modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
-                        )
-
-                        StateHistorySkeleton(
-                            modifier = Modifier.fillMaxWidth(),
-                            itemCount = 3
-                        )
-
-                    }
-                }
                 is UiState.Success -> {
                     val data by remember {
                         mutableStateOf(state.currentTracking.data)
@@ -190,7 +190,12 @@ private fun TrackingScreen(
                                 Column(
                                     modifier = Modifier
                                         .fillMaxSize()
-                                        .padding(combinedPadding),
+                                        .padding(PaddingValues(
+                                            bottom = 0.dp,
+                                            start = 16.dp,
+                                            end = 16.dp,
+                                            top = innerPadding.calculateTopPadding()
+                                        )),
                                     verticalArrangement = Arrangement.Center,
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
@@ -307,7 +312,28 @@ private fun TrackingScreen(
                         }
                     }
                 }
-                else -> {}
+                else -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding.calculateTopPadding()),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        VehicleHeaderSkeleton(
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
+                        )
+                        CurrentStateSkeleton(
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
+                        )
+
+                        StateHistorySkeleton(
+                            modifier = Modifier.fillMaxWidth(),
+                            itemCount = 3
+                        )
+
+                    }
+                }
             }
         }
     }

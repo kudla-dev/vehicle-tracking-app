@@ -17,7 +17,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
-import cz.kudladev.vehicletracking.core.ui.util.toFormattedString
+import cz.kudladev.vehicletracking.core.ui.util.toFormattedLongString
 import kotlinx.datetime.LocalDateTime
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -45,8 +45,8 @@ fun TrackingDetailSection(
         )
         Spacer(modifier = Modifier.height(24.dp))
         TrackingDetailSectionItem(stringResource(Res.string.trackingId), trackingId)
-        TrackingDetailSectionItem(stringResource(Res.string.startDate), startDate.toFormattedString())
-        TrackingDetailSectionItem(stringResource(Res.string.endDate), endDate.toFormattedString())
+        TrackingDetailSectionItem(stringResource(Res.string.startDate), startDate.toFormattedLongString())
+        TrackingDetailSectionItem(stringResource(Res.string.endDate), endDate.toFormattedLongString())
     }
 }
 

@@ -26,48 +26,28 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.preat.peekaboo.image.picker.SelectionMode
 import com.preat.peekaboo.image.picker.rememberImagePickerLauncher
-import cz.kudladev.vehicletracking.core.designsystem.BackButton
-import cz.kudladev.vehicletracking.core.designsystem.ChoiceTextField
-import cz.kudladev.vehicletracking.core.designsystem.MediumTopAppBar
-import cz.kudladev.vehicletracking.core.designsystem.OutlinedTextField
-import cz.kudladev.vehicletracking.core.designsystem.PrimaryButton
-import cz.kudladev.vehicletracking.core.designsystem.SecondaryButton
+import cz.kudladev.vehicletracking.core.designsystem.*
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
-import cz.kudladev.vehicletracking.core.ui.brandString
-import cz.kudladev.vehicletracking.core.ui.colorString
-import cz.kudladev.vehicletracking.core.ui.driverLicenseString
-import cz.kudladev.vehicletracking.core.ui.fullNameString
+import cz.kudladev.vehicletracking.core.ui.*
 import cz.kudladev.vehicletracking.core.ui.image.UploadDialog
-import cz.kudladev.vehicletracking.core.ui.licensePlateString
-import cz.kudladev.vehicletracking.core.ui.maximumDistanceString
-import cz.kudladev.vehicletracking.core.ui.modelString
-import cz.kudladev.vehicletracking.core.ui.placeString
-import cz.kudladev.vehicletracking.core.ui.totalDistanceString
 import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleImages
-import cz.kudladev.vehicletracking.core.ui.yearString
 import cz.kudladev.vehicletracking.model.Brand
 import cz.kudladev.vehicletracking.model.ImageUploadState
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
-import vehicletracking.feature.menu.manage_vehicles.generated.resources.Res
-import vehicletracking.feature.menu.manage_vehicles.generated.resources.createVehicleAction
-import vehicletracking.feature.menu.manage_vehicles.generated.resources.createVehicleTitle
-import vehicletracking.feature.menu.manage_vehicles.generated.resources.getImagesFromShopLink
-import vehicletracking.feature.menu.manage_vehicles.generated.resources.isTransferableLicensePlate
-import vehicletracking.feature.menu.manage_vehicles.generated.resources.manageImages
-import vehicletracking.feature.menu.manage_vehicles.generated.resources.or
-import vehicletracking.feature.menu.manage_vehicles.generated.resources.pickFromGallery
-import vehicletracking.feature.menu.manage_vehicles.generated.resources.vehicleShopLink
+import vehicletracking.feature.menu.manage_vehicles.generated.resources.*
 
 @Serializable
 data object ManageVehiclesAddEdit
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditVehicleRoot(
     viewModel: AddEditVehicleViewModel = koinViewModel(),
     paddingValues: PaddingValues,
+    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior,
     onBack: () -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -82,6 +62,7 @@ fun AddEditVehicleRoot(
     }
     AddEditVehicleScreen(
         state = state,
+        bottomAppBarScrollBehavior = bottomAppBarScrollBehavior,
         uploadStatus = uploadStatus,
         onAction = viewModel::onAction,
         paddingValues = paddingValues,
@@ -93,12 +74,13 @@ fun AddEditVehicleRoot(
 @Composable
 fun AddEditVehicleScreen(
     state: AddEditVehicleState,
+    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior,
     uploadStatus: List<ImageUploadState>,
     onAction: (AddEditVehicleAction) -> Unit,
     paddingValues: PaddingValues,
     onBack: () -> Unit,
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val focusManager = LocalFocusManager.current
 
     val coroutinesScope = rememberCoroutineScope()
@@ -122,7 +104,8 @@ fun AddEditVehicleScreen(
         modifier = Modifier
             .fillMaxSize()
             .imePadding()
-            .nestedScroll(scrollBehavior.nestedScrollConnection),
+            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+            .nestedScroll(bottomAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(
                 title = {
@@ -134,7 +117,7 @@ fun AddEditVehicleScreen(
                 navigationIcon = {
                     BackButton(onBack)
                 },
-                scrollBehavior = scrollBehavior
+                scrollBehavior = topAppBarScrollBehavior
             )
         }
     ) { innerPadding ->
@@ -527,12 +510,14 @@ fun AddEditVehicleScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun AddEditVehicleScreenPreview() {
     AppTheme {
         AddEditVehicleScreen(
             state = AddEditVehicleState(),
+            bottomAppBarScrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior(),
             uploadStatus = emptyList(),
             onAction = {},
             paddingValues = PaddingValues(0.dp),

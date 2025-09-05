@@ -2,6 +2,7 @@ package cz.kudladev.vehicletracking.core.ui.vehicle
 
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -70,7 +71,10 @@ fun VehicleMileageChart(
         data
     }
 
-    Column(modifier = modifier.padding(16.dp)) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
         Text(
             text = "Mileage",
             style = MaterialTheme.typography.titleLarge,
@@ -80,7 +84,6 @@ fun VehicleMileageChart(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(340.dp)
-                .padding(top = 16.dp, bottom = 30.dp, start = 8.dp, end = 8.dp)
                 .pointerInput(Unit) {
                     detectDragGestures(
                         onDragStart = { offset ->
@@ -339,7 +342,7 @@ fun VehicleMileageChartPreview() {
     AppTheme {
         Surface {
             VehicleMileageChart(
-                modifier = Modifier.size(400.dp),
+                modifier = Modifier.fillMaxWidth(),
                 data = listOf(
                     "Jan" to 1200f,
                     "Feb" to 1500f,

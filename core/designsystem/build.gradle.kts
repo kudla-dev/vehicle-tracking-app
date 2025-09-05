@@ -47,8 +47,6 @@ kotlin {
 
             implementation(libs.bundles.coil)
 
-            implementation(libs.compose.stacked.snackbar)
-
             implementation(libs.bundles.peekaboo)
 
             implementation("com.github.GIGAMOLE:ComposeScrollbars:1.0.4")

@@ -51,6 +51,7 @@ kotlin {
             implementation(libs.bundles.koin)
 
             implementation(libs.navigation.compose)
+            implementation(libs.bundles.haze)
 
             implementation(projects.model)
             implementation(projects.core.domain)

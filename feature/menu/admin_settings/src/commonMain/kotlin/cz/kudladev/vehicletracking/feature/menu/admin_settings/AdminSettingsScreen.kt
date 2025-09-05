@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.HomeWork
 import androidx.compose.material.icons.twotone.Mail
+import androidx.compose.material3.BottomAppBarScrollBehavior
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,16 +36,19 @@ import vehicletracking.feature.menu.admin_settings.generated.resources.requestNo
 @Serializable
 data object AdminSettings
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminSettingsRoot(
     viewModel: AdminSettingsViewModel = koinViewModel(),
     paddingValues: PaddingValues,
+    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior,
     onBack: () -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     AdminSettingsScreen(
         paddingValues = paddingValues,
+        bottomAppBarScrollBehavior = bottomAppBarScrollBehavior,
         state = state,
         onAction = viewModel::onAction,
         onBack = onBack,
@@ -56,6 +60,7 @@ fun AdminSettingsRoot(
 fun AdminSettingsScreen(
     paddingValues: PaddingValues,
     state: AdminSettingsState,
+    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior,
     onAction: (AdminSettingsAction) -> Unit,
     onBack: () -> Unit
 ) {
@@ -77,7 +82,9 @@ fun AdminSettingsScreen(
                 scrollBehavior = scrollBehavior,
             )
         },
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+        modifier = Modifier
+            .nestedScroll(scrollBehavior.nestedScrollConnection)
+            .nestedScroll(bottomAppBarScrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
         val padding = PaddingValues(
             start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),

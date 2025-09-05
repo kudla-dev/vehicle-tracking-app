@@ -2,8 +2,10 @@ package cz.kudladev.vehicletracking.feature.onboarding.loading
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.kudladev.vehicletracking.core.domain.SnackbarController
 import cz.kudladev.vehicletracking.core.domain.auth.AuthRepository
 import cz.kudladev.vehicletracking.core.domain.auth.UserStateHolder
+import cz.kudladev.vehicletracking.model.Snackbar
 import cz.kudladev.vehicletracking.model.onError
 import cz.kudladev.vehicletracking.model.onSuccess
 import kotlinx.coroutines.flow.*

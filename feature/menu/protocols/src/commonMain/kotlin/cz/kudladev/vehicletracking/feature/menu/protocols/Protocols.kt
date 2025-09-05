@@ -1,5 +1,6 @@
 package cz.kudladev.vehicletracking.feature.menu.protocols
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,6 +12,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -35,6 +38,7 @@ import com.skydoves.landscapist.coil3.CoilImage
 import cz.kudladev.vehicletracking.core.designsystem.BackButton
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
 import cz.kudladev.vehicletracking.core.designsystem.OutlinedTextField
+import cz.kudladev.vehicletracking.core.designsystem.PrimaryButton
 import cz.kudladev.vehicletracking.core.ui.image.SummaryImageSectionItem
 import cz.kudladev.vehicletracking.core.ui.nextString
 import cz.kudladev.vehicletracking.core.ui.submitString
@@ -65,9 +69,11 @@ enum class ProtocolsType(val title: StringResource) {
     RETURN(Res.string.returnProtocolTitle),
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProtocolsRoot(
     viewModel: ProtocolsViewModel = koinViewModel(),
+    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior,
     type: ProtocolsType,
     paddingValues: PaddingValues,
     onBack: () -> Unit,
@@ -86,6 +92,7 @@ fun ProtocolsRoot(
 
     ProtocolsScreen(
         state = state,
+        bottomAppBarScrollBehavior = bottomAppBarScrollBehavior,
         onAction = viewModel::onAction,
         type = type,
         paddingValues = paddingValues,
@@ -98,13 +105,14 @@ fun ProtocolsRoot(
 @Composable
 fun ProtocolsScreen(
     state: ProtocolsState,
+    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior,
     onAction: (ProtocolsAction) -> Unit,
     type: ProtocolsType,
     paddingValues: PaddingValues,
     onBack: () -> Unit,
     uploadStatus: List<ImageUploadState>,
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     val cameraState = rememberPeekabooCameraState(
         onCapture = { byteArray ->
@@ -131,12 +139,13 @@ fun ProtocolsScreen(
                         onClick = onBack
                     )
                 },
-                scrollBehavior = scrollBehavior
+                scrollBehavior = topAppBarScrollBehavior
             )
         },
+        contentWindowInsets = WindowInsets(0.dp),
         modifier = Modifier
-            .imePadding()
-            .nestedScroll(scrollBehavior.nestedScrollConnection)
+            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+            .nestedScroll(bottomAppBarScrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
         val combinedPadding = PaddingValues(
             bottom = paddingValues.calculateBottomPadding(),
@@ -267,7 +276,7 @@ fun ProtocolsScreen(
 fun ProtocolsCapture(
     cameraState: PeekabooCameraState,
     page: ProtocolsScreenPage,
-    capturedImage: Image?,
+    capturedImage: ImageUploadState?,
     onRetake: () -> Unit,
     action: (ProtocolsAction) -> Unit,
     onBack: () -> Unit,
@@ -278,122 +287,150 @@ fun ProtocolsCapture(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ){
-        Text(
-            text = page.instruction,
-            style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-        Crossfade(
-            targetState = capturedImage
+        Box(
+            modifier = Modifier.weight(1f),
+            contentAlignment = Alignment.Center
         ){
-            when (it) {
-                null -> {
-                    PeekabooCamera(
-                        state = cameraState,
-                        modifier = Modifier
-                            .fillMaxWidth(0.9f)
-                            .aspectRatio(16f/9f)
-                            .clip(MaterialTheme.shapes.medium),
-                        permissionDeniedContent = {
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    stringResource(Res.string.cameraPermissionDenied),
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-                        },
-                    )
-                }
-                else -> {
-                    capturedImage?.let { capturedImage ->
-                        val imageModifier = Modifier
-                            .fillMaxWidth(0.9f)
-                            .aspectRatio(16f/9f)
-                            .clip(MaterialTheme.shapes.medium)
-                        when (capturedImage) {
-                            is ImageWithUrl -> {
-                                CoilImage(
-                                    imageModel = {
-                                        capturedImage.url
-                                    },
-                                    modifier = imageModifier,
-                                    imageOptions = ImageOptions(
-                                        contentScale = ContentScale.Crop,
+            Text(
+                text = page.instruction,
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+            )
+        }
+        Box(
+            modifier = Modifier.weight(1f),
+            contentAlignment = Alignment.Center
+        ){
+            AnimatedContent(
+                targetState = capturedImage
+            ){
+                when (it) {
+                    null -> {
+                        PeekabooCamera(
+                            state = cameraState,
+                            modifier = Modifier
+                                .fillMaxWidth(0.9f)
+                                .aspectRatio(16f/9f)
+                                .clip(MaterialTheme.shapes.medium),
+                            permissionDeniedContent = {
+                                Column(
+                                    modifier = Modifier.fillMaxSize(),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Text(
+                                        stringResource(Res.string.cameraPermissionDenied),
+                                        textAlign = TextAlign.Center
                                     )
-                                )
-                            }
-                            is ImageWithBytes -> {
-                                Image(
-                                    bitmap = capturedImage.bytes?.toImageBitmap() ?: return@Crossfade,
-                                    contentDescription = null,
-                                    modifier = imageModifier,
-                                    contentScale = ContentScale.Crop,
-                                )
+                                }
+                            },
+                        )
+                    }
+                    else -> {
+                        capturedImage?.let { capturedImage ->
+                            if (capturedImage is ImageUploadState.Completed) {
+                                val imageModifier = Modifier
+                                    .fillMaxWidth(0.9f)
+                                    .aspectRatio(16f/9f)
+                                    .clip(MaterialTheme.shapes.medium)
+
+                                when (val imageURL = capturedImage.imageURL) {
+                                    is ImageWithUrl -> {
+                                        CoilImage(
+                                            imageModel = { imageURL.url },
+                                            modifier = imageModifier,
+                                            imageOptions = ImageOptions(
+                                                contentScale = ContentScale.Crop,
+                                            )
+                                        )
+                                    }
+                                    is ImageWithBytes -> {
+                                        val bitmap = imageURL.bytes?.toImageBitmap()
+                                        if (bitmap != null) {
+                                            Image(
+                                                bitmap = bitmap,
+                                                contentDescription = null,
+                                                modifier = imageModifier,
+                                                contentScale = ContentScale.Crop,
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
         }
-        Crossfade(
-            targetState = capturedImage
+        Box(
+            modifier = Modifier.weight(1f),
+            contentAlignment = Alignment.Center
         ){
-            when (it) {
-                null -> {
-                    Box(
-                        modifier = Modifier
-                            .size(64.dp)
-                            .clip(RoundedCornerShape(100))
-                            .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f), RoundedCornerShape(100))
-                            .clickable(
-                                onClick = {
-                                    cameraState.capture()
-                                }
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
+            AnimatedContent(
+                targetState = capturedImage,
+            ){
+                when (it) {
+                    null -> {
                         Box(
                             modifier = Modifier
-                                .size(56.dp)
-                                .clip(RoundedCornerShape(100))
-                                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f))
-                        )
-                    }
-                }
-                else -> {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceAround,
-                    ) {
-                        TextButton(
-                            onClick = {
-                                onRetake()
-                            }
+                                .fillMaxWidth(),
+                            contentAlignment = Alignment.Center
                         ){
-                            Text(
-                                stringResource(Res.string.retake),
-                            )
+                            Box(
+                                modifier = Modifier
+                                    .size(64.dp)
+                                    .clip(RoundedCornerShape(100))
+                                    .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f), RoundedCornerShape(100))
+                                    .clickable(
+                                        onClick = {
+                                            cameraState.capture()
+                                        }
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(56.dp)
+                                        .clip(RoundedCornerShape(100))
+                                        .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f))
+                                )
+                            }
                         }
-                        Button(
-                            onClick = {
-                                onNext()
+                    }
+                    else -> {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceAround,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            TextButton(
+                                onClick = {
+                                    onRetake()
+                                }
+                            ){
+                                Text(
+                                    stringResource(Res.string.retake),
+                                )
                             }
-                        ){
-                            Text(
-                                nextString(),
-                            )
+                            Button(
+                                onClick = {
+                                    onNext()
+                                }
+                            ){
+                                Text(
+                                    nextString(),
+                                )
+                            }
                         }
                     }
                 }
             }
         }
     }
+
 }
 
 @Composable
@@ -405,7 +442,7 @@ fun SummaryProtocol(
 ) {
     val focusManager = LocalFocusManager.current
 
-    val nextImages by remember{
+    val beforeImages by remember{
         mutableStateOf(
             when (state.tracking) {
                 is UiState.Success -> {
@@ -416,20 +453,19 @@ fun SummaryProtocol(
             }
         )
     }
-
-
     LazyColumn(
         modifier = Modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        contentPadding = PaddingValues(16.dp),
     ) {
         itemsIndexed(ProtocolsScreenPage.viewPages()) { index,page ->
-//            SummaryImageSectionItem(
-//                beforeImage = state.images[page],
-//                afterImage = nextImages?.getOrElse(index) { null },
-//                title = page.title,
-//            )
+            SummaryImageSectionItem(
+                beforeImage = beforeImages?.get(index) ?: state.images[page],
+                afterImage = if (beforeImages != null) state.images[page] else null,
+                title = page.title,
+            )
         }
         item {
             OutlinedTextField(
@@ -446,7 +482,7 @@ fun SummaryProtocol(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp, start = 8.dp, end = 8.dp),
+                    .padding(top = 8.dp),
                 maxLines = 1,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
@@ -472,8 +508,7 @@ fun SummaryProtocol(
                     )
                 },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
+                    .fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done
@@ -490,16 +525,24 @@ fun SummaryProtocol(
                 modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 32.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Button(
+                PrimaryButton(
                     onClick = {
                         onSubmit()
+                    },
+                    text = submitString(),
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Send,
+                            contentDescription = null
+                        )
                     }
-                ) {
-                    Text(
-                        text = submitString(),
-                    )
-                }
+                )
             }
+        }
+        item {
+            Spacer(
+                modifier = Modifier.padding(WindowInsets.ime.asPaddingValues().calculateBottomPadding())
+            )
         }
     }
 }

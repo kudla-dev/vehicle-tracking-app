@@ -3,9 +3,18 @@ package cz.kudladev.vehicletracking.core.ui.tracking
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Flag
+import androidx.compose.material.icons.filled.Speed
+import androidx.compose.material.icons.filled.SportsScore
+import androidx.compose.material.icons.filled.Start
+import androidx.compose.material.icons.filled.TripOrigin
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,6 +33,7 @@ import cz.kudladev.vehicletracking.core.designsystem.Badge
 import cz.kudladev.vehicletracking.core.designsystem.Image
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
 import cz.kudladev.vehicletracking.core.ui.user.testUser
+import cz.kudladev.vehicletracking.core.ui.util.toFormattedShortString
 import cz.kudladev.vehicletracking.core.ui.vehicle.testVehicle
 import cz.kudladev.vehicletracking.model.Role
 import cz.kudladev.vehicletracking.model.Tracking
@@ -55,28 +65,29 @@ fun TrackingItem(
     ){
         Row(
             modifier = Modifier
-                .padding(4.dp),
+                .padding(4.dp)
+                .height(IntrinsicSize.Min),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Box(
                 modifier = Modifier
-                    .width(160.dp)
-                    .clip(MaterialTheme.shapes.medium)
-                    .aspectRatio(16f / 9f),
+                    .fillMaxHeight()
+                    .clip(RoundedCornerShape(16.dp))
+                    .aspectRatio(4f / 3f),
             ){
                 Image(
                     imageUrl = tracking.vehicle.images.firstOrNull()?.url ?: "",
                     modifier = Modifier
-                        .width(160.dp)
-                        .clip(MaterialTheme.shapes.medium)
-                        .aspectRatio(16f / 9f),
+                        .matchParentSize()
+                        .clip(RoundedCornerShape(16.dp))
+                        .aspectRatio(4f / 3f),
                     contentScale = ContentScale.Crop,
                 )
                 lastTrackingState?.let {
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .matchParentSize()
                             .padding(4.dp)
                     ){
                         Badge(
@@ -85,9 +96,25 @@ fun TrackingItem(
                         )
                     }
                 }
+                tracking.finalDistance?.let {
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .padding(4.dp),
+                        contentAlignment = Alignment.BottomEnd
+                    ) {
+                        Badge(
+                            text = "${tracking.finalDistance} km",
+                            icon = Icons.Default.Add,
+                            containerColor = MaterialTheme.colorScheme.tertiary,
+                            contentColor = MaterialTheme.colorScheme.onTertiary,
+                        )
+                    }
+                }
             }
             Column(
                 modifier = Modifier
+                    .fillMaxHeight()
                     .padding(4.dp)
             ) {
                 Text(
@@ -100,14 +127,34 @@ fun TrackingItem(
                 Text(
                     text = tracking.user.fullName,
                     style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-                tracking.finalDistance?.let {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.TripOrigin,
+                        contentDescription = null,
+                    )
                     Text(
-                        text = "+${it} km",
+                        text = tracking.startTime.toFormattedShortString(),
                         style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold,
+                    )
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.SportsScore,
+                        contentDescription = null,
+                    )
+                    Text(
+                        text = tracking.endTime.toFormattedShortString(),
+                        style = MaterialTheme.typography.bodyMedium,
                     )
                 }
             }
@@ -139,14 +186,15 @@ fun TrackingItemSkeleton(
         Row(
             modifier = Modifier
                 .padding(4.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             // Image placeholder
             Box(
                 modifier = Modifier
-                    .width(160.dp)
+                    .fillMaxHeight()
                     .aspectRatio(16f / 9f)
                     .clip(MaterialTheme.shapes.medium)
                     .background(Color.Gray)
@@ -154,6 +202,7 @@ fun TrackingItemSkeleton(
 
             Column(
                 modifier = Modifier
+                    .fillMaxHeight()
                     .padding(4.dp)
                     .weight(1f)
             ) {

@@ -1,6 +1,5 @@
 package cz.kudladev.vehicletracking.app.navigation.core
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
@@ -9,13 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import cz.kudladev.vehicletracking.app.AppState
 import cz.kudladev.vehicletracking.app.navigation.BottomBar
+import cz.kudladev.vehicletracking.core.designsystem.snackbar.StackedSnackbarHost
+import dev.chrisbanes.haze.hazeSource
 import org.koin.compose.viewmodel.koinViewModel
 
 
@@ -32,11 +32,12 @@ fun VehicleTracking(
                 BottomBar(appState)
             }
         },
-        snackbarHost = { SnackbarHost(appState.snackbarHostState) },
+        snackbarHost = { StackedSnackbarHost(appState.snackbarHost) },
         contentWindowInsets = WindowInsets()
     ) {
         appState.paddingValues = it
         NavHost(
+            modifier = Modifier.hazeSource(appState.hazeState),
             navController = appState.coreNavController,
             startDestination = AuthRoot
         ){

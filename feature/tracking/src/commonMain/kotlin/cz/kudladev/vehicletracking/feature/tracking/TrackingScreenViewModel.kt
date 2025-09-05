@@ -50,6 +50,11 @@ class TrackingScreenViewModel(
                     trackingState = action.trackingState
                 )
             }
+            TrackingScreenAction.ReturnAcknowledge -> {
+                _state.update { it.copy(
+                    confirmTracking = UiState.Idle
+                ) }
+            }
         }
     }
 

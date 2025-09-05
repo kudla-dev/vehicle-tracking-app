@@ -50,7 +50,7 @@ kotlin {
             implementation(libs.bundles.paging)
 
             implementation(libs.navigation.compose)
-
+            implementation(libs.haze)
 
             implementation(projects.model)
             implementation(projects.core.domain)

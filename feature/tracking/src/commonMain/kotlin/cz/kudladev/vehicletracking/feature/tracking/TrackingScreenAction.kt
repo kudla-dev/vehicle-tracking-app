@@ -11,4 +11,6 @@ sealed interface TrackingScreenAction {
         val trackingState: TrackingState
     ) : TrackingScreenAction
 
+    data object ReturnAcknowledge : TrackingScreenAction
+
 }

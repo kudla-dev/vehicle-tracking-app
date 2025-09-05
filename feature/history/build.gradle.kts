@@ -47,6 +47,8 @@ kotlin {
 
             implementation(libs.bundles.koin)
 
+            implementation(libs.haze)
+
             implementation(libs.bundles.paging)
             implementation(projects.core.domain)
             implementation(projects.core.designsystem)

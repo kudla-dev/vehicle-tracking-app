@@ -1,7 +1,6 @@
 package cz.kudladev.vehicletracking.feature.vehicles
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -17,7 +16,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -56,8 +54,10 @@ data class VehicleList(
     val create: Boolean = false,
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VehicleListScreenRoot(
+    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior,
     userState: UserStateHolder = koinInject(),
     vehicleListViewModel: VehicleListViewModel = koinViewModel(),
     paddingValues: PaddingValues,
@@ -71,6 +71,7 @@ fun VehicleListScreenRoot(
     val state = vehicleListViewModel.state.collectAsStateWithLifecycle()
 
     VehicleListScreen(
+        bottomAppBarScrollBehavior = bottomAppBarScrollBehavior,
         state = state.value,
         onAction = vehicleListViewModel::onAction,
         paddingValues = paddingValues,
@@ -86,6 +87,7 @@ fun VehicleListScreenRoot(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun VehicleListScreen(
+    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior,
     state: VehicleListState,
     onAction: (VehicleListAction) -> Unit,
     paddingValues: PaddingValues,
@@ -96,7 +98,7 @@ private fun VehicleListScreen(
     onVehicleClick: (Int) -> Unit,
     onCreate: (() -> Unit)? = null,
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val pullToRefreshState = rememberPullToRefreshState()
 
     PullToRefreshBox(
@@ -110,7 +112,8 @@ private fun VehicleListScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .nestedScroll(scrollBehavior.nestedScrollConnection),
+                .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+                .nestedScroll(bottomAppBarScrollBehavior.nestedScrollConnection),
             topBar = {
                 LargeTopAppBar(
                     title = {
@@ -150,7 +153,7 @@ private fun VehicleListScreen(
                             )
                         }
                     },
-                    scrollBehavior = scrollBehavior,
+                    scrollBehavior = topAppBarScrollBehavior,
                 )
             },
             floatingActionButton = {
@@ -179,7 +182,8 @@ private fun VehicleListScreen(
                 when (vehicles.loadState.refresh) {
                     is LoadState.Loading -> {
                         LazyVerticalGrid(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize(),
                             contentPadding = combinedPadding,
                             columns = when(state.selectedView){
                                 VehicleListView.Grid -> GridCells.Adaptive(150.dp)
@@ -214,7 +218,7 @@ private fun VehicleListScreen(
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(combinedPadding),
+                                .padding(paddingValues.calculateBottomPadding()),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
@@ -265,7 +269,8 @@ private fun VehicleListScreen(
                             }
                             false -> {
                                 LazyVerticalGrid(
-                                    modifier = Modifier.fillMaxSize(),
+                                    modifier = Modifier
+                                        .fillMaxSize(),
                                     contentPadding = combinedPadding,
                                     columns = when(state.selectedView){
                                         VehicleListView.Grid -> GridCells.Adaptive(150.dp)

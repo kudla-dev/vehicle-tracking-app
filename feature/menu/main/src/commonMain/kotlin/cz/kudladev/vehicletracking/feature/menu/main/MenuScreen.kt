@@ -6,8 +6,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.Logout
-import androidx.compose.material.icons.filled.SportsScore
-import androidx.compose.material.icons.filled.TrackChanges
 import androidx.compose.material.icons.twotone.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -30,25 +28,13 @@ import cz.kudladev.vehicletracking.model.User
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
-import vehicletracking.feature.menu.main.generated.resources.Res
-import vehicletracking.feature.menu.main.generated.resources.accountSection
-import vehicletracking.feature.menu.main.generated.resources.adminSection
-import vehicletracking.feature.menu.main.generated.resources.adminSettings
-import vehicletracking.feature.menu.main.generated.resources.changePassword
-import vehicletracking.feature.menu.main.generated.resources.logout
-import vehicletracking.feature.menu.main.generated.resources.manageUsers
-import vehicletracking.feature.menu.main.generated.resources.manageVehicles
-import vehicletracking.feature.menu.main.generated.resources.menuTitle
-import vehicletracking.feature.menu.main.generated.resources.personalData
-import vehicletracking.feature.menu.main.generated.resources.trackingHistory
-import vehicletracking.feature.menu.main.generated.resources.trackingsActive
-import vehicletracking.feature.menu.main.generated.resources.trackingsNewRequest
-import vehicletracking.feature.menu.main.generated.resources.trackingsReadyToStart
-import vehicletracking.feature.menu.main.generated.resources.trackingsSection
+import vehicletracking.feature.menu.main.generated.resources.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MenuScreenRoot(
     paddingValues: PaddingValues,
+    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior,
     userStateHolder: UserStateHolder = koinInject(),
     viewModel: MenuScreenViewModel = koinViewModel(),
     onAdminSettings: () -> Unit,
@@ -63,6 +49,7 @@ fun MenuScreenRoot(
 
     MenuScreen(
         paddingValues = paddingValues,
+        bottomAppBarScrollBehavior = bottomAppBarScrollBehavior,
         state = state,
         user = user,
         onAdminSettings = onAdminSettings,
@@ -78,6 +65,7 @@ fun MenuScreenRoot(
 @Composable
 private fun MenuScreen(
     paddingValues: PaddingValues,
+    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior,
     state: MenuScreenState,
     user: User?,
     onAdminSettings: () -> Unit,
@@ -87,12 +75,13 @@ private fun MenuScreen(
     onNewRequestsTrackings: () -> Unit,
     onTrackingHistory: () -> Unit,
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .nestedScroll(scrollBehavior.nestedScrollConnection),
+            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+            .nestedScroll(bottomAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             LargeTopAppBar(
                 title = {
@@ -102,7 +91,7 @@ private fun MenuScreen(
 
                     )
                 },
-                scrollBehavior = scrollBehavior,
+                scrollBehavior = topAppBarScrollBehavior,
             )
         },
     ) { innerPadding ->

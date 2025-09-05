@@ -1,7 +1,6 @@
 package cz.kudladev.vehicletracking.core.ui.tracking
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
@@ -21,16 +20,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.valentinilk.shimmer.shimmer
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
-import cz.kudladev.vehicletracking.core.ui.util.toFormattedString
-import cz.kudladev.vehicletracking.model.Role
+import cz.kudladev.vehicletracking.core.ui.util.toFormattedLongString
 import cz.kudladev.vehicletracking.model.Tracking
 import cz.kudladev.vehicletracking.model.TrackingLog
 import cz.kudladev.vehicletracking.model.TrackingState
-import cz.kudladev.vehicletracking.model.User
 import cz.kudladev.vehicletracking.model.getNextState
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import vehicletracking.core.ui.generated.resources.Res
@@ -51,8 +45,8 @@ fun StateHistory(
             null -> stringResource(Res.string.noMessageProvided)
             else -> stringResource( last.message!!,
                 when (last){
-                    TrackingState.WAITING_FOR_START -> tracking.startTime.toFormattedString()
-                    TrackingState.WAITING_FOR_RETURN -> tracking.endTime.toFormattedString()
+                    TrackingState.WAITING_FOR_START -> tracking.startTime.toFormattedLongString()
+                    TrackingState.WAITING_FOR_RETURN -> tracking.endTime.toFormattedLongString()
                     else -> ""
                 }
             )

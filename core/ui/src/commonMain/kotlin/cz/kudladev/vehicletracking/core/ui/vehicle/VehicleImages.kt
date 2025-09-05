@@ -87,6 +87,7 @@ fun VehicleImages(
                             stiffness = Spring.StiffnessLow
                         )
                     ),
+                    contentPadding = PaddingValues(horizontal = 16.dp)
 //                    key = { index -> images.getOrNull(index) ?: index }
                 ) { index ->
                     Box(

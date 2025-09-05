@@ -4,8 +4,6 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,7 +18,6 @@ import androidx.paging.LoadState
 import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
 import cz.kudladev.vehicletracking.core.designsystem.BackButton
-import cz.kudladev.vehicletracking.core.designsystem.Image
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
 import cz.kudladev.vehicletracking.core.designsystem.theme.Images
 import cz.kudladev.vehicletracking.core.ui.tracking.TrackingItem
@@ -78,10 +75,12 @@ enum class ManageTrackingsTypes(val states: List<TrackingState>, val title: Stri
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ManageTrackingsRoot(
     viewModel: ManageTrackingsViewModel = koinViewModel(),
     paddingValues: PaddingValues,
+    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior,
     onBack: () -> Unit,
     onTrackingClicked: (tracking: Tracking) -> Unit,
     type: ManageTrackingsTypes
@@ -93,6 +92,7 @@ fun ManageTrackingsRoot(
     ManageTrackingsScreen(
         paddingValues = paddingValues,
         state = state,
+        bottomAppBarScrollBehavior = bottomAppBarScrollBehavior,
         type = type,
         trackings = trackings,
         onAction = viewModel::onAction,
@@ -105,6 +105,7 @@ fun ManageTrackingsRoot(
 @Composable
 private fun ManageTrackingsScreen(
     paddingValues: PaddingValues,
+    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior,
     state: ManageTrackingsState,
     type: ManageTrackingsTypes,
     trackings: LazyPagingItems<Tracking>,
@@ -112,7 +113,7 @@ private fun ManageTrackingsScreen(
     onBack: () -> Unit,
     onTrackingClicked: (tracking: Tracking) -> Unit
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val topAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
         topBar = {
@@ -126,10 +127,12 @@ private fun ManageTrackingsScreen(
                 navigationIcon = {
                     BackButton(onClick = onBack)
                 },
-                scrollBehavior = scrollBehavior
+                scrollBehavior = topAppBarScrollBehavior
             )
         },
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+        modifier = Modifier
+            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+            .nestedScroll(bottomAppBarScrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
         val combinedPadding = PaddingValues(
             bottom = paddingValues.calculateBottomPadding() + 16.dp,

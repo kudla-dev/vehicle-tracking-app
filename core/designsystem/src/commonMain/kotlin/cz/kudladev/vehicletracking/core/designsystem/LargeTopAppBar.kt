@@ -26,6 +26,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LargeTopAppBar(
+    modifier: Modifier = Modifier,
     title: @Composable () -> Unit,
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable () -> Unit = {},
@@ -34,7 +35,7 @@ fun LargeTopAppBar(
     scrolledContainerColor: Color = MaterialTheme.colorScheme.background,
 ){
     LargeTopAppBar(
-        modifier = Modifier
+        modifier = modifier
             .drawBehind {
                 // Draw shadow only when the app bar is scrolled/collapsed
                 if (scrollBehavior != null && scrollBehavior.state.collapsedFraction > 0f) {

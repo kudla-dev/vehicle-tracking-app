@@ -39,7 +39,7 @@ data class ImageWithBytes(
 sealed class ImageUploadState {
     data object Queued : ImageUploadState()
     data class Uploading(val imageUri: ByteArray?, val progress: Float) : ImageUploadState()
-    data class Completed(val imageURL: ImageWithUrl) : ImageUploadState()
+    data class Completed(val imageURL: Image) : ImageUploadState()
     data class Failed(val errorMessage: ErrorMessage) : ImageUploadState()
     data class Canceled(val imageUri: String) : ImageUploadState()
 }

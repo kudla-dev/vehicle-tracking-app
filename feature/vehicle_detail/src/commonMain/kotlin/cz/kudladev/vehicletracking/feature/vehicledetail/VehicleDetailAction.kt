@@ -13,4 +13,6 @@ interface VehicleDetailAction {
 
     data object CreateTracking : VehicleDetailAction
 
+    data object ReservationAcknowledged : VehicleDetailAction
+
 }

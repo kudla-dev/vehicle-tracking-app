@@ -37,9 +37,11 @@ import vehicletracking.feature.history.generated.resources.*
 @Serializable
 data object History
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreenRoot(
     paddingValues: PaddingValues,
+    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior,
     viewModel: HistoryScreenViewModel = koinViewModel()
 ){
     val trackings = viewModel.trackings.collectAsLazyPagingItems()
@@ -52,6 +54,7 @@ fun HistoryScreenRoot(
 
     HistoryScreen(
         paddingValues = paddingValues,
+        bottomAppBarScrollBehavior = bottomAppBarScrollBehavior,
         onAction = viewModel::onAction,
         trackings = trackings,
         user = user
@@ -62,11 +65,12 @@ fun HistoryScreenRoot(
 @Composable
 fun HistoryScreen(
     paddingValues: PaddingValues,
+    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior,
     onAction: (HistoryScreenAction) -> Unit,
     trackings: LazyPagingItems<Tracking>,
     user: User? = null
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
     val pullToRefreshState = rememberPullToRefreshState()
 
@@ -79,17 +83,17 @@ fun HistoryScreen(
         Scaffold(
             modifier = Modifier
                 .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection),
+                .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+                .nestedScroll(bottomAppBarScrollBehavior.nestedScrollConnection),
             topBar = {
                 LargeTopAppBar(
                     title = {
                         Text(
                             stringResource(Res.string.historyTitle),
                             fontStyle = FontStyle.Italic
-
                         )
                     },
-                    scrollBehavior = scrollBehavior,
+                    scrollBehavior = topAppBarScrollBehavior,
                 )
             },
         ) { innerPadding ->
@@ -99,28 +103,39 @@ fun HistoryScreen(
                 start = innerPadding.calculateStartPadding(LocalLayoutDirection.current) + 16.dp,
                 end = innerPadding.calculateEndPadding(LocalLayoutDirection.current) + 16.dp,
             )
+            val columnPadding = PaddingValues(
+                top = combinedPadding.calculateTopPadding(),
+                start = combinedPadding.calculateStartPadding(LocalLayoutDirection.current),
+                end = combinedPadding.calculateEndPadding(LocalLayoutDirection.current)
+            )
             Crossfade(
                 targetState = trackings.loadState.refresh
             ){
                 when (it) {
                     is LoadState.Error -> {
-                        Text(
-                            text = stringResource(Res.string.historyError, it.error.message?: stringResource(Res.string.historyEmpty)),
-                            modifier = Modifier.padding(combinedPadding)
-                        )
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(columnPadding),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = stringResource(Res.string.historyError, it.error.message?: stringResource(Res.string.historyEmpty)),
+                                modifier = Modifier.padding(combinedPadding)
+                            )
+                        }
                     }
                     LoadState.Loading -> {
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(combinedPadding),
+                                .padding(columnPadding),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             repeat(6){
-                                TrackingItemSkeleton(
-                                    modifier = Modifier.padding(horizontal = 8.dp)
-                                )
+                                TrackingItemSkeleton()
                             }
                         }
                     }
@@ -130,7 +145,7 @@ fun HistoryScreen(
                                 Column(
                                     modifier = Modifier
                                         .fillMaxSize()
-                                        .padding(combinedPadding),
+                                        .padding(columnPadding),
                                     verticalArrangement = Arrangement.Center,
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
@@ -156,7 +171,8 @@ fun HistoryScreen(
                             false -> {
                                 LazyColumn(
                                     contentPadding = combinedPadding,
-                                    modifier = Modifier.fillMaxSize(),
+                                    modifier = Modifier
+                                        .fillMaxSize(),
                                     verticalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
                                     user?.let { user ->
@@ -177,7 +193,6 @@ fun HistoryScreen(
                                                 onClick = {
 
                                                 },
-                                                modifier = Modifier.padding(horizontal = 8.dp)
                                             )
                                         }
                                     }

@@ -4,54 +4,47 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.kudladev.vehicletracking.core.designsystem.BackButton
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
-import cz.kudladev.vehicletracking.core.ui.backViewString
-import cz.kudladev.vehicletracking.core.ui.frontViewString
+import cz.kudladev.vehicletracking.core.designsystem.PrimaryButton
+import cz.kudladev.vehicletracking.core.designsystem.SecondaryButton
+import cz.kudladev.vehicletracking.core.ui.*
 import cz.kudladev.vehicletracking.core.ui.image.SummaryImageSectionItem
-import cz.kudladev.vehicletracking.core.ui.leftViewString
-import cz.kudladev.vehicletracking.core.ui.rejectString
-import cz.kudladev.vehicletracking.core.ui.rightViewString
-import cz.kudladev.vehicletracking.core.ui.submitString
-import cz.kudladev.vehicletracking.core.ui.tachometerReadingString
+import cz.kudladev.vehicletracking.core.ui.others.LoadingDialog
 import cz.kudladev.vehicletracking.core.ui.tracking.CurrentState
 import cz.kudladev.vehicletracking.core.ui.tracking.StateHistory
 import cz.kudladev.vehicletracking.core.ui.tracking.TrackingDetailSection
 import cz.kudladev.vehicletracking.core.ui.tracking.TrackingHistory
+import cz.kudladev.vehicletracking.core.ui.user.UserCard
 import cz.kudladev.vehicletracking.core.ui.vehicle.VehicleHeader
 import cz.kudladev.vehicletracking.model.*
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import vehicletracking.feature.menu.tracking_detail.generated.resources.Res
-import vehicletracking.feature.menu.tracking_detail.generated.resources.imagesFromPickUp
-import vehicletracking.feature.menu.tracking_detail.generated.resources.loadingTrackingDetails
-import vehicletracking.feature.menu.tracking_detail.generated.resources.pickUp
-import vehicletracking.feature.menu.tracking_detail.generated.resources.`return`
-import vehicletracking.feature.menu.tracking_detail.generated.resources.trackingDetailTitle
+import vehicletracking.feature.menu.tracking_detail.generated.resources.*
 import kotlin.math.max
 
 @Serializable
 data class TrackingDetail(val trackingId: String)
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrackingDetailRoot(
     viewModel: TrackingDetailViewModel = koinViewModel(),
     paddingValues: PaddingValues,
+    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior,
     onBack: () -> Unit,
     onPickUpProtocol: (String, TrackingState) -> Unit,
     onReturnProtocol: (String, TrackingState) -> Unit,
@@ -66,6 +59,7 @@ fun TrackingDetailRoot(
 
     TrackingDetailScreen(
         paddingValues = paddingValues,
+        bottomAppBarScrollBehavior = bottomAppBarScrollBehavior,
         state = state,
         user = user,
         onAction = viewModel::onAction,
@@ -79,6 +73,7 @@ fun TrackingDetailRoot(
 @Composable
 private fun TrackingDetailScreen(
     paddingValues: PaddingValues,
+    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior,
     state: TrackingDetailState,
     user: User?,
     onAction: (TrackingDetailAction) -> Unit,
@@ -86,7 +81,7 @@ private fun TrackingDetailScreen(
     onPickUpProtocol: (String, TrackingState) -> Unit,
     onReturnProtocol: (String, TrackingState) -> Unit,
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(
         topBar = {
@@ -97,7 +92,7 @@ private fun TrackingDetailScreen(
                         fontStyle = FontStyle.Italic,
                     )
                 },
-                scrollBehavior = scrollBehavior,
+                scrollBehavior = topAppBarScrollBehavior,
                 navigationIcon = {
                     BackButton(
                         onClick = onBack
@@ -118,44 +113,40 @@ private fun TrackingDetailScreen(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(horizontal = 16.dp),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        horizontalArrangement = Arrangement.spacedBy(16.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        SmallExtendedFloatingActionButton(
+                                        SecondaryButton(
+                                            modifier = Modifier.weight(1f),
                                             onClick = {
                                                 onAction(TrackingDetailAction.RejectTracking(state.tracking.data.id))
                                             },
-                                            containerColor = MaterialTheme.colorScheme.tertiary,
-                                            contentColor = MaterialTheme.colorScheme.onTertiary
-                                        ){
-                                            Text(text = rejectString())
-                                        }
-                                        SmallExtendedFloatingActionButton(
+                                            text = rejectString()
+                                        )
+                                        PrimaryButton(
+                                            modifier = Modifier.weight(1f),
                                             onClick = {
                                                 onAction(TrackingDetailAction.ApproveTracking(state.tracking.data.id))
-                                            }
-                                        ) {
-                                            Text(text = submitString())
-                                        }
+                                            },
+                                            text = submitString()
+                                        )
                                     }
                                 }
                                 TrackingState.APPROVED -> {
-                                    SmallExtendedFloatingActionButton(
+                                    PrimaryButton(
                                         onClick = {
                                             onPickUpProtocol(state.tracking.data.id, TrackingState.ACTIVE)
-                                        }
-                                    ) {
-                                        Text(text = stringResource(Res.string.pickUp))
-                                    }
+                                        },
+                                        text = stringResource(Res.string.pickUp)
+                                    )
                                 }
                                 TrackingState.ACTIVE -> {
-                                    SmallExtendedFloatingActionButton(
+                                    PrimaryButton(
                                         onClick = {
                                             onReturnProtocol(state.tracking.data.id, TrackingState.RETURNED)
-                                        }
-                                    ) {
-                                        Text(text = stringResource(Res.string.`return`))
-                                    }
+                                        },
+                                        text = stringResource(Res.string.`return`)
+                                    )
                                 }
                                 else -> {}
                             }
@@ -166,7 +157,8 @@ private fun TrackingDetailScreen(
             }
         },
         modifier = Modifier
-            .nestedScroll(scrollBehavior.nestedScrollConnection)
+            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+            .nestedScroll(bottomAppBarScrollBehavior.nestedScrollConnection)
             .padding(bottom = paddingValues.calculateBottomPadding()),
     ) { innerPadding ->
         val combinedPadding = PaddingValues(
@@ -193,13 +185,43 @@ private fun TrackingDetailScreen(
                         verticalArrangement = Arrangement.spacedBy(32.dp)
                     ) {
                         item {
-                            VehicleHeader(
-                                modifier = Modifier.fillMaxWidth(),
-                                vehicle = it.data.vehicle,
-                                onClick = {
-                                    // TODO: Navigate to vehicle detail
-                                }
-                            )
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+
+                            ) {
+                                Text(
+                                    text = "Vehicle",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontStyle = FontStyle.Italic,
+                                )
+                                VehicleHeader(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    vehicle = it.data.vehicle,
+                                    onClick = {
+                                        // TODO: Navigate to vehicle detail
+                                    }
+                                )
+                            }
+                        }
+                        item {
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Text(
+                                    text = "Requester",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontStyle = FontStyle.Italic,
+                                )
+                                UserCard(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    user = it.data.user,
+                                    onClick = {
+
+                                    }
+                                )
+                            }
                         }
                         item {
                             CurrentState(
@@ -301,10 +323,18 @@ private fun TrackingDetailScreen(
                                     else -> {}
                                 }
                             }
-                            TrackingState.REJECTED -> TODO()
-                            TrackingState.FAILED -> TODO()
-                            TrackingState.COMPLETED -> TODO()
-                            TrackingState.ERROR -> TODO()
+                            TrackingState.REJECTED -> {
+
+                            }
+                            TrackingState.FAILED -> {
+
+                            }
+                            TrackingState.COMPLETED -> {
+
+                            }
+                            TrackingState.ERROR -> {
+
+                            }
                             else -> {}
                         }
                     }
@@ -319,4 +349,9 @@ private fun TrackingDetailScreen(
             }
         }
     }
+
+    LoadingDialog(
+        title = "Please wait",
+        isLoading = state.updatedTracking is UiState.Loading
+    )
 }

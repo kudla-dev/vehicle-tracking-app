@@ -33,6 +33,8 @@ import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
 import cz.kudladev.vehicletracking.core.ui.util.toImageBitmap
 import cz.kudladev.vehicletracking.model.ErrorMessage
 import cz.kudladev.vehicletracking.model.ImageUploadState
+import cz.kudladev.vehicletracking.model.ImageWithBytes
+import cz.kudladev.vehicletracking.model.ImageWithUrl
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import vehicletracking.core.ui.generated.resources.Res
@@ -170,14 +172,35 @@ private fun Completed(
     imageState: ImageUploadState.Completed,
     imageModifier: Modifier
 ) {
-    CoilImage(
-        imageModel = { imageState.imageURL.url },
-        modifier = imageModifier
-            .background(MaterialTheme.colorScheme.surface),
-        imageOptions = ImageOptions(
-            contentScale = ContentScale.Crop,
-        )
-    )
+    when (val imageURL = imageState.imageURL) {
+        is ImageWithUrl -> {
+            CoilImage(
+                imageModel = { imageURL.url },
+                modifier = imageModifier
+                    .background(MaterialTheme.colorScheme.surface),
+                imageOptions = ImageOptions(
+                    contentScale = ContentScale.Crop,
+                )
+            )
+        }
+        is ImageWithBytes -> {
+            val bitmap = imageURL.bytes?.toImageBitmap()
+            bitmap?.let {
+                Image(
+                    bitmap = it,
+                    contentDescription = null,
+                    modifier = imageModifier
+                        .background(MaterialTheme.colorScheme.surface),
+                    contentScale = ContentScale.Crop,
+                )
+            } ?: Box(
+                modifier = imageModifier.background(MaterialTheme.colorScheme.surface),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Image data unavailable")
+            }
+        }
+    }
 }
 
 @Composable

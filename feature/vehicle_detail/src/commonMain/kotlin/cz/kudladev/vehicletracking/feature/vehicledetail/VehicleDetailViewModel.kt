@@ -45,9 +45,13 @@ class VehicleDetailViewModel(
                     endLocalDateTime = action.endLocalDateTime
                 ) }
             }
-
             is VehicleDetailAction.CreateTracking -> {
                 createTracking()
+            }
+            is VehicleDetailAction.ReservationAcknowledged -> {
+                _state.update { it.copy(
+                    trackingCreatingState = UiState.Idle
+                ) }
             }
         }
     }

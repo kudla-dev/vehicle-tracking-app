@@ -1,11 +1,13 @@
 package cz.kudladev.vehicletracking.core.ui.user
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -24,14 +26,16 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun UserCard(
     modifier: Modifier = Modifier,
     user: User,
-    onClick: () -> Unit
+    onClick: (() -> Unit) = {}
 ){
     Card(
         modifier = modifier,
+        onClick = onClick,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onSurface
-        )
+        ),
+        shape = RoundedCornerShape(12.dp)
     ) {
         Column(
             modifier = Modifier
@@ -47,7 +51,9 @@ fun UserCard(
                     modifier = Modifier
                         .size(64.dp),
                     user = user,
-                    onClick = onClick
+                    onClick = {
+
+                    }
                 )
                 Column {
                     Text(

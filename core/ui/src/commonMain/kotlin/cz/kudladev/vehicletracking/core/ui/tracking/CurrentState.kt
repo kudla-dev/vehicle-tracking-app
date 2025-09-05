@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -25,16 +24,9 @@ import androidx.compose.ui.unit.sp
 import com.valentinilk.shimmer.shimmer
 import cz.kudladev.vehicletracking.core.designsystem.Badge
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
-import cz.kudladev.vehicletracking.core.ui.util.toFormattedString
-import cz.kudladev.vehicletracking.model.Role
+import cz.kudladev.vehicletracking.core.ui.util.toFormattedLongString
 import cz.kudladev.vehicletracking.model.TrackingLog
 import cz.kudladev.vehicletracking.model.TrackingState
-import cz.kudladev.vehicletracking.model.User
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import vehicletracking.core.ui.generated.resources.Res
@@ -67,7 +59,7 @@ fun CurrentState(
                 iconSize = 16.dp,
             )
             Text(
-                text = currentTracking.assignedAt?.toFormattedString() ?: "N/A",
+                text = currentTracking.assignedAt?.toFormattedLongString() ?: "N/A",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
             )

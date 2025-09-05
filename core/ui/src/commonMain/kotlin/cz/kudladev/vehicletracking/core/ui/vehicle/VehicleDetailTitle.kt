@@ -26,11 +26,13 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun VehicleDetailTitle(
+    modifier: Modifier = Modifier,
     vehicle: Vehicle
 ){
     Text(
+        modifier = modifier,
         text = vehicle.fullName,
-        maxLines = 1,
+        maxLines = 2,
         softWrap = true,
         overflow = TextOverflow.Ellipsis,
         autoSize = TextAutoSize.StepBased(

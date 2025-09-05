@@ -262,7 +262,9 @@ actual class ImageService(
 
         workInfoFlow.collect { workInfos ->
             println("Received work infos for tag $tag: ${workInfos.size} items")
-            println("Work infos: $workInfos")
+            workInfos.forEach { info ->
+                println("WorkInfo - ID: ${info.id}, State: ${info.state}, Progress: ${info.progress}, OutputData: ${info.outputData}")
+            }
             val works = workInfos
                 .sortedBy { it.id }
                 .map { work ->

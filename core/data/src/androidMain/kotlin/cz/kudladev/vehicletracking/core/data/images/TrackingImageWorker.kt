@@ -5,10 +5,10 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import cz.kudladev.vehicletracking.core.domain.tracking.TrackingRepository
-import cz.kudladev.vehicletracking.core.domain.vehicles.VehicleRepository
 import cz.kudladev.vehicletracking.model.ImageWithUrl
 import cz.kudladev.vehicletracking.model.onError
 import cz.kudladev.vehicletracking.model.onSuccess
+import io.ktor.client.plugins.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.io.File
@@ -56,13 +56,19 @@ class TrackingImageWorker(
                         imageUrl = progressUpdate.imageURL
                         setProgress(progress)
                     }
-                    .onError { error ->
+                    .onError { uploadError ->
                         val error = workDataOf(
-                            "error" to error.toString(),
+                            "error" to uploadError.toString(),
                             "imageUri" to imagePath,
                             "position" to position
                         )
                         setProgress(error)
+                        if (uploadError.status in 500..599 || uploadError.status == 401 || uploadError.status == 408) {
+                            // Retry for server errors
+                            throw ServerException(uploadError.message)
+                        } else {
+                            throw ClientException(uploadError.message)
+                        }
                     }
             }
             // Delete the temporary file after successful upload
@@ -75,8 +81,16 @@ class TrackingImageWorker(
                     "imageUri" to imagePath
                 )
             )
+        } catch (e: ServerException) {
+            return Result.retry()
+        }
+        catch (e: ClientException) {
+            return Result.failure(workDataOf("error" to (e.message ?: "Client error")))
         } catch (e: Exception) {
-            return Result.failure(workDataOf("error" to e.message))
+            return Result.failure(workDataOf("error" to (e.message ?: "Unknown error")))
         }
     }
 }
+
+private class ServerException(e: String) : Exception(e)
+private class ClientException(e: String) : Exception(e)

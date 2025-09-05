@@ -1,5 +1,8 @@
 package cz.kudladev.vehicletracking.app.navigation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
@@ -30,6 +33,10 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import cz.kudladev.vehicletracking.app.AppState
 import cz.kudladev.vehicletracking.app.navigation.core.*
+import dev.chrisbanes.haze.HazeStyle
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
+import dev.chrisbanes.haze.materials.HazeMaterials
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -82,6 +89,7 @@ enum class BottomBarDestinations(
 }
 
 
+@OptIn(ExperimentalHazeMaterialsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun BottomBar(
     appState: AppState
@@ -95,13 +103,19 @@ fun BottomBar(
         }
     }
 
-    if (showBottomBar){
-        NavigationBar(
+    AnimatedVisibility(
+        visible = showBottomBar,
+        enter = slideInVertically{ it },
+        exit = slideOutVertically{ it },
+    ){
+        BottomAppBar(
             modifier = Modifier
                 .shadowWithClipIntersect(
                     elevation = 16.dp
                 ),
-            containerColor = MaterialTheme.colorScheme.background,
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            scrollBehavior = appState.bottomAppBarScrollBehavior
         ) {
             BottomBarDestinations.entries.forEach { destination ->
                 val isSelected = selectedRoutes[destination] ?: false
@@ -109,7 +123,7 @@ fun BottomBar(
                     destination = destination,
                     isSelected = isSelected,
                     onClick = {
-                       appState.navigateToBottomBarDestination(destination)
+                        appState.navigateToBottomBarDestination(destination)
                     }
                 )
             }

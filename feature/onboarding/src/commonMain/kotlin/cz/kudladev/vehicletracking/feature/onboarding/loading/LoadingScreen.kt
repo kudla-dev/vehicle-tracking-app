@@ -9,7 +9,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cz.kudladev.vehicletracking.core.domain.SnackbarController
 import cz.kudladev.vehicletracking.core.domain.auth.UserStateHolder
+import cz.kudladev.vehicletracking.model.Snackbar
+import cz.kudladev.vehicletracking.model.SnackbarStyle
 import cz.kudladev.vehicletracking.model.User
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
@@ -33,6 +36,10 @@ fun LoadingScreenRoot(
             LoadingProcess.Loading -> {}
             LoadingProcess.Success -> {
                 println("User: $user")
+                SnackbarController.sendEvent(Snackbar(
+                    title = "Logged in",
+                    snackbarStyle = SnackbarStyle.SUCCESS
+                ))
                 onAuth()
             }
             is LoadingProcess.Error -> {

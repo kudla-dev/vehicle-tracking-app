@@ -49,7 +49,7 @@ class ProtocolsViewModel(
         when (action) {
             is ProtocolsAction.AddImage -> {
                 _state.update { it.copy(
-                    images = it.images + (action.page to ImageWithBytes(bytes = action.image))
+                    images = it.images + (action.page to ImageUploadState.Completed(imageURL = ImageWithBytes(bytes = action.image)))
                 ) }
             }
             is ProtocolsAction.NextPage -> {
@@ -94,7 +94,7 @@ class ProtocolsViewModel(
     private fun updateTracking(
         trackingId: String,
         trackingState: TrackingState,
-        images: Map<ProtocolsScreenPage, Image>,
+        images: Map<ProtocolsScreenPage, ImageUploadState>,
         tachometerReading: String,
         additionalNotes: String
     ) = viewModelScope.launch {
@@ -115,9 +115,10 @@ class ProtocolsViewModel(
                 println("Tracking updated successfully: $tracking")
                 var position = 0
                 images.forEach { (page, image) ->
+                    if (image !is ImageUploadState.Completed) return@forEach
                     imageRepository
                         .uploadImageToTracking(
-                            image = image,
+                            image = image.imageURL,
                             trackingId = trackingId,
                             position = position++,
                             state = trackingState
@@ -140,8 +141,13 @@ class ProtocolsViewModel(
         trackingRepository
             .getTracking(trackingId)
             .onSuccess { tracking ->
+                val trackingLastState = tracking.stateLogs.last()
                 _state.update { it.copy(
-                    tracking = UiState.Success(tracking)
+                    tracking = UiState.Success(tracking),
+                    tachometerReading = when (trackingLastState.state){
+                        TrackingState.APPROVED -> tracking.vehicle.totalDistance.toString()
+                        else -> tracking.startTachometer?.toString() ?: ""
+                    }
                 ) }
             }
             .onError { error ->

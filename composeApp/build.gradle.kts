@@ -69,6 +69,10 @@ kotlin {
 
             implementation("com.valentinilk.shimmer:compose-shimmer:1.3.2")
 
+            implementation(libs.sonner)
+
+            implementation(libs.bundles.haze)
+
             implementation(projects.model)
             implementation(projects.core.ui)
             implementation(projects.core.datastore)

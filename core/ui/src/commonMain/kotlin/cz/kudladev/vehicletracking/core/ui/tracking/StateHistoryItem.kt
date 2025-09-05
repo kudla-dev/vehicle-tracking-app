@@ -3,9 +3,6 @@ package cz.kudladev.vehicletracking.core.ui.tracking
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -24,7 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.valentinilk.shimmer.shimmer
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
-import cz.kudladev.vehicletracking.core.ui.util.toFormattedString
+import cz.kudladev.vehicletracking.core.ui.util.toFormattedLongString
 import cz.kudladev.vehicletracking.model.Tracking
 import cz.kudladev.vehicletracking.model.TrackingLog
 import cz.kudladev.vehicletracking.model.TrackingState
@@ -87,7 +84,7 @@ fun StateHistoryItem(
                             overflow = TextOverflow.Ellipsis,
                             fontWeight = if (isLast) FontWeight.Bold else FontWeight.Normal,
                         )
-                        trackingLog.assignedAt?.toFormattedString()?.let {
+                        trackingLog.assignedAt?.toFormattedLongString()?.let {
                             Text(
                                 modifier = Modifier.padding(start = 16.dp),
                                 text = it,
@@ -103,8 +100,8 @@ fun StateHistoryItem(
                         null -> stringResource(Res.string.noMessageProvided)
                         else -> stringResource(trackingLog.state.message!!,
                             when (trackingLog.state) {
-                                TrackingState.WAITING_FOR_START -> tracking.startTime.toFormattedString()
-                                TrackingState.WAITING_FOR_RETURN -> tracking.endTime.toFormattedString()
+                                TrackingState.WAITING_FOR_START -> tracking.startTime.toFormattedLongString()
+                                TrackingState.WAITING_FOR_RETURN -> tracking.endTime.toFormattedLongString()
                                 else -> ""
                             }
                         )
