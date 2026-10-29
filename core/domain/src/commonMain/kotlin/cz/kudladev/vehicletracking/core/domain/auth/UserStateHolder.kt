@@ -14,4 +14,5 @@ interface UserStateHolder {
         refreshToken: String
     )
 
+    suspend fun clearSession()
 }

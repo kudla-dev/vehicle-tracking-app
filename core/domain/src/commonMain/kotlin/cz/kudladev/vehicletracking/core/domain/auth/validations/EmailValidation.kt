@@ -4,13 +4,17 @@ import cz.kudladev.vehicletracking.model.ValidationResult
 
 class EmailValidation {
 
+    companion object {
+        private val EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}\$".toRegex()
+    }
+
     fun execute(email: String): ValidationResult {
-        return if (email.isEmpty()) {
+        return if (email.isBlank()) {
             ValidationResult(
                 isSuccessful = false,
                 errorMessage = "Email cannot be empty"
             )
-        } else if (email.matches(Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}\$"))){
+        } else if (email.matches(EMAIL_REGEX)) {
             ValidationResult(
                 isSuccessful = true
             )
@@ -21,5 +25,4 @@ class EmailValidation {
             )
         }
     }
-
 }

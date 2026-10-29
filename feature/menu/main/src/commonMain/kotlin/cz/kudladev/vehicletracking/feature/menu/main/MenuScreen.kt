@@ -58,6 +58,9 @@ fun MenuScreenRoot(
         onNonStartedTrackings = onNonStartedTrackings,
         onNewRequestsTrackings = onNewRequestsTrackings,
         onTrackingHistory = onTrackingHistory,
+        onLogout = {
+            viewModel.onAction(MenuScreenAction.Logout)
+        }
     )
 }
 
@@ -74,6 +77,7 @@ private fun MenuScreen(
     onNonStartedTrackings: () -> Unit,
     onNewRequestsTrackings: () -> Unit,
     onTrackingHistory: () -> Unit,
+    onLogout: () -> Unit,
 ) {
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
@@ -139,7 +143,7 @@ private fun MenuScreen(
                         onNewRequestsTrackings = onNewRequestsTrackings
                     )
                 }
-                accountSection()
+                accountSection(onLogout = onLogout)
                 versionSection()
             }
         }
@@ -155,7 +159,9 @@ private fun LazyListScope.versionSection() {
     }
 }
 
-private fun LazyListScope.accountSection() {
+private fun LazyListScope.accountSection(
+    onLogout: () -> Unit
+) {
     item {
         MenuSection(
             title = stringResource(Res.string.accountSection)
@@ -177,9 +183,7 @@ private fun LazyListScope.accountSection() {
             MenuSectionItem(
                 icon = Icons.AutoMirrored.TwoTone.Logout,
                 title = stringResource(Res.string.logout),
-                onClick = {
-                    // Handle logout
-                },
+                onClick = onLogout,
                 isLast = true
             )
         }
@@ -264,4 +268,3 @@ private fun LazyListScope.trackingSection(
         }
     }
 }
-

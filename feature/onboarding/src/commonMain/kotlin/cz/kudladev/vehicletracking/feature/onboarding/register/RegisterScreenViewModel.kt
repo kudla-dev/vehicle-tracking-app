@@ -105,7 +105,7 @@ class RegisterScreenViewModel(
             _state.update { it.copy(
                 firstNameError = firstNameResult.errorMessage,
                 lastNameError = lastNameResult.errorMessage,
-                emailError = lastNameResult.errorMessage,
+                emailError = emailResult.errorMessage,
                 passwordError = passwordResult.errorMessage,
                 phoneNumberError = phoneNumberResult.errorMessage,
                 confirmPasswordError = passwordConfirmResult.errorMessage

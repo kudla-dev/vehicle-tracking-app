@@ -260,7 +260,7 @@ class AddEditVehicleViewModel(
         val isPlaceValid = placeValidator.execute(place)
         val isBrandValid = brandValidator.execute(brand)
 
-        val result = listOf(
+        val areFieldsValid = listOf(
             isFullNameValid,
             isModelValid,
             isSpzValid,
@@ -268,7 +268,10 @@ class AddEditVehicleViewModel(
             isColorValid,
             isPlaceValid,
             isBrandValid
-        ).any { it.isSuccessful }
+        ).all { it.isSuccessful }
+
+        val areImagesValid = images.isNotEmpty()
+        val isDriverLicenseValid = driverLicense.isNotBlank()
 
         _state.update { it.copy(
             fullNameError = if (isFullNameValid.isSuccessful) null else isFullNameValid.errorMessage,
@@ -276,24 +279,12 @@ class AddEditVehicleViewModel(
             spzError = if (isSpzValid.isSuccessful) null else isSpzValid.errorMessage,
             yearError = if (isYearValid.isSuccessful) null else isYearValid.errorMessage,
             colorError = if (isColorValid.isSuccessful) null else isColorValid.errorMessage,
+            selectedPlaceError = if (isPlaceValid.isSuccessful) null else isPlaceValid.errorMessage,
+            imagesError = if (areImagesValid) null else "Please select at least one image",
+            driverLicenseError = if (isDriverLicenseValid) null else "Please enter a valid driving license",
         ) }
 
-        if (images.isEmpty()){
-            _state.update { it.copy(
-                imagesError = "Please select at least one image"
-            ) }
-            return false
-        } else if(driverLicense.isBlank()){
-            _state.update { it.copy(
-                driverLicenseError = "Please enter a valid driving license"
-            ) }
-            return false
-        } else {
-            _state.update { it.copy(
-                imagesError = null
-            ) }
-        }
-        return result
+        return areFieldsValid && areImagesValid && isDriverLicenseValid
     }
 
     private fun getVehicleImageFromUrl(url: String) = viewModelScope.launch {

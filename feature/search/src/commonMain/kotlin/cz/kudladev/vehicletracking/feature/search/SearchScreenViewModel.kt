@@ -9,6 +9,7 @@ import cz.kudladev.vehicletracking.model.Vehicle
 import cz.kudladev.vehicletracking.model.onError
 import cz.kudladev.vehicletracking.model.onSuccess
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.debounce
@@ -28,6 +29,7 @@ class SearchScreenViewModel(
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
+    private var searchJob: Job? = null
 
     private val _state = MutableStateFlow(SearchScreenState())
     val state = _state
@@ -68,31 +70,34 @@ class SearchScreenViewModel(
     }
 
 
-    private fun searchVehicles(query: String) = viewModelScope.launch {
-        if (query.isBlank()) {
+    private fun searchVehicles(query: String) {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            if (query.isBlank()) {
+                _state.update { it.copy(
+                    searchResult = UiState.Success(emptyList())
+                ) }
+                return@launch
+            }
             _state.update { it.copy(
-                searchResult = UiState.Success(emptyList())
+                searchResult = UiState.Loading
             ) }
-            return@launch
+            vehicleRepository
+                .get(
+                    page = 1,
+                    size = 10,
+                    search = query
+                )
+                .onSuccess { vehicles ->
+                    _state.update { it.copy(
+                        searchResult = UiState.Success(vehicles)
+                    ) }
+                }
+                .onError { error ->
+                    _state.update { it.copy(
+                        searchResult = UiState.Error(error.message)
+                    ) }
+                }
         }
-        _state.update { it.copy(
-            searchResult = UiState.Loading
-        ) }
-        vehicleRepository
-            .get(
-                page = 1,
-                size = 10,
-                search = query
-            )
-            .onSuccess { vehicles ->
-                _state.update { it.copy(
-                    searchResult = UiState.Success(vehicles)
-                ) }
-            }
-            .onError { error ->
-                _state.update { it.copy(
-                    searchResult = UiState.Error(error.message)
-                ) }
-            }
     }
 }

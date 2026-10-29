@@ -47,30 +47,45 @@ class DataStoreRepository(
             .firstOrNull()
     }
 
+    suspend fun getTokens(): Pair<String?, String?> {
+        return dataStore.data
+            .catch { exception ->
+                emit(emptyPreferences())
+                exception.printStackTrace()
+            }
+            .map { preferences ->
+                preferences[ACCESS_TOKEN] to preferences[REFRESH_TOKEN]
+            }
+            .firstOrNull() ?: (null to null)
+    }
 
     suspend fun saveAccessToken(token: String) {
-        println("Saving access token: $token")
         dataStore.edit { preferences ->
             preferences[ACCESS_TOKEN] = token
         }
-        println("Access token saved")
     }
 
     suspend fun saveRefreshToken(token: String) {
-        println("Saving refresh token: $token")
         dataStore.edit { preferences ->
             preferences[REFRESH_TOKEN] = token
         }
-        println("Refresh token saved")
+    }
+
+    suspend fun saveTokens(accessToken: String, refreshToken: String) {
+        dataStore.edit { preferences ->
+            preferences[ACCESS_TOKEN] = accessToken
+            preferences[REFRESH_TOKEN] = refreshToken
+        }
     }
 
     suspend fun saveUser(user: User?) {
-        val userData = Json.encodeToString(user)
-        println("Saving user: $userData")
         dataStore.edit { preferences ->
-            preferences[USER] = userData
+            if (user == null) {
+                preferences.remove(USER)
+            } else {
+                preferences[USER] = Json.encodeToString(user)
+            }
         }
-        println("User saved")
     }
 
     suspend fun getUser(): User? {
@@ -99,6 +114,14 @@ class DataStoreRepository(
         dataStore.edit { preferences ->
             preferences.remove(ACCESS_TOKEN)
             preferences.remove(REFRESH_TOKEN)
+        }
+    }
+
+    suspend fun clearSession() {
+        dataStore.edit { preferences ->
+            preferences.remove(ACCESS_TOKEN)
+            preferences.remove(REFRESH_TOKEN)
+            preferences.remove(USER)
         }
     }
 }

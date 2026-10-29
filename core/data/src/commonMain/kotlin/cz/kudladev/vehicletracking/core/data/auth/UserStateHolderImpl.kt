@@ -6,15 +6,17 @@ import cz.kudladev.vehicletracking.model.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class UserStateHolderImpl(
     private val dataStoreRepository: DataStoreRepository
 ): UserStateHolder {
+
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override val user: StateFlow<User?>
         get() = _state.asStateFlow()
@@ -22,21 +24,24 @@ class UserStateHolderImpl(
     private val _state = MutableStateFlow<User?>(null)
 
     init {
-        CoroutineScope(Dispatchers.IO).launch {
-            _state.update { dataStoreRepository.getUser() }
+        scope.launch {
+            _state.value = dataStoreRepository.getUser()
         }
     }
 
     override fun updateUser(user: User?) {
-        _state.update { user }
-        CoroutineScope(Dispatchers.IO).launch {
+        _state.value = user
+        scope.launch {
             dataStoreRepository.saveUser(user)
         }
     }
 
     override suspend fun updateTokens(accessToken: String, refreshToken: String) {
-        dataStoreRepository.saveAccessToken(accessToken)
-        dataStoreRepository.saveRefreshToken(refreshToken)
+        dataStoreRepository.saveTokens(accessToken, refreshToken)
     }
 
+    override suspend fun clearSession() {
+        _state.value = null
+        dataStoreRepository.clearSession()
+    }
 }

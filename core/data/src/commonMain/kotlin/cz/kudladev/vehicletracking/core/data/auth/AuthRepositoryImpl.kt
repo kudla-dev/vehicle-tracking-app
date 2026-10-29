@@ -58,8 +58,6 @@ class AuthRepositoryImpl(
         return tokenResultHandling(result)
     }
 
-
-
     override suspend fun refresh(refreshToken: String): Result<Boolean, ErrorMessage> {
         val refreshRequest = RefreshRequest(
             refreshToken = refreshToken
@@ -78,8 +76,6 @@ class AuthRepositoryImpl(
             httpClient.post("/auth")
         }
 
-        println("response: $response")
-
         return when (response) {
             is Result.Success -> {
                 Result.Success(response.data.toDomain())
@@ -90,6 +86,17 @@ class AuthRepositoryImpl(
             else -> {
                 Result.Loading
             }
+        }
+    }
+
+    override suspend fun logout(): Result<Boolean, ErrorMessage> {
+        return try {
+            safeCall<Boolean> {
+                httpClient.post("/auth/logout")
+            }
+            Result.Success(true)
+        } finally {
+            userStateHolder.clearSession()
         }
     }
 

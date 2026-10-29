@@ -2,6 +2,7 @@ package cz.kudladev.vehicletracking.feature.menu.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.kudladev.vehicletracking.core.domain.auth.AuthRepository
 import cz.kudladev.vehicletracking.core.domain.tracking.TrackingRepository
 import cz.kudladev.vehicletracking.model.ErrorMessage
 import cz.kudladev.vehicletracking.model.TrackingState
@@ -15,7 +16,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MenuScreenViewModel(
-    private val trackingRepository: TrackingRepository
+    private val trackingRepository: TrackingRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -77,7 +79,12 @@ class MenuScreenViewModel(
     fun onAction(action: MenuScreenAction) {
         when (action) {
             is MenuScreenAction.ChangeProfilePicture -> TODO()
+            MenuScreenAction.Logout -> logout()
         }
+    }
+
+    private fun logout() = viewModelScope.launch {
+        authRepository.logout()
     }
 
     private fun getCountByState(

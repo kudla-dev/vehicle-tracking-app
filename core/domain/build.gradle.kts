@@ -45,6 +45,9 @@ kotlin {
             implementation(libs.bundles.koin)
 
         }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
     }
 
     project.configurations.configureEach {
@@ -76,8 +79,4 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-}
-
-dependencies {
-    debugImplementation(compose.uiTooling)
 }

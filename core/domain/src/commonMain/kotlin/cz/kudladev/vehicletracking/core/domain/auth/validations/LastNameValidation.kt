@@ -2,24 +2,27 @@ package cz.kudladev.vehicletracking.core.domain.auth.validations
 
 import cz.kudladev.vehicletracking.model.ValidationResult
 
-
 class LastNameValidation {
 
     fun execute(lastName: String): ValidationResult {
-        if (lastName.length > 1 && lastName.length < 20) {
-            return ValidationResult(
-                isSuccessful = true
+        return if (lastName.isBlank()) {
+            ValidationResult(
+                isSuccessful = false,
+                errorMessage = "Last name cannot be empty"
+            )
+        } else if (lastName.length < 4) {
+            ValidationResult(
+                isSuccessful = false,
+                errorMessage = "Last name must be at least 4 characters long"
+            )
+        } else if (lastName.length > 50) {
+            ValidationResult(
+                isSuccessful = false,
+                errorMessage = "Last name cannot be longer than 50 characters"
             )
         } else {
-            return ValidationResult(
-                isSuccessful = false,
-                errorMessage = if (lastName.isEmpty()){
-                    "Last name cannot be empty"
-                } else if (lastName.length >= 20) {
-                    "Last name cannot be longer than 20 characters"
-                } else {
-                    "Last name cannot be shorter than 1 character"
-                }
+            ValidationResult(
+                isSuccessful = true
             )
         }
     }

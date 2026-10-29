@@ -13,6 +13,7 @@ import cz.kudladev.vehicletracking.model.TrackingState
 import cz.kudladev.vehicletracking.model.UiState
 import cz.kudladev.vehicletracking.model.onError
 import cz.kudladev.vehicletracking.model.onSuccess
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -32,6 +33,7 @@ class TrackingDetailViewModel(
     private val trackingId: String = savedStateHandle.toRoute<TrackingDetail>().trackingId
 
     private var hasLoadedInitialData = false
+    private var uploadImagesStatusJob: Job? = null
 
     private val _state = MutableStateFlow(TrackingDetailState())
     val state = _state
@@ -152,41 +154,44 @@ class TrackingDetailViewModel(
             }
     }
 
-    private fun updateUploadImagesStatus() = viewModelScope.launch {
-        launch {
-            activeUploadImageStates
-                .sample(300)
-                .collect { activeUploadImageStates ->
-                if (_state.value.tracking is UiState.Success<Tracking>){
-                    val activeTrackingLog = (_state.value.tracking as UiState.Success<Tracking>)
-                        .data
-                        .stateLogs
-                        .firstOrNull { trackingLog ->
-                            trackingLog.state == TrackingState.ACTIVE
+    private fun updateUploadImagesStatus() {
+        uploadImagesStatusJob?.cancel()
+        uploadImagesStatusJob = viewModelScope.launch {
+            launch {
+                activeUploadImageStates
+                    .sample(300)
+                    .collect { activeUploadImageStates ->
+                    if (_state.value.tracking is UiState.Success<Tracking>){
+                        val activeTrackingLog = (_state.value.tracking as UiState.Success<Tracking>)
+                            .data
+                            .stateLogs
+                            .firstOrNull { trackingLog ->
+                                trackingLog.state == TrackingState.ACTIVE
+                            }
+                        if (activeUploadImageStates.isNotEmpty()) {
+                            _state.update { it.copy(
+                                activeImage = activeUploadImageStates
+                            ) }
                         }
-                    if (activeUploadImageStates.isNotEmpty()) {
-                        _state.update { it.copy(
-                            activeImage = activeUploadImageStates
-                        ) }
                     }
                 }
             }
-        }
-        launch {
-            returnUploadImageStates
-                .sample(300)
-                .collect { returnUploadImageStates ->
-                if (_state.value.tracking is UiState.Success<Tracking>){
-                    val returnTrackingLog = (_state.value.tracking as UiState.Success<Tracking>)
-                        .data
-                        .stateLogs
-                        .firstOrNull { trackingLog ->
-                            trackingLog.state == TrackingState.RETURNED
+            launch {
+                returnUploadImageStates
+                    .sample(300)
+                    .collect { returnUploadImageStates ->
+                    if (_state.value.tracking is UiState.Success<Tracking>){
+                        val returnTrackingLog = (_state.value.tracking as UiState.Success<Tracking>)
+                            .data
+                            .stateLogs
+                            .firstOrNull { trackingLog ->
+                                trackingLog.state == TrackingState.RETURNED
+                            }
+                        if (returnUploadImageStates.isNotEmpty()) {
+                            _state.update { it.copy(
+                                returnImage = returnUploadImageStates
+                            ) }
                         }
-                    if (returnUploadImageStates.isNotEmpty()) {
-                        _state.update { it.copy(
-                            returnImage = returnUploadImageStates
-                        ) }
                     }
                 }
             }

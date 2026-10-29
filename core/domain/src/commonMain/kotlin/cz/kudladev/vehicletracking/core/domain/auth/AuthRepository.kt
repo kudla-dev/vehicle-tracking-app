@@ -25,4 +25,6 @@ interface AuthRepository {
 
     suspend fun auth(): Result<User, ErrorMessage>
 
+    suspend fun logout(): Result<Boolean, ErrorMessage>
+
 }
