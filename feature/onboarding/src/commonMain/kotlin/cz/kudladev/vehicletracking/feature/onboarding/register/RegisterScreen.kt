@@ -1,8 +1,9 @@
 package cz.kudladev.vehicletracking.feature.onboarding.register
 
-import StackedSnackbarAnimation
-import StackedSnackbarDuration
-import StackedSnackbarHost
+import cz.kudladev.vehicletracking.core.designsystem.snackbar.StackedSnackbarAnimation
+import cz.kudladev.vehicletracking.core.designsystem.snackbar.StackedSnackbarDuration
+import cz.kudladev.vehicletracking.core.designsystem.snackbar.StackedSnackbarHost
+import cz.kudladev.vehicletracking.core.designsystem.snackbar.rememberStackedSnackbarHostState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -44,7 +45,6 @@ import cz.kudladev.vehicletracking.feature.onboarding.register.components.Passwo
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import rememberStackedSnackbarHostState
 import vehicletracking.feature.onboarding.generated.resources.Res
 import vehicletracking.feature.onboarding.generated.resources.registrationAction
 import vehicletracking.feature.onboarding.generated.resources.registrationFailed

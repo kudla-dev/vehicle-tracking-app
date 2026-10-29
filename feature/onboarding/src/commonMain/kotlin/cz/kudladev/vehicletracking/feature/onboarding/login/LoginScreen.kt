@@ -1,8 +1,5 @@
 package cz.kudladev.vehicletracking.feature.onboarding.login
 
-import StackedSnackbarAnimation
-import StackedSnackbarDuration
-import StackedSnackbarHost
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -30,13 +27,16 @@ import cz.kudladev.vehicletracking.core.designsystem.KeyboardClearFocus
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
 import cz.kudladev.vehicletracking.core.designsystem.OutlinedTextField
 import cz.kudladev.vehicletracking.core.designsystem.PrimaryButton
+import cz.kudladev.vehicletracking.core.designsystem.snackbar.StackedSnackbarAnimation
+import cz.kudladev.vehicletracking.core.designsystem.snackbar.StackedSnackbarDuration
+import cz.kudladev.vehicletracking.core.designsystem.snackbar.StackedSnackbarHost
+import cz.kudladev.vehicletracking.core.designsystem.snackbar.rememberStackedSnackbarHostState
 import cz.kudladev.vehicletracking.core.ui.emailExampleString
 import cz.kudladev.vehicletracking.core.ui.emailString
 import cz.kudladev.vehicletracking.core.ui.passwordString
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import rememberStackedSnackbarHostState
 import vehicletracking.feature.onboarding.generated.resources.Res
 import vehicletracking.feature.onboarding.generated.resources.loggedIn
 import vehicletracking.feature.onboarding.generated.resources.loginAction

@@ -47,15 +47,9 @@ kotlin {
 
             implementation(libs.bundles.coil)
 
-            implementation(libs.compose.stacked.snackbar)
-
             implementation(libs.bundles.peekaboo)
 
-            implementation("com.github.GIGAMOLE:ComposeScrollbars:1.0.4")
-
             implementation("com.valentinilk.shimmer:compose-shimmer:1.3.2")
-
-            implementation("io.github.pushpalroy:jetlime:3.0.1")
 
             implementation(projects.model)
             implementation(projects.core.designsystem)

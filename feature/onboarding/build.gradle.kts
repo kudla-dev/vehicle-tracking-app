@@ -45,8 +45,6 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
 
-            implementation(libs.compose.stacked.snackbar)
-
             implementation(libs.bundles.koin)
 
             implementation(projects.model)

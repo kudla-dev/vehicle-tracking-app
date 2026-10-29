@@ -49,8 +49,6 @@ kotlin {
 
             implementation(libs.bundles.peekaboo)
 
-            implementation("com.github.GIGAMOLE:ComposeScrollbars:1.0.4")
-
             implementation("com.valentinilk.shimmer:compose-shimmer:1.3.2")
 
 //            implementation("com.github.skydoves:landscapist-coil:2.5.0")

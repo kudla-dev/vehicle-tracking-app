@@ -63,13 +63,7 @@ kotlin {
 
             implementation(libs.bundles.peekaboo)
 
-            implementation(libs.flexible.bottomsheet.material3)
-
-            implementation("com.github.GIGAMOLE:ComposeScrollbars:1.0.4")
-
             implementation("com.valentinilk.shimmer:compose-shimmer:1.3.2")
-
-            implementation(libs.sonner)
 
             implementation(libs.bundles.haze)
 
