@@ -1,6 +1,9 @@
 package cz.kudladev.vehicletracking
 
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.Modifier
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import coil3.ImageLoader
@@ -37,7 +40,10 @@ fun App() {
     }
 
     AppTheme {
-        VehicleTracking(appState)
+        Column {
+            UploadRecovery()
+            Box(Modifier.weight(1f)) { VehicleTracking(appState) }
+        }
     }
 }
 

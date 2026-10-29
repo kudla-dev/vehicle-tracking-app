@@ -17,13 +17,15 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.cancel
 import platform.Foundation.NSUUID
+import cz.kudladev.vehicletracking.core.data.images.upload.*
 
 /** Application-lifetime transfers; records/photos survive suspension and relaunch. */
 actual class ImageService(httpClient: HttpClient) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val client = ImageUploadClient(httpClient)
     private val pendingClear = MutableStateFlow<Job?>(null)
-    private val queue = PersistentUploadQueue(IosUploadStore(), scope) { record, bytes ->
+    private val store = IosUploadStore()
+    private val queue = PersistentUploadQueue(store, scope, prepare = client::snapshotIds) { record, bytes ->
         when {
             record.sourceUrl != null -> client.vehicleUrl(record.sourceUrl, requireNotNull(record.vehicleId), record.position)
             record.vehicleId != null -> client.vehicle(requireNotNull(bytes), record.vehicleId, record.position)
@@ -33,11 +35,11 @@ actual class ImageService(httpClient: HttpClient) {
     }
 
     actual suspend fun enqueueBackgroundUpload(imageData: ByteArray, vehicleId: Long, position: Int) {
-        enqueue(UploadRecord(id(), "image_upload", vehicleId = vehicleId, position = position), imageData)
+        enqueue(UploadRecord(id(), "vehicle_image_upload_$vehicleId", vehicleId = vehicleId, position = position), imageData)
     }
     actual suspend fun enqueueBackgroundUpload(imageData: String, vehicleId: Long, position: Int) {
         require(imageData.isNotBlank())
-        enqueue(UploadRecord(id(), "image_upload", vehicleId = vehicleId, position = position, sourceUrl = imageData), null)
+        enqueue(UploadRecord(id(), "vehicle_image_upload_$vehicleId", vehicleId = vehicleId, position = position, sourceUrl = imageData), null)
     }
     actual suspend fun enqueueBackgroundUpload(imageData: ByteArray, trackingId: String, position: Int, state: String) {
         enqueueBackgroundUpload(imageData, trackingId, position, state, 0)
@@ -50,7 +52,7 @@ actual class ImageService(httpClient: HttpClient) {
         scope.launch(start = CoroutineStart.UNDISPATCHED) { queue.cancel(uploadId) }
     }
     actual fun clearUploadStatus() {
-        pendingClear.value = scope.launch(start = CoroutineStart.UNDISPATCHED) { queue.clear() }
+        pendingClear.value = scope.launch(start = CoroutineStart.UNDISPATCHED) { queue.dismissCompleted() }
     }
 
     private suspend fun enqueue(record: UploadRecord, bytes: ByteArray?) {
@@ -58,26 +60,16 @@ actual class ImageService(httpClient: HttpClient) {
         queue.enqueue(record, bytes)
     }
 
-    actual fun getUploadStatus(): Flow<List<UploadStatus>> = queue.snapshots.map { snapshots ->
-        snapshots.map { snapshot -> UploadStatus(snapshot.record.id, snapshot.progress, when (snapshot.record.state) {
-            UploadRecord.State.QUEUED -> UploadState.QUEUED
-            UploadRecord.State.UPLOADING -> UploadState.UPLOADING
-            UploadRecord.State.COMPLETED -> UploadState.COMPLETED
-            UploadRecord.State.FAILED -> UploadState.FAILED
-            UploadRecord.State.CANCELED -> UploadState.CANCELED
-        }, snapshot.record.error) }
+    actual fun observeUploads() = queue.snapshots.map { it.map { snapshot -> snapshot.task() } }
+    actual suspend fun localUploadPhoto(id: String): ByteArray? {
+        val record = queue.snapshots.value.find { it.record.id == id }?.record ?: return null
+        return if (record.sourceUrl == null && record.state != UploadRecord.State.COMPLETED) store.readBytes(id) else null
     }
+    actual suspend fun retryUpload(id: String) { queue.retry(id) }
+    actual suspend fun reconcileUpload(id: String): Boolean = queue.reconcile(id, client::reconcile)
+    actual fun getUploadStatus(): Flow<List<UploadStatus>> = queue.snapshots.map { it.map { s -> s.status() } }
     actual fun getUploadStatusByTag(tag: String): Flow<List<ImageUploadState>> = queue.snapshots.map { snapshots ->
-        snapshots.filter { tag.isEmpty() || it.record.tag == tag }.sortedBy { it.record.position }.map { snapshot ->
-            val record = snapshot.record
-            when (record.state) {
-                UploadRecord.State.QUEUED -> ImageUploadState.Queued
-                UploadRecord.State.UPLOADING -> ImageUploadState.Uploading(null, snapshot.progress)
-                UploadRecord.State.COMPLETED -> ImageUploadState.Completed(requireNotNull(record.image))
-                UploadRecord.State.FAILED -> ImageUploadState.Failed(record.error ?: uploadError(500, "Upload failed"))
-                UploadRecord.State.CANCELED -> ImageUploadState.Canceled(record.id)
-            }
-        }
+        snapshots.filter { tag.isEmpty() || it.record.tag == tag || (tag == "image_upload" && it.record.vehicleId != null) }.sortedBy { it.record.position }.map { it.imageState() }
     }
     internal fun close() { scope.cancel() }
 

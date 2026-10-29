@@ -73,8 +73,12 @@ iOS image uploads persist photos and a job journal in Application Support before
 sending, expose progress and protocol tags, and keep evidence on failures or
 cancellation. Interrupted uploads are restored as failures requiring review;
 they are not automatically posted again because the API is not idempotent.
-Transfers currently run only while the application is executing. Native
-background URLSession execution and recovery UI remain open work.
+Transfers currently run only while the application is executing. A shared recovery UI provides local previews, GET-only byte reconciliation and
+explicit manual resubmission after reviewing the server. Native background
+URLSession execution and device verification remain open work.
+
+Recovery behavior, regression checks and native runtime limitations are documented in
+[docs/upload-recovery.md](docs/upload-recovery.md).
 
 The common upload tests run with `:core:data:testDebugUnitTest`. They verify
 acknowledgements, error/cancellation handling and evidence preservation. Native

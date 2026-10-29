@@ -504,6 +504,7 @@ fun AddEditVehicleScreen(
 
     if (uploadStatus.isNotEmpty()) {
         UploadDialog(
+            onDismiss = onBack,
             images = uploadStatus.size,
             uploadedImages = uploadStatus.count { it is ImageUploadState.Completed }.toFloat(),
         )

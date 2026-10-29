@@ -14,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -33,6 +34,7 @@ import vehicletracking.core.ui.generated.resources.uploadingImages
 fun UploadDialog(
     images: Int,
     uploadedImages: Float,
+    onDismiss: () -> Unit = {},
 ) {
 
     val animatedProgress = animateFloatAsState(
@@ -74,8 +76,8 @@ fun UploadDialog(
                 )
             }
         },
-        onDismissRequest = {},
-        confirmButton = {},
+        onDismissRequest = onDismiss,
+        confirmButton = { TextButton(onClick = onDismiss) { Text("Pokračovat na pozadí") } },
         dismissButton = {},
         containerColor = MaterialTheme.colorScheme.background,
         textContentColor = MaterialTheme.colorScheme.onBackground,

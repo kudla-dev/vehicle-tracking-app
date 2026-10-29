@@ -46,7 +46,7 @@ class ImageUploadClientTest {
     }
 
     @Test fun wrongParentAndAmbiguousPhotosDoNotConfirmUpload() = runTest {
-        for (response in listOf(parent(image).replace("reservation-1", "other"), parent("$image,${image.replace("photo-1", "photo-2")}"))) {
+        for (response in listOf(parent(image).replace("reservation-1", "other"), parent(image.replace("position\":0", "position\":1")), parent("$image,${image.replace("photo-1", "photo-2")}"))) {
             val client = client { if (it == HttpMethod.Get) parent("") else response }
             try {
                 assertIs<Result.Error>(ImageUploadClient(client).tracking(byteArrayOf(1), "reservation-1", 0, "active").awaitUploadedImage())
@@ -112,7 +112,48 @@ class ImageUploadClientTest {
         } finally { client.close() }
     }
 
+    @Test fun reconciliationUsesOnlyGetAndRequiresUniqueExactBytes() = runTest {
+        for (count in 0..2) {
+            val methods = mutableListOf<HttpMethod>()
+            val http = HttpClient(MockEngine { request ->
+                methods += request.method
+                if (request.url.encodedPath == "/vehicles/7") {
+                    val images = (1..count).joinToString(",") { n ->
+                        """{"id":"p$n","url":"http://localhost/images/p$n","position":0}"""
+                    }
+                    respond("""{"id":7,"images":[$images]}""", headers = headersOf("Content-Type", "application/json"))
+                } else respond(byteArrayOf(1, 2))
+            }) { install(ContentNegotiation) { json() } }
+            try {
+                val record = cz.kudladev.vehicletracking.core.data.images.upload.UploadRecord("job", "tag", vehicleId = 7, position = 0, previousImageIds = emptySet())
+                val match = ImageUploadClient(http).reconcile(record, byteArrayOf(1, 2))
+                assertEquals(count == 1, match != null)
+                assertEquals(null, ImageUploadClient(http).reconcile(record.copy(previousImageIds = null), byteArrayOf(1, 2)))
+                assertEquals(null, ImageUploadClient(http).reconcile(record.copy(previousImageIds = setOf("p1", "p2")), byteArrayOf(1, 2)))
+                assertEquals(null, ImageUploadClient(http).reconcile(record, byteArrayOf(9)))
+                kotlin.test.assertTrue(methods.all { it == HttpMethod.Get })
+            } finally { http.close() }
+        }
+    }
+
+    @Test fun newPhotoWithWrongBytesCannotConfirmPost() = runTest {
+        val http = client { if (it == HttpMethod.Get) parent("") else parent(image) }
+        try {
+            assertIs<Result.Error>(ImageUploadClient(http).tracking(byteArrayOf(9), "reservation-1", 0, "active").awaitUploadedImage())
+        } finally { http.close() }
+    }
+
+    @Test fun conflictingReferencesToSameIdCannotConfirmRecovery() = runTest {
+        val http = client { """{"id":7,"images":[$image,${image.replace("position\":0", "position\":1")}]}""" }
+        try {
+            val record = cz.kudladev.vehicletracking.core.data.images.upload.UploadRecord(
+                "job", "tag", vehicleId = 7, position = 0, previousImageIds = emptySet())
+            assertEquals(null, ImageUploadClient(http).reconcile(record, byteArrayOf(1)))
+        } finally { http.close() }
+    }
+
     private fun client(body: (HttpMethod) -> String) = HttpClient(MockEngine { request ->
-        respond(body(request.method), headers = headersOf("Content-Type", "application/json"))
+        if (request.url.encodedPath.startsWith("/images/")) respond(byteArrayOf(1))
+        else respond(body(request.method), headers = headersOf("Content-Type", "application/json"))
     }) { install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) } }
 }

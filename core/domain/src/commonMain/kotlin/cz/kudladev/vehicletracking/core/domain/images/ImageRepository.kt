@@ -13,6 +13,13 @@ interface ImageRepository {
         position: Int,
         state: TrackingState
     )
+    fun observeUploads(): Flow<List<cz.kudladev.vehicletracking.model.UploadTask>>
+    /** Explicit user decision after reviewing the server; never an automatic retry. */
+    suspend fun localUploadPhoto(id: String): ByteArray?
+    suspend fun retryUpload(id: String)
+    /** GET-only reconciliation. True only for an exact, unique byte match. */
+    suspend fun reconcileUpload(id: String): Boolean
+
     fun cancelUpload(id: String)
     fun getUploadStatus(tag: String = ""): Flow<List<ImageUploadState>>
     fun clearUploadStatus()

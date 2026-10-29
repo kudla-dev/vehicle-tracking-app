@@ -42,7 +42,11 @@ class AddEditVehicleViewModel(
 
     private val _state = MutableStateFlow(AddEditVehicleState())
 
-    val uploadStatus = imageRepository.getUploadStatus()
+    private val uploadTag = MutableStateFlow<String?>(null)
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    val uploadStatus = uploadTag.flatMapLatest { tag ->
+        if (tag == null) flowOf(emptyList()) else imageRepository.getUploadStatus(tag)
+    }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000L),
@@ -349,6 +353,7 @@ class AddEditVehicleViewModel(
                 place = place,
             )
             .onSuccess { response ->
+                uploadTag.value = "vehicle_image_upload_${response.id}"
                 images.forEach { image ->
                     imageRepository.uploadImageToVehicle(image, response.id?.toLong() ?: 0L)
                 }

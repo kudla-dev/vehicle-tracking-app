@@ -37,6 +37,11 @@ expect class ImageService {
      * Cancels a pending or ongoing upload
      * @param uploadId ID of the upload to cancel
      */
+    fun observeUploads(): Flow<List<cz.kudladev.vehicletracking.model.UploadTask>>
+    suspend fun localUploadPhoto(id: String): ByteArray?
+    suspend fun retryUpload(id: String)
+    suspend fun reconcileUpload(id: String): Boolean
+
     fun cancelUpload(uploadId: String)
 
     /**

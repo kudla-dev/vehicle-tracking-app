@@ -31,7 +31,16 @@ internal class IosUploadStore : UploadStore {
         check(files.createDirectoryAtPath(directory, true, null, null)) { "Cannot create upload directory" }
     }
 
-    override fun load(): List<UploadRecord> = files.contentsOfDirectoryAtPath(directory, null).orEmpty()
+    override fun load(): List<UploadRecord> {
+        files.contentsOfDirectoryAtPath(directory, null).orEmpty().filterIsInstance<String>()
+            .filter { it.endsWith(".jpg") }.forEach { name ->
+                val id = name.removeSuffix(".jpg")
+                if (!files.fileExistsAtPath(path(id, "json"))) {
+                    save(UploadRecord(id, "image_upload", position = -1, state = UploadRecord.State.FAILED,
+                        error = uploadError(409, "Fotografie bez metadat cíle; nutná ruční obnova.")))
+                }
+            }
+        return files.contentsOfDirectoryAtPath(directory, null).orEmpty()
         .filterIsInstance<String>().filter { it.endsWith(".json") }.sorted().map { name ->
             val id = name.removeSuffix(".json")
             try {
@@ -48,6 +57,8 @@ internal class IosUploadStore : UploadStore {
                     error = uploadError(500, "Upload metadata is unreadable; local evidence retained"))
             }
         }
+
+    }
 
     override fun save(record: UploadRecord) = write(path(record.id, "json"), json.encodeToString(record).encodeToByteArray())
     override fun saveBytes(id: String, bytes: ByteArray) = write(path(id, "jpg"), bytes)

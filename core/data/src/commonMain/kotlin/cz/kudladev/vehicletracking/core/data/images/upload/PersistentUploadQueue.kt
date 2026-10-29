@@ -28,6 +28,7 @@ internal data class UploadRecord(
     val trackingState: String? = null,
     val position: Int,
     val sourceUrl: String? = null,
+    val previousImageIds: Set<String>? = null,
     val state: State = State.QUEUED,
     val image: ImageWithUrl? = null,
     val error: ErrorMessage? = null,
@@ -50,10 +51,13 @@ internal interface UploadStore {
 internal class PersistentUploadQueue(
     private val store: UploadStore,
     private val scope: CoroutineScope,
+    private val schedule: ((String) -> Unit)? = null,
+    private val prepare: (suspend (UploadRecord) -> Set<String>)? = null,
     private val transfer: (UploadRecord, ByteArray?) -> Flow<Result<ProgressUpdate, ErrorMessage>>,
 ) {
     private val mutex = Mutex()
     private val serialTransfer = Mutex()
+    private val recovering = mutableSetOf<String>()
     private val jobs = mutableMapOf<String, Job>()
     private val mutable = MutableStateFlow<List<UploadSnapshot>>(emptyList())
     val snapshots = mutable.asStateFlow()
@@ -79,6 +83,10 @@ internal class PersistentUploadQueue(
         // Persist bytes before publishing the job; a write failure must not start HTTP.
         store.save(record)
         publish(UploadSnapshot(record))
+        if (schedule != null) {
+            schedule.invoke(record.id)
+            return@withLock
+        }
         jobs[record.id] = scope.launch {
             try {
                 serialTransfer.withLock { run(record) }
@@ -88,11 +96,74 @@ internal class PersistentUploadQueue(
         }
     }
 
+    suspend fun process(id: String) {
+        val job = currentCoroutineContext()[Job]!!
+        serialTransfer.withLock {
+            val record = mutex.withLock {
+                mutable.value.find { it.record.id == id && it.record.state == UploadRecord.State.QUEUED }?.record
+                    ?.also { jobs[id] = job }
+            }
+            if (record != null) {
+                try { run(record) }
+                finally { withContext(NonCancellable) { mutex.withLock { if (jobs[id] === job) jobs.remove(id) } } }
+            }
+        }
+    }
+
+    suspend fun retry(id: String) = mutex.withLock {
+        val record = mutable.value.singleOrNull { it.record.id == id }?.record ?: return@withLock
+        if (record.state !in listOf(UploadRecord.State.FAILED, UploadRecord.State.CANCELED)) return@withLock
+        if (jobs.containsKey(id) || id in recovering) return@withLock
+        require(record.vehicleId != null || (record.trackingId != null && record.trackingState != null)) { "Upload target requires manual recovery" }
+        val queued = record.copy(state = UploadRecord.State.QUEUED, error = null)
+        transition(queued)
+        if (schedule != null) schedule.invoke(id)
+        else jobs[id] = scope.launch {
+            try { serialTransfer.withLock { run(queued) } }
+            finally { withContext(NonCancellable) { mutex.withLock { jobs.remove(id) } } }
+        }
+    }
+
+    suspend fun reconcile(id: String, verify: suspend (UploadRecord, ByteArray) -> ImageWithUrl?): Boolean {
+        val record = mutex.withLock {
+            val current = mutable.value.singleOrNull { it.record.id == id }?.record
+            if (current == null || current.sourceUrl != null || jobs.containsKey(id) || id in recovering ||
+                current.state !in listOf(UploadRecord.State.FAILED, UploadRecord.State.CANCELED)) return false
+            recovering.add(id)
+            current
+        }
+        try {
+            val image = verify(record, store.readBytes(id)) ?: return false
+            currentCoroutineContext().ensureActive()
+            return mutex.withLock {
+                require(!image.id.isNullOrBlank() && !image.url.isNullOrBlank() && image.position == record.position)
+                transition(record.copy(state = UploadRecord.State.COMPLETED, image = image, error = null))
+                store.deleteBytes(id)
+                true
+            }
+        } finally {
+            withContext(NonCancellable) { mutex.withLock { recovering.remove(id) } }
+        }
+    }
+
     private suspend fun run(record: UploadRecord) {
         try {
             currentCoroutineContext().ensureActive()
-            mutex.withLock { transition(record.copy(state = UploadRecord.State.UPLOADING)) }
-            val result = transfer(record, if (record.sourceUrl == null) store.readBytes(record.id) else null)
+            val canStart = mutex.withLock {
+                if (mutable.value.single { it.record.id == record.id }.record.state != UploadRecord.State.QUEUED) false
+                else { transition(record.copy(state = UploadRecord.State.UPLOADING)); true }
+            }
+            if (!canStart) return
+            val attempt = if (prepare != null) {
+                val ids = prepare.invoke(record)
+                currentCoroutineContext().ensureActive()
+                mutex.withLock {
+                    val current = mutable.value.single { it.record.id == record.id }.record
+                    check(current.state == UploadRecord.State.UPLOADING)
+                    current.copy(previousImageIds = ids).also { transition(it) }
+                }
+            } else record
+            val result = transfer(attempt, if (record.sourceUrl == null) store.readBytes(record.id) else null)
                 .awaitUploadedImage { update ->
                     mutex.withLock {
                         val current = mutable.value.single { it.record.id == record.id }
@@ -102,14 +173,16 @@ internal class PersistentUploadQueue(
                         publish(current.copy(progress = progress))
                     }
                 }
+            currentCoroutineContext().ensureActive()
             mutex.withLock {
+                if (mutable.value.single { it.record.id == record.id }.record.state != UploadRecord.State.UPLOADING) return
                 when (result) {
                     is Result.Success -> {
-                        transition(record.copy(state = UploadRecord.State.COMPLETED, image = result.data))
+                        transition(attempt.copy(state = UploadRecord.State.COMPLETED, image = result.data))
                         // Durable acknowledgement must precede deletion of evidence.
                         store.deleteBytes(record.id)
                     }
-                    is Result.Error -> transition(record.copy(state = UploadRecord.State.FAILED, error = result.error))
+                    is Result.Error -> transition(attempt.copy(state = UploadRecord.State.FAILED, error = result.error))
                     Result.Loading -> error("Unexpected terminal upload state")
                 }
             }
@@ -126,7 +199,7 @@ internal class PersistentUploadQueue(
         } catch (e: Exception) {
             mutex.withLock {
                 val current = mutable.value.single { it.record.id == record.id }.record
-                if (current.state != UploadRecord.State.COMPLETED) {
+                if (current.state !in listOf(UploadRecord.State.COMPLETED, UploadRecord.State.CANCELED)) {
                     val failed = current.copy(state = UploadRecord.State.FAILED,
                         error = uploadError(500, "Upload failed; local image retained"))
                     // A broken disk must not turn failure into apparent success.
@@ -142,6 +215,14 @@ internal class PersistentUploadQueue(
         if (current.record.state == UploadRecord.State.COMPLETED) return@withLock
         jobs[id]?.cancel()
         cancelRecord(current.record)
+    }
+
+    suspend fun dismissCompleted() = mutex.withLock {
+        mutable.value.filter { it.record.state == UploadRecord.State.COMPLETED }.forEach {
+            store.deleteBytes(it.record.id)
+            store.deleteRecord(it.record.id)
+        }
+        mutable.value = mutable.value.filter { it.record.state != UploadRecord.State.COMPLETED }
     }
 
     suspend fun clear() = mutex.withLock {

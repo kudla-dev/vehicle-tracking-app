@@ -24,6 +24,35 @@ import kotlinx.serialization.Serializable
 
 /** Reads only the upload acknowledgement fields; the server returns the parent entity. */
 internal class ImageUploadClient(private val client: HttpClient) {
+    private suspend fun images(record: UploadRecord): List<ImageWithUrl> = if (record.vehicleId != null) {
+            val response = client.get("/vehicles/${record.vehicleId}")
+            check(response.status.value in 200..299)
+            val parent = response.body<VehicleImages>()
+            check(parent.id == record.vehicleId)
+            parent.images
+        } else {
+            val response = client.get("/trackings/${record.trackingId}")
+            check(response.status.value in 200..299)
+            val parent = response.body<TrackingImages>()
+            check(parent.id == record.trackingId)
+            parent.stateLogs.single { it.state == record.trackingState }.images.orEmpty()
+        }
+
+    suspend fun snapshotIds(record: UploadRecord): Set<String> = images(record).map { requireNotNull(it.id) }.toSet()
+
+    suspend fun reconcile(record: UploadRecord, bytes: ByteArray): ImageWithUrl? {
+        // Without a durable pre-POST baseline an identical old photo cannot identify this attempt.
+        val previousIds = record.previousImageIds ?: return null
+        val candidates = images(record).distinct()
+        if (candidates.groupBy { it.id }.values.any { it.size > 1 }) return null
+        val matches = candidates.filter { it.id !in previousIds && !it.id.isNullOrBlank() && !it.url.isNullOrBlank() && it.position == record.position }
+            .filter { image ->
+                val response = client.get(requireNotNull(image.url))
+                response.status.value in 200..299 && response.body<ByteArray>().contentEquals(bytes)
+            }
+        return matches.singleOrNull()
+    }
+
     fun vehicle(bytes: ByteArray, id: Long, position: Int) = vehicleUpload(bytes, id, position, null)
     fun vehicleUrl(url: String, id: Long, position: Int) = vehicleUpload(byteArrayOf(), id, position, url)
 
@@ -93,8 +122,14 @@ internal class ImageUploadClient(private val client: HttpClient) {
             }
             // Older servers can repeat the same association after flushing their JPA collection.
             val image = acknowledged(response).distinct().filter {
-                !it.id.isNullOrBlank() && !it.url.isNullOrBlank() && it.id !in previousIds
+                !it.id.isNullOrBlank() && !it.url.isNullOrBlank() && it.position == position && it.id !in previousIds
             }.singleOrNull() ?: error("Upload response does not identify exactly one new image")
+            if (sourceUrl == null) {
+                val stored = client.get(requireNotNull(image.url))
+                check(stored.status.value in 200..299 && stored.body<ByteArray>().contentEquals(bytes)) {
+                    "Acknowledged photo does not match local evidence"
+                }
+            }
             val size = bytes.size.toLong().coerceAtLeast(1)
             send(Result.Success(ProgressUpdate(size, size, image)))
         } catch (e: CancellationException) {

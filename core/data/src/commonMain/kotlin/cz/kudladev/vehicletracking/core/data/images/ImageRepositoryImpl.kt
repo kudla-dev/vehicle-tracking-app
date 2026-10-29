@@ -45,6 +45,11 @@ class ImageRepositoryImpl(
         }
     }
 
+    override fun observeUploads() = imageService.observeUploads()
+    override suspend fun localUploadPhoto(id: String) = imageService.localUploadPhoto(id)
+    override suspend fun retryUpload(id: String) = imageService.retryUpload(id)
+    override suspend fun reconcileUpload(id: String) = imageService.reconcileUpload(id)
+
     override fun cancelUpload(id: String) {
         imageService.cancelUpload(id)
     }

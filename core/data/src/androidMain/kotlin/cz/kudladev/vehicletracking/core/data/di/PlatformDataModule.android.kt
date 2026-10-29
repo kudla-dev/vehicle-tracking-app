@@ -6,11 +6,12 @@ import cz.kudladev.vehicletracking.core.domain.images.ImageRepository
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
+import org.koin.dsl.onClose
 import org.koin.dsl.module
 
 actual val platformDataModule: Module
     get() = module {
-        singleOf(::ImageService)
+        singleOf(::ImageService) onClose { it?.close() }
 
         singleOf(::ImageRepositoryImpl).bind<ImageRepository>()
 
