@@ -53,11 +53,11 @@ internal class ImageUploadClient(private val client: HttpClient) {
         return matches.singleOrNull()
     }
 
-    fun vehicle(bytes: ByteArray, id: Long, position: Int) = vehicleUpload(bytes, id, position, null)
-    fun vehicleUrl(url: String, id: Long, position: Int) = vehicleUpload(byteArrayOf(), id, position, url)
+    fun vehicle(bytes: ByteArray, id: Long, position: Int, uploadId: String? = null) = vehicleUpload(bytes, id, position, null, uploadId)
+    fun vehicleUrl(url: String, id: Long, position: Int, uploadId: String? = null) = vehicleUpload(byteArrayOf(), id, position, url, uploadId)
 
-    private fun vehicleUpload(bytes: ByteArray, id: Long, position: Int, sourceUrl: String?) = upload(
-        path = "/vehicles/$id/images", bytes = bytes, position = position, sourceUrl = sourceUrl,
+    private fun vehicleUpload(bytes: ByteArray, id: Long, position: Int, sourceUrl: String?, uploadId: String?) = upload(
+        path = "/vehicles/$id/images", bytes = bytes, position = position, sourceUrl = sourceUrl, uploadId = uploadId,
         existing = {
             val response = client.get("/vehicles/$id")
             if (response.status.value !in 200..299) throw UploadRejected(response.status.value)
@@ -72,8 +72,8 @@ internal class ImageUploadClient(private val client: HttpClient) {
         },
     )
 
-    fun tracking(bytes: ByteArray, id: String, position: Int, state: String) = upload(
-        path = "/trackings/$id/logs/$state/images", bytes = bytes, position = position,
+    fun tracking(bytes: ByteArray, id: String, position: Int, state: String, uploadId: String? = null) = upload(
+        path = "/trackings/$id/logs/$state/images", bytes = bytes, position = position, uploadId = uploadId,
         existing = {
             val response = client.get("/trackings/$id")
             if (response.status.value !in 200..299) throw UploadRejected(response.status.value)
@@ -93,6 +93,7 @@ internal class ImageUploadClient(private val client: HttpClient) {
         bytes: ByteArray,
         position: Int,
         sourceUrl: String? = null,
+        uploadId: String? = null,
         existing: suspend () -> List<ImageWithUrl>,
         acknowledged: suspend (io.ktor.client.statement.HttpResponse) -> List<ImageWithUrl>,
     ): Flow<Result<ProgressUpdate, ErrorMessage>> = channelFlow {
@@ -101,6 +102,7 @@ internal class ImageUploadClient(private val client: HttpClient) {
             // Snapshot IDs so an old photo or a parent UUID cannot masquerade as this upload.
             val previousIds = existing().mapNotNull { it.id }.toSet()
             val response = if (sourceUrl != null) client.post("$path/fetch") {
+                uploadId?.let { headers.append("Idempotency-Key", it) }
                 parameter("url", sourceUrl)
                 contentType(ContentType.Application.Json)
                 setBody(ImagePosition(position))
@@ -111,6 +113,7 @@ internal class ImageUploadClient(private val client: HttpClient) {
                 })
                 append("position", position.toString())
             }) {
+                uploadId?.let { headers.append("Idempotency-Key", it) }
                 parameter("position", position)
                 onUpload { sent, total ->
                     if (total != null && total > 0) send(Result.Success(ProgressUpdate(sent, total)))
@@ -121,8 +124,9 @@ internal class ImageUploadClient(private val client: HttpClient) {
                 return@channelFlow
             }
             // Older servers can repeat the same association after flushing their JPA collection.
+            val confirmedId = response.headers["X-Upload-Image-Id"]
             val image = acknowledged(response).distinct().filter {
-                !it.id.isNullOrBlank() && !it.url.isNullOrBlank() && it.position == position && it.id !in previousIds
+                !it.id.isNullOrBlank() && !it.url.isNullOrBlank() && it.position == position && (if (confirmedId != null && uploadId != null) it.id == confirmedId else it.id !in previousIds)
             }.singleOrNull() ?: error("Upload response does not identify exactly one new image")
             if (sourceUrl == null) {
                 val stored = client.get(requireNotNull(image.url))

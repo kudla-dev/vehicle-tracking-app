@@ -27,10 +27,10 @@ actual class ImageService(httpClient: HttpClient) {
     private val store = IosUploadStore()
     private val queue = PersistentUploadQueue(store, scope, prepare = client::snapshotIds) { record, bytes ->
         when {
-            record.sourceUrl != null -> client.vehicleUrl(record.sourceUrl, requireNotNull(record.vehicleId), record.position)
-            record.vehicleId != null -> client.vehicle(requireNotNull(bytes), record.vehicleId, record.position)
+            record.sourceUrl != null -> client.vehicleUrl(record.sourceUrl, requireNotNull(record.vehicleId), record.position, record.id)
+            record.vehicleId != null -> client.vehicle(requireNotNull(bytes), record.vehicleId, record.position, record.id)
             else -> client.tracking(requireNotNull(bytes), requireNotNull(record.trackingId), record.position,
-                requireNotNull(record.trackingState))
+                requireNotNull(record.trackingState), record.id)
         }
     }
 

@@ -118,3 +118,28 @@ zůstávají výslovně neověřené/neimplementované podle výše uvedených o
 
 Kopie tohoto dokumentu je verzovaná v klientském `docs/upload-recovery.md`;
 workspace roadmapa a původní dokument leží mimo Git repozitáře.
+
+## Idempotency keys (2026-10-29)
+
+Every Android/iOS transfer now sends the journal's durable UUID as
+`Idempotency-Key`, including URL imports. Retrying or restoring a journal never
+allocates a new operation ID. The new backend returns `X-Upload-Image-Id`; this
+allows acknowledgement of a replay even if the preflight GET already contains
+the photo. Parent, position, URL and local-byte verification still apply, and
+local bytes are deleted only after durable completion. A conflicting operation
+returns 409 and retains local evidence.
+
+Older servers ignore the new optional header and return the established parent
+JSON; the client keeps the previous new-photo checks as fallback. Older clients
+can upload to the new backend without a key. Because the client cannot assume a
+server upgrade, automatic POST retries/replays remain disabled. Interrupted jobs
+still require explicit recovery/retry; keyed retries against the new backend are
+safe after a lost response or restart. Old journal entries that already have a
+UUID use it unchanged; historical uploads sent before server-side idempotency
+cannot acquire protection retroactively and can still duplicate on manual replay.
+
+The regression test `lostResponseAndRestartReuseDurableKeyAndAcceptExistingPhoto`
+commits a simulated HTTP upload, loses its response, retains the bytes, serializes
+and reloads the journal, explicitly retries, checks the identical key, accepts the
+existing photo ID and only then removes bytes. Native filesystem/process and iOS
+background execution limitations described above remain unverified.

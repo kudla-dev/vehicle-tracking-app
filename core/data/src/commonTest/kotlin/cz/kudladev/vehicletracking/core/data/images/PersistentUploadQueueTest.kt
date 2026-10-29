@@ -9,15 +9,68 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlin.test.*
+import io.ktor.client.engine.mock.respond
+import io.ktor.serialization.kotlinx.json.json
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class PersistentUploadQueueTest {
     private val photo = ImageWithUrl("photo", "http://localhost/images/photo", 0)
     private fun record(id: String = "job") = UploadRecord(id, "tag", vehicleId = 7, position = 0)
+
+    @Test fun lostResponseAndRestartReuseDurableKeyAndAcceptExistingPhoto() = runTest {
+        val key = "058289cd-0345-4ff1-bc12-c80c4a67e792"
+        val store = MemoryStore()
+        var committed = false
+        val keys = mutableListOf<String?>()
+        val http = io.ktor.client.HttpClient(io.ktor.client.engine.mock.MockEngine { request ->
+            when {
+                request.url.encodedPath.startsWith("/images/") -> respond(byteArrayOf(1))
+                request.method == io.ktor.http.HttpMethod.Post -> {
+                    keys += request.headers["Idempotency-Key"]
+                    if (!committed) {
+                        committed = true
+                        throw IllegalStateException("response lost after commit")
+                    }
+                    respond(
+                        """{"id":7,"images":[{"id":"photo","url":"http://localhost/images/photo","position":0}]}""",
+                        headers = io.ktor.http.headersOf("Content-Type" to listOf("application/json"), "X-Upload-Image-Id" to listOf("photo")))
+                }
+                else -> respond(
+                    if (committed) """{"id":7,"images":[{"id":"photo","url":"http://localhost/images/photo","position":0}]}""" else """{"id":7,"images":[]}""",
+                    headers = io.ktor.http.headersOf("Content-Type", "application/json"))
+            }
+        }) { install(io.ktor.client.plugins.contentnegotiation.ContentNegotiation) {
+            json(kotlinx.serialization.json.Json { ignoreUnknownKeys = true })
+        } }
+        try {
+            val transport = ImageUploadClient(http)
+            fun queue() = PersistentUploadQueue(store, this, prepare = transport::snapshotIds) { r, bytes ->
+                transport.vehicle(requireNotNull(bytes), requireNotNull(r.vehicleId), r.position, r.id)
+            }
+            val original = queue()
+            original.enqueue(record(key), byteArrayOf(1))
+            original.snapshots.first { it.single().record.state == UploadRecord.State.FAILED }
+            advanceUntilIdle()
+            assertEquals(UploadRecord.State.FAILED, store.records[key]?.state)
+            assertNotNull(store.bytes[key])
+            // Force a serialization round trip, as native journal reload does after process restart.
+            val persisted = kotlinx.serialization.json.Json.encodeToString(UploadRecord.serializer(), requireNotNull(store.records[key]))
+            store.records[key] = kotlinx.serialization.json.Json.decodeFromString(UploadRecord.serializer(), persisted)
+            val restored = queue()
+            restored.retry(key)
+            restored.snapshots.first { it.single().record.state == UploadRecord.State.COMPLETED }
+            advanceUntilIdle()
+            assertEquals(listOf<String?>(key, key), keys)
+            assertEquals(UploadRecord.State.COMPLETED, store.records[key]?.state)
+            assertEquals("photo", store.records[key]?.image?.id)
+            assertNull(store.bytes[key])
+        } finally { http.close() }
+    }
 
     @Test fun progressOnlyDoesNotDeleteEvidence() = runTest {
         val store = MemoryStore()

@@ -21,9 +21,9 @@ actual class ImageService(context: Context, httpClient: HttpClient) {
                 .setInputData(workDataOf("uploadId" to id)).addTag("image_upload").build())
     }, prepare = client::snapshotIds) { record, bytes ->
         when {
-            record.sourceUrl != null -> client.vehicleUrl(record.sourceUrl, requireNotNull(record.vehicleId), record.position)
-            record.vehicleId != null -> client.vehicle(requireNotNull(bytes), record.vehicleId, record.position)
-            else -> client.tracking(requireNotNull(bytes), requireNotNull(record.trackingId), record.position, requireNotNull(record.trackingState))
+            record.sourceUrl != null -> client.vehicleUrl(record.sourceUrl, requireNotNull(record.vehicleId), record.position, record.id)
+            record.vehicleId != null -> client.vehicle(requireNotNull(bytes), record.vehicleId, record.position, record.id)
+            else -> client.tracking(requireNotNull(bytes), requireNotNull(record.trackingId), record.position, requireNotNull(record.trackingState), record.id)
         }
     }
     private var pendingClear: Job? = null
