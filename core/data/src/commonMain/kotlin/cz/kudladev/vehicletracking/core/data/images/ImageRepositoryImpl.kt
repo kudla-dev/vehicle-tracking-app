@@ -50,7 +50,7 @@ class ImageRepositoryImpl(
     }
 
     override fun getUploadStatus(tag: String): Flow<List<ImageUploadState>> {
-        return imageService.getUploadStatusByTag(tag)
+        return imageService.getUploadStatusByTag(tag.ifEmpty { "image_upload" })
     }
 
     override fun clearUploadStatus() {

@@ -265,7 +265,7 @@ private fun WaitingForUpload(imageModifier: Modifier) {
 }
 
 private fun Float.toFormatedPercentage(): String {
-    return String.format("%.0f%%", this * 100)
+    return "${kotlin.math.round(this * 100).toInt()}%"
 }
 
 

@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>MotoparkAPIBaseURL</key>
+    <string>$(MOTOPARK_API_SCHEME)://$(MOTOPARK_API_HOST):$(MOTOPARK_API_PORT)</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Motopark uses the camera to document the vehicle at pickup and return.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Motopark lets you attach selected photos to vehicle and handover records.</string>
     <key>NSAllowsLocalNetworking</key>
     <true/>
     <key>NSAllowsArbitraryLoads</key>

@@ -1,5 +1,6 @@
 package cz.kudladev.vehicletracking.core.data.vehicles
 
+import cz.kudladev.vehicletracking.core.data.vehicles.models.DriverLicenseDTO
 import cz.kudladev.vehicletracking.core.data.vehicles.models.VehicleBasic
 import cz.kudladev.vehicletracking.core.data.vehicles.models.VehicleImageRequest
 import cz.kudladev.vehicletracking.core.data.vehicles.models.VehicleScrape
@@ -15,12 +16,9 @@ import cz.kudladev.vehicletracking.model.Result
 import cz.kudladev.vehicletracking.network.mapSuccess
 import cz.kudladev.vehicletracking.network.safeCall
 import io.ktor.client.*
-import io.ktor.client.plugins.*
 import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.channelFlow
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
@@ -56,10 +54,8 @@ class VehicleRepositoryImpl(
                 parameter("transferableSpz", transferableSpz)
                 parameter("totalDistance", totalDistance)
                 parameter("maximumDistance", maximumDistance)
-                parameter("driverLicense", driverLicense)
+                parameter("driverLicenses", driverLicense)
                 parameter("place", place)
-                parameter("type", type)
-                parameter("subType", subType)
                 parameter("page", page)
                 parameter("size", size)
             }
@@ -124,7 +120,8 @@ class VehicleRepositoryImpl(
             transferableSpz = transferableSpz,
             totalDistance = totalDistance,
             maximumDistance = maximumDistance,
-            driverLicense = driverLicense,
+            driverLicense = driverLicense.split(',').map { it.trim() }.filter { it.isNotEmpty() }
+                .distinct().map { DriverLicenseDTO(it) },
             place = place
         )
         return safeCall<VehicleBasic> {
@@ -140,29 +137,9 @@ class VehicleRepositoryImpl(
         imageData: ByteArray,
         vehicleId: Long,
         position: Int
-    ): Flow<Result<ProgressUpdate, ErrorMessage>> = channelFlow {
-        safeCall<VehicleBasic> {
-            httpClient.submitFormWithBinaryData(
-                url = "/vehicles/$vehicleId/images",
-                formData = formData {
-                    append("file", imageData, Headers.build {
-                        append(HttpHeaders.ContentType, "image/jpeg")
-                        append(HttpHeaders.ContentDisposition, "filename=\"image.png\"")
-                    })
-                    append("position", position.toString())
-                }
-            ){ this
-                onUpload { bytesSentTotal, totalBytes ->
-                   if ((totalBytes ?: 0L) > 0L) {
-                          send(Result.Success(ProgressUpdate(
-                              byteSent = bytesSentTotal,
-                              totalBytes = totalBytes ?: 0L,
-                          )))
-                   }
-                }
-            }
-        }
-    }
+    ): Flow<Result<ProgressUpdate, ErrorMessage>> =
+        cz.kudladev.vehicletracking.core.data.images.upload.ImageUploadClient(httpClient)
+            .vehicle(imageData, vehicleId, position)
 
     override suspend fun uploadImage(
         imageUrl: String,

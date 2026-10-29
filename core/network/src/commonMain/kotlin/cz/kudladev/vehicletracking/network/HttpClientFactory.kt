@@ -19,6 +19,7 @@ import org.koin.core.component.inject
 
 class HttpClientFactory(
     private val dataStoreRepository: DataStoreRepository,
+    private val apiConfig: ApiConfig,
 ): KoinComponent {
 
     private val authRepository: AuthRepository by inject()
@@ -26,6 +27,7 @@ class HttpClientFactory(
 
     fun create(httpClientEngine: HttpClientEngine): HttpClient{
         return HttpClient(httpClientEngine) {
+            apiEndpoint(apiConfig)
 
             install(ContentNegotiation){
                 json(
@@ -41,15 +43,16 @@ class HttpClientFactory(
                         println(message)
                     }
                 }
+                sanitizeHeader { it == HttpHeaders.Authorization }
                 level = LogLevel.INFO
             }
             install(Auth){
                 bearer {
+                    sendWithoutRequest { apiConfig.contains(it.url.build()) }
                     loadTokens {
                         val accessToken = dataStoreRepository.getAccessToken()
                         val refreshToken = dataStoreRepository.getRefreshToken()
 
-                        println("Access token: $accessToken")
 
                         BearerTokens(accessToken ?: "", refreshToken)
                     }
@@ -84,14 +87,6 @@ class HttpClientFactory(
                 connectTimeoutMillis = 15000  // 15 seconds
             }
 
-            defaultRequest {
-                contentType(ContentType.Application.Json)
-                url {
-                    protocol = URLProtocol.HTTP
-                    host = "0.0.0.0"
-                    port = 8080
-                }
-            }
         }
     }
 }

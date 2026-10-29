@@ -1,5 +1,7 @@
 package cz.kudladev.vehicletracking.core.data.images
 
+import cz.kudladev.vehicletracking.core.data.images.upload.awaitUploadedImage
+import kotlinx.coroutines.CancellationException
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -33,29 +35,22 @@ class VehicleImageWorker(
 
             val imageData = file.readBytes()
 
-            vehicleRepository.uploadImage(imageData, vehicleId, position).collect { result ->
-                when (result) {
-                    is cz.kudladev.vehicletracking.model.Result.Success -> {
-                        val progressUpdate = result.data
-                        val progress = workDataOf(
-                            "progress" to (progressUpdate.byteSent.toFloat() / progressUpdate.totalBytes.toFloat()),
-                        )
-                        setProgress(progress)
-                    }
-                    is cz.kudladev.vehicletracking.model.Result.Error -> {
-                        val error = workDataOf("error" to result.error.toString())
-                        setProgress(error)
-                    }
-                    is cz.kudladev.vehicletracking.model.Result.Loading -> {
-                        // Handle loading state if needed
-                    }
+            val result = vehicleRepository.uploadImage(imageData, vehicleId, position)
+                .awaitUploadedImage { update ->
+                    if (update.totalBytes > 0) setProgress(workDataOf(
+                        "progress" to (update.byteSent.toFloat() / update.totalBytes).coerceIn(0f, 1f)
+                    ))
                 }
+            if (result is cz.kudladev.vehicletracking.model.Result.Error) {
+                return Result.failure(workDataOf("error" to result.error.message, "imageUri" to imagePath))
             }
 
             // Delete the temporary file after successful upload
             file.delete()
 
             return Result.success()
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             return Result.failure(workDataOf("error" to e.message))
         }

@@ -4,11 +4,12 @@ import cz.kudladev.vehicletracking.model.DriverLicense
 import cz.kudladev.vehicletracking.model.ImageWithUrl
 import cz.kudladev.vehicletracking.model.Vehicle
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerialName
 
 @Serializable
 data class VehicleScrape(
     val fullName: String = "",
-    val drivingLicenses: List<String> = emptyList(),
+    @SerialName("driverLicense") val drivingLicenses: List<String> = emptyList(),
     val imageUrls: List<String> = emptyList(),
 )
 
