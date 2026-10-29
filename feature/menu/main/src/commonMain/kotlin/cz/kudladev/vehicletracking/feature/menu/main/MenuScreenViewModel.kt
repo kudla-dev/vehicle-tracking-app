@@ -89,7 +89,7 @@ class MenuScreenViewModel(
 
     private fun getCountByState(
         state: TrackingState,
-        onSuccess: (newCount: Int) -> Unit,
+        onSuccess: (newCount: Long) -> Unit,
         onError: (errorMessage: ErrorMessage) -> Unit
     ) = viewModelScope.launch {
         trackingRepository

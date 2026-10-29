@@ -25,7 +25,7 @@ interface TrackingRepository {
 
     suspend fun getCountByState(
         state: TrackingState,
-    ): Result<Int, ErrorMessage>
+    ): Result<Long, ErrorMessage>
 
     suspend fun uploadImage(
         imageData: ByteArray,

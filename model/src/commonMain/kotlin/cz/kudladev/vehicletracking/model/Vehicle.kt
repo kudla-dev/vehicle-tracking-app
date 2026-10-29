@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Vehicle(
-    val id: Int? = null,
+    val id: Long? = null,
     val brand: Brand? = null,
     val fullName: String = "",
     val color: String = "",

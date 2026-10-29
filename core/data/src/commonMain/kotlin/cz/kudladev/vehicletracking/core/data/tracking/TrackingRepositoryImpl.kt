@@ -65,8 +65,8 @@ class TrackingRepositoryImpl(
         }
     }
 
-    override suspend fun getCountByState(state: TrackingState): Result<Int, ErrorMessage> {
-        return safeCall<Int> {
+    override suspend fun getCountByState(state: TrackingState): Result<Long, ErrorMessage> {
+        return safeCall<Long> {
             httpClient.get("/trackings/${state.state}/count")
         }.mapSuccess { response ->
             response

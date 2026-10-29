@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class VehicleBasic(
-    val id: Int?,
+    val id: Long?,
     val brand: BrandDTO,
     val fullName: String,
     val color: String,

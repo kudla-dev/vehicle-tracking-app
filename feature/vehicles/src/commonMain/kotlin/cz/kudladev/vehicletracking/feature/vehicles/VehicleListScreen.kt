@@ -63,7 +63,7 @@ fun VehicleListScreenRoot(
     paddingValues: PaddingValues,
     onSearch: (String) -> Unit,
     searchQuery: String? = null,
-    onVehicleClick: (Int) -> Unit,
+    onVehicleClick: (Long) -> Unit,
     onCreate: (() -> Unit)? = null,
 ) {
     val user = userState.user.collectAsStateWithLifecycle()
@@ -95,7 +95,7 @@ private fun VehicleListScreen(
     user: User?,
     onSearch: (String) -> Unit,
     searchQuery: String?,
-    onVehicleClick: (Int) -> Unit,
+    onVehicleClick: (Long) -> Unit,
     onCreate: (() -> Unit)? = null,
 ) {
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())

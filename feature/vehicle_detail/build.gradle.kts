@@ -30,6 +30,11 @@ kotlin {
 
     sourceSets {
 
+        androidUnitTest.dependencies {
+            implementation(libs.kotlin.test.junit)
+            implementation("org.robolectric:robolectric:4.14.1")
+        }
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)

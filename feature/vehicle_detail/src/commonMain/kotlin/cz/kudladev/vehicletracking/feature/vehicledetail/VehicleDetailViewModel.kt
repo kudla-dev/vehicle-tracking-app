@@ -3,7 +3,6 @@ package cz.kudladev.vehicletracking.feature.vehicledetail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import cz.kudladev.vehicletracking.core.domain.tracking.TrackingRepository
 import cz.kudladev.vehicletracking.core.domain.vehicles.VehicleRepository
 import cz.kudladev.vehicletracking.model.UiState
@@ -21,7 +20,7 @@ class VehicleDetailViewModel(
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
-    val vehicleId = savedStateHandle.toRoute<VehicleDetails>().vehicleId
+    val vehicleId = savedStateHandle.vehicleDetails().vehicleId
 
     private val _state = MutableStateFlow(VehicleDetailState())
     val state = _state
@@ -57,7 +56,7 @@ class VehicleDetailViewModel(
     }
 
     private fun loadVehicle(
-        vehicleId: Int?,
+        vehicleId: Long?,
     ) = viewModelScope.launch {
         if (vehicleId == null) {
             _state.value = VehicleDetailState(
@@ -87,7 +86,7 @@ class VehicleDetailViewModel(
         }
         trackingRepository
             .createTracking(
-                vehicleId = vehicleId?.toLong() ?: 0L,
+                vehicleId = vehicleId ?: 0L,
                 startTime = state.value.startLocalDateTime!!,
                 endTime = state.value.endLocalDateTime!!
             )
@@ -132,7 +131,7 @@ class VehicleDetailViewModel(
     }
 
     private fun getCalendar(
-        vehicleId: Int
+        vehicleId: Long
     ) = viewModelScope.launch {
         _state.update { it.copy(
             calendar = UiState.Loading

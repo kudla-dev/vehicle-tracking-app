@@ -81,7 +81,7 @@ class RepositoryContractTest {
         val client = client { request -> assertEquals("/trackings/pending/count", request.url.encodedPath); "4" }
         try {
             val result = TrackingRepositoryImpl(client).getCountByState(TrackingState.PENDING)
-            assertEquals(4, assertIs<Result.Success<Int>>(result).data)
+            assertEquals(4L, assertIs<Result.Success<Long>>(result).data)
         } finally { client.close() }
     }
 

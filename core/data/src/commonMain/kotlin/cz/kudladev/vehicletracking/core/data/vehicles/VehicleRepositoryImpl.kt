@@ -66,7 +66,7 @@ class VehicleRepositoryImpl(
         }
     }
 
-    override suspend fun getById(id: Int): Result<Vehicle, ErrorMessage> {
+    override suspend fun getById(id: Long): Result<Vehicle, ErrorMessage> {
         return safeCall<VehicleBasic> {
             httpClient.get("/vehicles/$id")
         }.mapSuccess {
@@ -75,7 +75,7 @@ class VehicleRepositoryImpl(
     }
 
     override suspend fun getCalendar(
-        vehicleId: Int
+        vehicleId: Long
     ): Result<Map<LocalDate, List<LocalTime>>, ErrorMessage> {
         val timezoneId = getTimezoneId()
         return safeCall<Map<String, List<String>>> {

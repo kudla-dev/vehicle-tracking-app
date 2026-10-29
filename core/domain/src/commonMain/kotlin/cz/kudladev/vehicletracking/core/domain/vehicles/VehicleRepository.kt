@@ -29,11 +29,11 @@ interface VehicleRepository {
     ): Result<List<Vehicle>, ErrorMessage>
 
     suspend fun getById(
-        id: Int,
+        id: Long,
     ): Result<Vehicle, ErrorMessage>
 
     suspend fun getCalendar(
-        vehicleId: Int,
+        vehicleId: Long,
     ): Result<Map<LocalDate, List<LocalTime>>, ErrorMessage>
 
     suspend fun scrape(

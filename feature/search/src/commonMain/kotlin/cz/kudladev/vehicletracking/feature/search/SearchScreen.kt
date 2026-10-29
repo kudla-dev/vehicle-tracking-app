@@ -41,7 +41,7 @@ fun SearchScreenRoot(
     searchType: String = "vehicle",
     onCancel: () -> Unit,
     onSearch: (String) -> Unit,
-    onVehicleSelected: (Int) -> Unit
+    onVehicleSelected: (Long) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -65,7 +65,7 @@ fun SearchScreen(
     paddingValues: PaddingValues,
     onCancel: () -> Unit,
     onSearch: (String) -> Unit,
-    onVehicleSelected: (Int) -> Unit,
+    onVehicleSelected: (Long) -> Unit,
 ) {
     Box(
         modifier = Modifier

@@ -55,7 +55,7 @@ import vehicletracking.feature.vehicle_detail.generated.resources.trackingCreati
 
 @Serializable
 data class VehicleDetails(
-    val vehicleId: Int? = null,
+    val vehicleId: Long? = null,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)

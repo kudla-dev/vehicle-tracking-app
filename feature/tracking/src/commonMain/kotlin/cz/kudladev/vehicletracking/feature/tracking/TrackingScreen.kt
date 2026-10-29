@@ -74,7 +74,7 @@ fun TrackingScreenRoot(
     paddingValues: PaddingValues,
     scrollBehaviour: BottomAppBarScrollBehavior,
     viewModel: TrackingScreenViewModel = koinViewModel(),
-    onVehicleClick: (Int) -> Unit
+    onVehicleClick: (Long) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -105,7 +105,7 @@ private fun TrackingScreen(
     paddingValues: PaddingValues,
     bottomAppBarScrollBehavior: BottomAppBarScrollBehavior,
     state: TrackingScreenState,
-    onVehicleClick: (Int) -> Unit,
+    onVehicleClick: (Long) -> Unit,
     onAction: (TrackingScreenAction) -> Unit
 ) {
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())

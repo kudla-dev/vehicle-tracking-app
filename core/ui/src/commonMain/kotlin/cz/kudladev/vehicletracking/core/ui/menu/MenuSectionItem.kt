@@ -28,7 +28,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun MenuSectionItem(
     icon: ImageVector,
     title: String,
-    badgeCount: Int? = null,
+    badgeCount: Long? = null,
     onClick: (() -> Unit)? = null,
     action: @Composable (() -> Unit)? = null,
     isLast: Boolean = false,

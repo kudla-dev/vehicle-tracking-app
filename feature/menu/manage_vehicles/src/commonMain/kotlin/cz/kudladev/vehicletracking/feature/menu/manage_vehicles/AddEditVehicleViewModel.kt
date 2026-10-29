@@ -355,7 +355,7 @@ class AddEditVehicleViewModel(
             .onSuccess { response ->
                 uploadTag.value = "vehicle_image_upload_${response.id}"
                 images.forEach { image ->
-                    imageRepository.uploadImageToVehicle(image, response.id?.toLong() ?: 0L)
+                    imageRepository.uploadImageToVehicle(image, response.id ?: 0L)
                 }
             }
             .onError { error ->
