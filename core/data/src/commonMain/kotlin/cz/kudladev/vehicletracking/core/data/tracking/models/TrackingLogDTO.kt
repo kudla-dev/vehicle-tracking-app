@@ -18,8 +18,8 @@ data class TrackingLogDTO(
     val trackingId: String,
     val state: String,
     val message: String? = null,
-    val assignedBy: UserResponse,
-    val assignedAt: String,
+    val assignedBy: UserResponse? = null,
+    val assignedAt: String? = null,
     val images: List<ImageWithUrl>? = null,
 )
 
@@ -28,8 +28,8 @@ fun TrackingLogDTO.toDomain(): TrackingLog {
         trackingId = trackingId,
         state = state.toTrackingState(),
         message = message,
-        assignedBy = assignedBy.toDomain(),
-        assignedAt = assignedAt.fromInstantToLocalDateTime(),
+        assignedBy = assignedBy?.toDomain(),
+        assignedAt = assignedAt?.fromInstantToLocalDateTime(),
         images = images?.map { ImageUploadState.Completed(it) } ?: emptyList()
     )
 }
