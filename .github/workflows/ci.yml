@@ -1,0 +1,71 @@
+name: Client CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  android:
+    name: Android Build, Tests & Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK 35 Platform & Build Tools
+        run: |
+          yes | sdkmanager --licenses || true
+          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Run Targeted Unit Tests
+        run: ./gradlew :core:data:testDebugUnitTest :core:network:testDebugUnitTest :feature:vehicle_detail:testDebugUnitTest
+
+      - name: Assemble Debug APK & Lint
+        run: ./gradlew assembleDebug lintDebug
+
+      - name: Upload Test and Lint Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-verification-reports
+          path: |
+            **/build/reports/tests/
+            **/build/reports/lint-results*
+          if-no-files-found: ignore
+
+  ios:
+    name: iOS Kotlin Simulator Build
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Compile Kotlin for iOS Simulator
+        run: ./gradlew compileKotlinIosSimulatorArm64
