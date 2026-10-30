@@ -6,4 +6,6 @@
     <string name="imagesFromReturn">Obrázky z vrácení</string>
 
     <string name="loadingTrackingDetails">Načítání detailů sledování...</string>
+    <string name="trackingDetailLoadError">Detail rezervace se nepodařilo načíst. Zkuste to znovu.</string>
+    <string name="retryTrackingDetail">Zkusit znovu</string>
 </resources>

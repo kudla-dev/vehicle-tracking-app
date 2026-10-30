@@ -27,7 +27,8 @@ class TrackingDetailPhotoViewModel : ViewModel() {
 
     fun onAction(action: TrackingDetailPhotoAction) {
         when (action) {
-            else -> TODO("Handle actions")
+            // No ViewModel actions are supported by this placeholder yet.
+            else -> Unit
         }
     }
 

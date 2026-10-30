@@ -27,7 +27,8 @@ class AdminSettingsViewModel : ViewModel() {
 
     fun onAction(action: AdminSettingsAction) {
         when (action) {
-            else -> TODO("Handle actions")
+            // No ViewModel actions are supported by this placeholder yet.
+            else -> Unit
         }
     }
 

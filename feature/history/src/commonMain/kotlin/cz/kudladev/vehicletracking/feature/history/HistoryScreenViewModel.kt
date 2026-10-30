@@ -64,7 +64,8 @@ class HistoryScreenViewModel(
 
     fun onAction(action: HistoryScreenAction) {
         when (action) {
-            else -> TODO("Handle actions")
+            // The screen refreshes its LazyPagingItems directly.
+            HistoryScreenAction.Refresh -> Unit
         }
     }
 

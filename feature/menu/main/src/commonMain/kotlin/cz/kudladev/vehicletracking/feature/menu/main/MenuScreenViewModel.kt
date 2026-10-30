@@ -78,7 +78,8 @@ class MenuScreenViewModel(
 
     fun onAction(action: MenuScreenAction) {
         when (action) {
-            is MenuScreenAction.ChangeProfilePicture -> TODO()
+            // Profile picture editing is not supported yet.
+            is MenuScreenAction.ChangeProfilePicture -> Unit
             MenuScreenAction.Logout -> logout()
         }
     }

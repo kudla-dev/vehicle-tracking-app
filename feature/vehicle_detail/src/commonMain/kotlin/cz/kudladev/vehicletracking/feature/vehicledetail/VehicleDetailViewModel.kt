@@ -36,7 +36,7 @@ class VehicleDetailViewModel(
     fun onAction(action: VehicleDetailAction) {
         when (action) {
             is VehicleDetailAction.RefreshVehicle -> {
-                TODO()
+                loadVehicle(vehicleId)
             }
             is VehicleDetailAction.OnStartEndDateTimeChange -> {
                 _state.update { it.copy(

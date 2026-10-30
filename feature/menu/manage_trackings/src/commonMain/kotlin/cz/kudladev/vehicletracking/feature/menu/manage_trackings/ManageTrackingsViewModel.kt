@@ -49,7 +49,8 @@ class ManageTrackingsViewModel(
 
     fun onAction(action: ManageTrackingsAction) {
         when (action) {
-            else -> TODO("Handle actions")
+            // No ViewModel actions are supported by this placeholder yet.
+            else -> Unit
         }
     }
 

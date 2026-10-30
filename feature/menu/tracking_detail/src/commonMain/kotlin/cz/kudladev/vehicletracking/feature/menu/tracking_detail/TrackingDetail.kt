@@ -63,6 +63,7 @@ fun TrackingDetailRoot(
         state = state,
         user = user,
         onAction = viewModel::onAction,
+        onRetry = { viewModel.refresh() },
         onBack = onBack,
         onPickUpProtocol = onPickUpProtocol,
         onReturnProtocol = onReturnProtocol,
@@ -77,6 +78,7 @@ private fun TrackingDetailScreen(
     state: TrackingDetailState,
     user: User?,
     onAction: (TrackingDetailAction) -> Unit,
+    onRetry: () -> Unit,
     onBack: () -> Unit,
     onPickUpProtocol: (String, TrackingState) -> Unit,
     onReturnProtocol: (String, TrackingState) -> Unit,
@@ -178,7 +180,23 @@ private fun TrackingDetailScreen(
             targetState = state.tracking
         ){
             when (it) {
-                is UiState.Error -> TODO()
+                is UiState.Error -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize().padding(combinedPadding),
+                        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.trackingDetailLoadError),
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                        PrimaryButton(
+                            text = stringResource(Res.string.retryTrackingDetail),
+                            onClick = onRetry,
+                        )
+                        SecondaryButton(text = backString(), onClick = onBack)
+                    }
+                }
                 is UiState.Success<Tracking> -> {
                     LazyColumn(
                         contentPadding = combinedPadding,

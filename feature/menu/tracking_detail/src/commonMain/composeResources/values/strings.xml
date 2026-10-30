@@ -8,4 +8,6 @@
 
     <string name="loadingTrackingDetails">Loading tracking details...</string>
 
+    <string name="trackingDetailLoadError">Unable to load reservation details. Please try again.</string>
+    <string name="retryTrackingDetail">Try again</string>
 </resources>
