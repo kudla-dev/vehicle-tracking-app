@@ -40,7 +40,9 @@ emulator. Override it at build time for a device or another isolated backend:
 bash ./gradlew :composeApp:assembleDebug -Pmotopark.apiBaseUrl=http://192.168.1.20:8080
 ```
 
-`core/network` generates its `BuildConfig.API_BASE_URL` from this property. The
+`composeApp` generates its `BuildConfig.API_BASE_URL` from this property and passes
+an immutable `AppConfig` to Koin. `core/network` receives the configuration and
+does not read platform settings itself. The
 debug variant permits HTTP to development hosts. Other variants retain the main
 network security configuration; configure the intended HTTPS origin before a
 hosted release. The defaults target local development. `NetworkConstants` is legacy code
@@ -61,6 +63,24 @@ remains separate work.
 
 Use an isolated backend when verifying the app. A successful build does not
 establish device connectivity or complete API compatibility.
+
+### Environment configuration foundation
+
+The shared `AppConfig` models `MOCK`, `DEV`, `STAGE` and `PROD`. Every network
+environment requires an explicit, validated API origin. Stage and production
+require HTTPS, including image requests and redirects through the shared HTTP
+client. Mock has no remote API origin and cannot initialize the native network
+module; its dedicated transport is a separate upcoming step.
+
+Both platform hosts currently select **DEV** explicitly and preserve the existing
+API overrides and local defaults described above. No environment switch is exposed
+yet: Android flavors, iOS schemes, application IDs and storage isolation must be
+implemented together before enabling stage/prod/mock builds. A release build is
+therefore not yet a production environment. Do not reuse the current app's stored
+session or pending uploads by switching its origin to another environment.
+
+`AppConfigTest` covers required HTTPS, invalid origins, mock network rejection,
+DI configuration identity and blocking HTTP image requests/redirects before send.
 
 ## iOS
 

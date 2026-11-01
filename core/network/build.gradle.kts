@@ -64,14 +64,7 @@ android {
     namespace = "cz.kudladev.vehicletracking.core.network"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
-    buildFeatures { buildConfig = true }
-
     defaultConfig {
-        val apiUrl = providers.gradleProperty("motopark.apiBaseUrl").orElse("http://10.0.2.2:8080").get()
-        require(apiUrl.none { it == '\n' || it == '\r' }) { "Invalid API URL" }
-        val quoted = "\"" + apiUrl.replace("\\", "\\\\").replace("\"", "\\\"") + "\""
-        buildConfigField("String", "API_BASE_URL", quoted)
-
         minSdk = libs.versions.android.minSdk.get().toInt()
     }
     packaging {

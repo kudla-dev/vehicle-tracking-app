@@ -102,7 +102,14 @@ android {
 //    androidResources {
 //        generateLocaleConfig = true
 //    }
+    buildFeatures { buildConfig = true }
+
     defaultConfig {
+        val apiUrl = providers.gradleProperty("motopark.apiBaseUrl").orElse("http://10.0.2.2:8080").get()
+        require(apiUrl.none { it == '\n' || it == '\r' }) { "Invalid API URL" }
+        val quoted = "\"" + apiUrl.replace("\\", "\\\\").replace("\"", "\\\"") + "\""
+        buildConfigField("String", "API_BASE_URL", quoted)
+
         applicationId = "cz.kudladev.vehicletracking"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()

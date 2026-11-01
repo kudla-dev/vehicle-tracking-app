@@ -14,6 +14,7 @@ import cz.kudladev.vehicletracking.feature.tracking.di.trackingModule
 import cz.kudladev.vehicletracking.feature.vehicledetail.di.vehicleDetailModule
 import cz.kudladev.vehicletracking.feature.vehicles.di.vehiclesModule
 import cz.kudladev.vehicletracking.network.di.networkModule
+import cz.kudladev.vehicletracking.network.AppConfig
 import org.koin.dsl.module
 
 
@@ -31,9 +32,9 @@ val featureModule = module {
     includes(protocolsModule)
     includes(menuModule)
 }
-val appModules = listOf(
+fun appModules(config: AppConfig) = listOf(
     dataModule,
-    networkModule,
+    networkModule(config),
     featureModule
 )
 
