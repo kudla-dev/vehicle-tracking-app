@@ -61,3 +61,30 @@ for environment, scheme, host, port, expected in [
 assert 'validate-environment.sh' in next(
     v['shellScript'] for v in graph.values() if v.get('name') == 'Compile Kotlin Framework')
 print('PASS: four shared schemes, eight paired configurations, bundle IDs, ATS and seven build guard cases')
+
+# Execute the checked-in build phase against a stub Gradle wrapper: only MOCK may
+# select mock sources/dependencies. No framework linking or native runtime claimed.
+import tempfile
+import shutil
+phase = next(v['shellScript'] for v in graph.values() if v.get('name') == 'Compile Kotlin Framework')
+with tempfile.TemporaryDirectory(prefix='motopark-xcode-') as directory:
+    sandbox = Path(directory)
+    configuration = sandbox / 'iosApp/Configuration'
+    configuration.mkdir(parents=True)
+    shutil.copy2(guard, configuration / guard.name)
+    wrapper = sandbox / 'gradlew'
+    wrapper.write_text('#!/bin/sh\nprintf "%s\\n" "$@" > "$CAPTURE"\n')
+    wrapper.chmod(0o755)
+    for environment in ('MOCK', 'DEV', 'STAGE', 'PROD'):
+        capture = sandbox / 'arguments'
+        subprocess.run(['/bin/sh', '-c', phase], check=True, env={
+            **os.environ, 'SRCROOT': str(sandbox / 'iosApp'),
+            'OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED': 'NO', 'CAPTURE': str(capture),
+            'MOTOPARK_ENVIRONMENT': environment, 'MOTOPARK_API_SCHEME': 'https',
+            'MOTOPARK_API_HOST': 'example.invalid', 'MOTOPARK_API_PORT': '443',
+        })
+        assert capture.read_text().splitlines() == [
+            ':composeApp:embedAndSignAppleFrameworkForXcode',
+            '-Pmotopark.mock=' + ('true' if environment == 'MOCK' else 'false'),
+        ], environment
+print('PASS: actual Xcode build phase selects mock framework only for MOCK')

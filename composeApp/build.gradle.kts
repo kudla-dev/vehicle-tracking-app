@@ -89,7 +89,11 @@ kotlin {
             implementation(projects.feature.search)
 
         }
+        iosMain {
+            kotlin.srcDir(if (providers.gradleProperty("motopark.mock").orNull == "true") "src/iosMock/kotlin" else "src/iosNetwork/kotlin")
+        }
         iosMain.dependencies {
+            if (providers.gradleProperty("motopark.mock").orNull == "true") implementation(projects.core.mock)
             implementation(libs.ktor.client.darwin)
         }
     }
@@ -120,6 +124,11 @@ android {
                 if (environment != "dev") applicationIdSuffix = ".$environment"
                 resValue("string", "app_name", if (environment == "prod") "Motopark" else "Motopark ${environment.uppercase()}")
                 buildConfigField("String", "APP_ENVIRONMENT", "\"${environment.uppercase()}\"")
+                if (environment == "mock") {
+                    val scenario = providers.gradleProperty("motopark.mockScenario").orElse("NORMAL").get()
+                    require(scenario.matches(Regex("[A-Z_]+")))
+                    buildConfigField("String", "MOCK_SCENARIO", "\"$scenario\"")
+                }
                 val apiUrl = when (environment) {
                     "mock" -> ""
                     "dev" -> providers.gradleProperty("motopark.dev.apiBaseUrl")
@@ -165,5 +174,6 @@ android {
 }
 
 dependencies {
+    add("mockImplementation", projects.core.mock)
     debugImplementation(compose.uiTooling)
 }

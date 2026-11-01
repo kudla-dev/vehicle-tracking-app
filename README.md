@@ -49,8 +49,8 @@ Stage/prod have **no default API**. Supply explicit HTTPS origins with
 `-Pmotopark.stage.apiBaseUrl=...` / `-Pmotopark.prod.apiBaseUrl=...`.
 `motopark.apiBaseUrl` remains a DEV-only compatibility alias;
 `motopark.dev.apiBaseUrl` takes precedence. Only DEV permits native cleartext.
-Mock starts an unavailable-transport notice, never application/network services;
-it is not yet a functional mock client. Android mock also has no INTERNET permission.
+MOCK runs the real application against a stateful offline HTTP transport. Android
+mock has no INTERNET permission. See [mock scenarios, accounts, reset and limits](docs/mock-transport.md).
 
 In Xcode choose `Motopark-Dev`, `Motopark-Mock`, `Motopark-Stage` or `Motopark-Prod`.
 Each shared scheme uses separate Debug/Release configurations and xcconfig files.

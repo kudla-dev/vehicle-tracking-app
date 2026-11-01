@@ -34,7 +34,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Targeted Unit Tests
-        run: ./gradlew :core:datastore:testDebugUnitTest :core:data:testDebugUnitTest :core:network:testDebugUnitTest :feature:vehicle_detail:testDebugUnitTest
+        run: ./gradlew :core:mock:testDebugUnitTest :core:domain:testDebugUnitTest :core:datastore:testDebugUnitTest :core:data:testDebugUnitTest :core:network:testDebugUnitTest :feature:vehicle_detail:testDebugUnitTest
 
       - name: Assemble Environment APKs & Lint
         # Reserved non-routable fixtures validate packaging only; no hosted API is contacted.
@@ -45,10 +45,12 @@ jobs:
           :composeApp:lintStageDebug :composeApp:lintProdRelease
           -Pmotopark.stage.apiBaseUrl=https://stage.example.invalid
           -Pmotopark.prod.apiBaseUrl=https://prod.example.invalid
-          --max-workers=2 '-Dorg.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8'
+          --max-workers=2 '-Dorg.gradle.jvmargs=-Xmx4g -XX:ReservedCodeCacheSize=512m -Dfile.encoding=UTF-8'
 
       - name: Check Packaged Environment Isolation
-        run: python3 scripts/check-android-environments.py
+        run: |
+          python3 scripts/check-android-environments.py
+          python3 scripts/check-mock-packaging.py
 
       - name: Upload Test and Lint Reports
         if: always()
@@ -82,4 +84,6 @@ jobs:
         run: python3 scripts/check-ios-environments.py
 
       - name: Compile Kotlin for iOS Simulator
-        run: ./gradlew compileKotlinIosSimulatorArm64
+        run: |
+          ./gradlew compileKotlinIosSimulatorArm64
+          ./gradlew :composeApp:compileKotlinIosSimulatorArm64 -Pmotopark.mock=true

@@ -34,7 +34,7 @@ val featureModule = module {
 }
 fun appModules(config: AppConfig) = listOf(
     dataModule,
-    networkModule(config),
+    hostTransport(config),
     featureModule
 )
 

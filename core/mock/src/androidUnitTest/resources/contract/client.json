@@ -1,0 +1,232 @@
+{
+  "vehicle": {
+    "id": 2147483648,
+    "brand": {
+      "id": 2147483649,
+      "name": "Fixture",
+      "imageURL": ""
+    },
+    "fullName": "Fixture vehicle",
+    "color": "black",
+    "year": "2026",
+    "model": "Fixture",
+    "spz": "TEST",
+    "transferableSpz": false,
+    "maximumDistance": 100,
+    "totalDistance": 0,
+    "place": "Test",
+    "driverLicenses": [
+      {
+        "type": "B"
+      }
+    ],
+    "images": []
+  },
+  "tracking": {
+    "id": "00000000-0000-0000-0000-000000000002",
+    "vehicle": {
+      "id": 2147483648,
+      "brand": {
+        "id": 2147483649,
+        "name": "Fixture",
+        "imageURL": ""
+      },
+      "fullName": "Fixture vehicle",
+      "color": "black",
+      "year": "2026",
+      "model": "Fixture",
+      "spz": "TEST",
+      "transferableSpz": false,
+      "maximumDistance": 100,
+      "totalDistance": 0,
+      "place": "Test",
+      "driverLicenses": [
+        {
+          "type": "B"
+        }
+      ],
+      "images": []
+    },
+    "user": {
+      "id": "00000000-0000-0000-0000-000000000001",
+      "firstName": "Fixture",
+      "lastName": "User",
+      "email": "fixture@example.invalid",
+      "phoneNumber": "+420000000000",
+      "role": "admin",
+      "maximumDistance": 100,
+      "overallDistance": 0
+    },
+    "startTime": "2026-01-01T10:00:00Z",
+    "endTime": "2026-01-01T11:00:00Z",
+    "startTachometer": null,
+    "endTachometer": null,
+    "finalDistance": null,
+    "stateLogs": []
+  },
+  "nullableLog": {
+    "trackingId": "00000000-0000-0000-0000-000000000002",
+    "state": "pending",
+    "message": null,
+    "assignedBy": null,
+    "assignedAt": null,
+    "images": null
+  },
+  "vehicleRequest": {
+    "fullName": "Fixture vehicle",
+    "model": "Fixture",
+    "year": "2026",
+    "color": "black",
+    "spz": "TEST",
+    "transferableSpz": false,
+    "totalDistance": 0,
+    "maximumDistance": 100,
+    "place": "Test",
+    "id": null,
+    "brandId": 2147483649,
+    "driverLicense": [
+      {
+        "type": "B"
+      }
+    ]
+  },
+  "trackingCreate": {
+    "vehicleId": 2147483648,
+    "startTime": "2026-01-01T10:00:00Z",
+    "endTime": "2026-01-01T11:00:00Z"
+  },
+  "trackingLogRequest": {
+    "state": "active",
+    "message": null,
+    "tachometer": 0
+  },
+  "image": {
+    "id": "00000000-0000-0000-0000-000000000003",
+    "url": "https://example.invalid/images/00000000-0000-0000-0000-000000000003",
+    "position": 0
+  },
+  "scrape": {
+    "fullName": "Fixture",
+    "driverLicense": [
+      "B"
+    ],
+    "imageUrls": [
+      "https://example.invalid/photo.jpg"
+    ]
+  },
+  "queries": {
+    "vehicles": "/vehicles?brandId=2147483649&driverLicenses=B&page=1&size=1",
+    "trackings": "/trackings?states=pending&vehicleId=2147483648&page=0&size=1",
+    "history": "/users/00000000-0000-0000-0000-000000000001/tracking?page=0&size=1&includeActive=false"
+  },
+  "emptyPage": [],
+  "noContent": {
+    "status": 204,
+    "body": ""
+  },
+  "errors": [
+    {
+      "error": "Bad Request",
+      "message": "Invalid request.",
+      "path": "/vehicles/2147483648/images",
+      "status": 400,
+      "timestamp": "2026-01-01T00:00:00Z"
+    },
+    {
+      "error": "Unauthorized",
+      "message": "Unauthorized",
+      "path": "/vehicles/2147483648/images",
+      "status": 401,
+      "timestamp": "2026-01-01T00:00:00Z"
+    },
+    {
+      "error": "Forbidden",
+      "message": "Forbidden",
+      "path": "/vehicles/2147483648/images",
+      "status": 403,
+      "timestamp": "2026-01-01T00:00:00Z"
+    },
+    {
+      "error": "Not Found",
+      "message": "Not Found",
+      "path": "/vehicles/2147483648/images",
+      "status": 404,
+      "timestamp": "2026-01-01T00:00:00Z"
+    },
+    {
+      "error": "Conflict",
+      "message": "Upload key already used for a different request",
+      "path": "/vehicles/2147483648/images",
+      "status": 409,
+      "timestamp": "2026-01-01T00:00:00Z"
+    },
+    {
+      "error": "Internal Server Error",
+      "message": "The request could not be completed.",
+      "path": "/vehicles/2147483648/images",
+      "status": 500,
+      "timestamp": "2026-01-01T00:00:00Z"
+    }
+  ],
+  "gateway": {
+    "status": 502,
+    "body": "<html>Bad Gateway</html>"
+  },
+  "count": 2147483648,
+  "login": {
+    "email": "fixture@example.invalid",
+    "password": "Fixture-only-1!"
+  },
+  "register": {
+    "email": "fixture@example.invalid",
+    "password": "Fixture-only-1!",
+    "firstName": "Fixture",
+    "lastName": "User",
+    "phoneNumber": "+420000000000"
+  },
+  "refresh": {
+    "refreshToken": "fixture-not-a-token"
+  },
+  "tokens": {
+    "accessToken": "fixture-not-an-access-token",
+    "refreshToken": "fixture-not-a-refresh-token"
+  },
+  "imagePosition": {
+    "position": 0
+  },
+  "calendar": {
+    "2026-01-01": [
+      "10:00",
+      "10:30"
+    ]
+  },
+  "uploadedVehicle": {
+    "id": 2147483648,
+    "brand": {
+      "id": 2147483649,
+      "name": "Fixture",
+      "imageURL": ""
+    },
+    "fullName": "Fixture vehicle",
+    "color": "black",
+    "year": "2026",
+    "model": "Fixture",
+    "spz": "TEST",
+    "transferableSpz": false,
+    "maximumDistance": 100,
+    "totalDistance": 0,
+    "place": "Test",
+    "driverLicenses": [
+      {
+        "type": "B"
+      }
+    ],
+    "images": [
+      {
+        "id": "00000000-0000-0000-0000-000000000003",
+        "url": "https://example.invalid/images/00000000-0000-0000-0000-000000000003",
+        "position": 0
+      }
+    ]
+  }
+}

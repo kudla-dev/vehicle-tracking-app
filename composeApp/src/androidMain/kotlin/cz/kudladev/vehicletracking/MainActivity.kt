@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
             navigationBarStyle = SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
         )
         setContent {
-            if (BuildConfig.APP_ENVIRONMENT == "MOCK") MockUnavailable() else App()
+            App()
         }
     }
 }

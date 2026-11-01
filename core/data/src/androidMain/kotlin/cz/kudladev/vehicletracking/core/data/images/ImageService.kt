@@ -18,7 +18,7 @@ actual class ImageService(context: Context, httpClient: HttpClient, private val 
     private val queue = PersistentUploadQueue(store, scope, schedule = { id ->
         manager.enqueueUniqueWork("${storageScope.key}-upload-$id", ExistingWorkPolicy.REPLACE,
             OneTimeWorkRequestBuilder<DurableImageWorker>()
-                .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+                .setConstraints(Constraints.Builder().setRequiredNetworkType(if (storageScope.environment == "mock") NetworkType.NOT_REQUIRED else NetworkType.CONNECTED).build())
                 .setInputData(workDataOf("uploadId" to id, "storageScope" to storageScope.key)).addTag("image_upload").build())
     }, prepare = client::snapshotIds) { record, bytes ->
         when {

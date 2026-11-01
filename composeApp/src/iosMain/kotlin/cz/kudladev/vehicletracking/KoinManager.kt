@@ -22,7 +22,7 @@ internal val iosAppConfig by lazy { launchConfig() }
 
 fun initKoin() {
     val config = iosAppConfig
-    if (config.environment == AppEnvironment.MOCK) return
+    prepareLaunchStorage(config)
     stopKoin()
     startKoin { modules(appModules(config)) }
 }

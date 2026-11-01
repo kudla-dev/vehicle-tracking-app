@@ -2,8 +2,8 @@
 
 The application host selects the environment at build time and supplies `AppConfig`
 to Koin. Only `composeApp` has Android flavors; libraries/features still publish
-ordinary Debug/Release variants. Mock transport is **not implemented**: both hosts
-show a notice without initializing Koin, application services or the network engine.
+ordinary Debug/Release variants. MOCK now starts the ordinary application with the
+stateful offline HTTP engine described in [mock-transport.md](mock-transport.md).
 Android mock removes INTERNET permission as an additional native barrier.
 
 ## Identities and configuration

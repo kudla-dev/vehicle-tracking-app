@@ -14,7 +14,7 @@ class VehicleTrackingApp : Application() {
         AppContext.set(this)
         val environment = AppEnvironment.valueOf(BuildConfig.APP_ENVIRONMENT)
         val config = AppConfig.create(environment, BuildConfig.API_BASE_URL.takeIf { it.isNotEmpty() })
-        if (environment == AppEnvironment.MOCK) return // No DI, client, image loader or workers.
+        prepareLaunchStorage(config, filesDir)
         startKoin {
             androidContext(this@VehicleTrackingApp)
             modules(appModules(config))

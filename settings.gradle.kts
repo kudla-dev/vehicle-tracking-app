@@ -49,3 +49,5 @@ include(":feature:menu:manage_trackings")
 include(":feature:menu:tracking_detail")
 include(":feature:menu:protocols")
 include(":model")
+
+include(":core:mock")

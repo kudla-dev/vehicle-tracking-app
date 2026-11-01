@@ -42,12 +42,12 @@ fun TimeRemaining(
     endTime: LocalDateTime,
     modifier: Modifier = Modifier
 ) {
-    var currentInstant by remember { mutableStateOf(Clock.System.now()) }
+    var currentInstant by remember { mutableStateOf(cz.kudladev.vehicletracking.model.AppClock.now()) }
 
     // Update every second
     LaunchedEffect(Unit) {
         while(true) {
-            currentInstant = Clock.System.now()
+            currentInstant = cz.kudladev.vehicletracking.model.AppClock.now()
             delay(1000)
         }
     }

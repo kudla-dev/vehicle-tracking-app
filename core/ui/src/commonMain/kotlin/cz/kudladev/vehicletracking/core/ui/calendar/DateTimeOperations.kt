@@ -48,7 +48,7 @@ object DateTimeOperations {
     }
 
     fun getLocalDate(): LocalDate {
-        return Clock.System.now().toLocalDateTime(dateTimePickerDefaults.timeZone).date
+        return cz.kudladev.vehicletracking.model.AppClock.now().toLocalDateTime(dateTimePickerDefaults.timeZone).date
     }
 
     fun LocalDate.addMonth(): LocalDate {
@@ -73,7 +73,7 @@ object DateTimeOperations {
         val firstDayOfTheMonth = LocalDate(localDate.year, localDate.month, 1)
         val numberOfDaysInMonth = getNumberOfDaysInMonth(localDate)
         val today = getLocalDate()
-        val time = Clock.System.now().toLocalDateTime(dateTimePickerDefaults.timeZone).time
+        val time = cz.kudladev.vehicletracking.model.AppClock.now().toLocalDateTime(dateTimePickerDefaults.timeZone).time
         val selectedMonth = localDate.month
         val selectedYear = localDate.year
 
