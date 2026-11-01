@@ -1,0 +1,86 @@
+appId: ${APP_ID}
+---
+# Flow FL-01 & FL-02: Authentication Validation, Errors and Registration Screen
+# Environment: MOCK (cz.kudladev.vehicletracking.mock)
+
+- launchApp:
+    clearState: true
+
+# 1. Start on Welcome screen
+- assertVisible:
+    id: "auth:welcome_login_button"
+- assertVisible:
+    id: "auth:welcome_register_button"
+
+# 2. Open Login screen
+- tapOn:
+    id: "auth:welcome_login_button"
+- assertVisible:
+    id: "auth:login_email_input"
+- assertVisible:
+    id: "auth:login_password_input"
+- assertVisible:
+    id: "auth:login_submit_button"
+
+# 3. Test empty submission / validation
+- tapOn:
+    id: "auth:login_submit_button"
+- assertVisible:
+    id: "auth:login_email_input"
+
+# 4. Attempt login with invalid credentials
+- tapOn:
+    id: "auth:login_email_input"
+- inputText: "invalid-user@motopark.cz"
+- tapOn:
+    id: "auth:login_password_input"
+- inputText: "WrongPassword123"
+- tapOn:
+    id: "auth:login_submit_button"
+- assertVisible:
+    id: "auth:login_email_input"
+
+# 5. Return to Welcome and open Registration
+- tapOn:
+    id: "auth:login_back_button"
+- assertVisible:
+    id: "auth:welcome_register_button"
+- tapOn:
+    id: "auth:welcome_register_button"
+
+# 6. Verify registration form fields
+- assertVisible:
+    id: "auth:register_first_name_input"
+- assertVisible:
+    id: "auth:register_last_name_input"
+- assertVisible:
+    id: "auth:register_email_input"
+- assertVisible:
+    id: "auth:register_phone_input"
+- assertVisible:
+    id: "auth:register_password_input"
+- assertVisible:
+    id: "auth:register_confirm_password_input"
+- assertVisible:
+    id: "auth:register_submit_button"
+
+# 7. Return to Welcome and Login
+- tapOn:
+    id: "auth:register_back_button"
+- tapOn:
+    id: "auth:welcome_login_button"
+- tapOn:
+    id: "auth:login_email_input"
+- inputText: "${USER_EMAIL}"
+- tapOn:
+    id: "auth:login_password_input"
+- inputText: "${USER_PASSWORD}"
+- tapOn:
+    id: "auth:login_submit_button"
+
+# 8. Assert successful catalog entry and logout
+- assertVisible:
+    id: "vehicles:grid"
+
+- runFlow:
+    file: "../subflows/logout.yaml"

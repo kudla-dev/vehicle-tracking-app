@@ -1,15 +1,15 @@
-# Maestro UI Flow Matrix & Screen Inventory
+# Inventář funkčních průchodů a matice pokrytí (Maestro E2E)
 
-Dokument shrnuje inventář funkčních uživatelských průchodů, matici pokrytí podle platforem, rolí (standardní uživatel vs. administrátor) a prostředí (lokální stavový `MOCK` sandbox vs. reálný backend), s explicitním odlišením plně funkčních obrazovek od dosavadních placeholderů.
+Tento dokument mapuje funkční stav aplikace **Vehicle Tracking App**, definuje stabilní UI selektory a stanovuje matici testovacího pokrytí pro E2E automatizaci nástrojem **Maestro**.
 
 ---
 
-## 1. Inventář obrazovek a stav implementace
+## 1. Inventář obrazovek a modulů
 
-| Obrazovka / Modul | Účel | Stav implementace | Klíčové selektory (`testTag`) |
-| :--- | :--- | :--- | :--- |
-| **WelcomeScreen** (`feature:onboarding`) | Úvodní obrazovka s volbou přihlášení či registrace | **Plně funkční** | `auth:welcome_login_button`<br>`auth:welcome_register_button` |
-| **LoginScreen** (`feature:onboarding`) | Formulář přihlášení (e-mail, heslo, validace) | **Plně funkční** | `auth:login_email_input`<br>`auth:login_password_input`<br>`auth:login_submit_button`<br>`auth:login_password_toggle`<br>`auth:login_back_button` |
+| Obrazovka / Modul | Účel / Popis | Reálný funkční stav | Klíčové UI selektory (`testTag` / `id`) |
+| :--- | :--- | :---: | :--- |
+| **WelcomeScreen** (`feature:onboarding`) | Úvodní obrazovka s volbou registrace nebo přihlášení | **Plně funkční** | `auth:welcome_login_button`<br>`auth:welcome_register_button` |
+| **LoginScreen** (`feature:onboarding`) | Přihlašovací formulář (e-mail, heslo, zobrazení hesla) | **Plně funkční** | `auth:login_email_input`<br>`auth:login_password_input`<br>`auth:login_password_toggle`<br>`auth:login_submit_button`<br>`auth:login_back_button` |
 | **RegisterScreen** (`feature:onboarding`) | Registrační formulář (jméno, e-mail, telefon, heslo) | **Plně funkční** | `auth:register_first_name_input`<br>`auth:register_last_name_input`<br>`auth:register_email_input`<br>`auth:register_phone_input`<br>`auth:register_password_input`<br>`auth:register_confirm_password_input`<br>`auth:register_submit_button` |
 | **BottomBar** (`composeApp`) | Hlavní navigace aplikace (5 záložek) | **Plně funkční** | `nav:bottom_bar`<br>`nav:bottom_bar:vehicles`<br>`nav:bottom_bar:favourites`<br>`nav:bottom_bar:tracking`<br>`nav:bottom_bar:history`<br>`nav:bottom_bar:menu` |
 | **VehicleListScreen** (`feature:vehicles`) | Katalog vozidel (mřížka / seznam, filtry) | **Plně funkční** | `vehicles:grid`<br>`vehicles:item:<id>`<br>`vehicles:search_action`<br>`vehicles:toggle_view_action`<br>`vehicles:add_button` (pouze admin)<br>`vehicles:empty_view`<br>`vehicles:error_view` |
@@ -31,11 +31,11 @@ Dokument shrnuje inventář funkčních uživatelských průchodů, matici pokry
 
 | Průchod (Flow) | Stav obrazovek | MOCK prostředí | Reálný backend | Android | iOS |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **FL-01: Registrace nového uživatele** | Plně funkční | ✅ Podporováno | ✅ Podporováno | ✅ Připraveno | ✅ Připraveno |
-| **FL-02: Přihlášení a odhlášení uživatele** | Plně funkční | ✅ **Implementováno v Maestro** (`smoke_login_and_browse.yaml`) | ✅ Podporováno | ✅ Připraveno | ✅ Připraveno |
+| **FL-01: Registrace a validační chyby** | Plně funkční | ✅ **Implementováno v Maestro** (`auth_validation_and_errors.yaml`) | ✅ Podporováno | ✅ Připraveno | ✅ Připraveno |
+| **FL-02: Přihlášení a odhlášení uživatele** | Plně funkční | ✅ **Implementováno v Maestro** (`smoke_login_and_browse.yaml`, `login_as_user.yaml`, `logout.yaml`) | ✅ Podporováno | ✅ Připraveno | ✅ Připraveno |
 | **FL-03: Prohlížení katalogu a detailu vozidla** | Plně funkční | ✅ **Implementováno v Maestro** (`smoke_login_and_browse.yaml`) | ✅ Podporováno | ✅ Připraveno | ✅ Připraveno |
 | **FL-04: Vyhledávání vozidel** | Plně funkční | ✅ **Implementováno v Maestro** (`smoke_login_and_browse.yaml`) | ✅ Podporováno | ✅ Připraveno | ✅ Připraveno |
-| **FL-05: Rezervace vozidla v kalendáři** | Plně funkční | ✅ Podporováno (mock sandbox) | ✅ Podporováno | ✅ Připraveno | ✅ Připraveno |
+| **FL-05: Rezervace vozidla v kalendáři** | Plně funkční | ✅ **Implementováno v Maestro** (`reservation_lifecycle.yaml`) | ✅ Podporováno | ✅ Připraveno | ✅ Připraveno |
 | **FL-06: Zobrazení a potvrzení vrácení v TrackingScreen** | Plně funkční | ✅ Podporováno (mock sandbox) | ✅ Podporováno | ✅ Připraveno | ✅ Připraveno |
 | **FL-07: Paginovaná historie výpůjček** | Plně funkční | ✅ Podporováno | ✅ Podporováno | ✅ Připraveno | ✅ Připraveno |
 | **FL-08: Správa oblíbených položek** | ⚠️ Placeholder | ❌ Neimplementováno v UI | ❌ Neimplementováno v UI | ❌ Blokováno UI | ❌ Blokováno UI |
@@ -45,8 +45,8 @@ Dokument shrnuje inventář funkčních uživatelských průchodů, matici pokry
 
 | Průchod (Flow) | Stav obrazovek | MOCK prostředí | Reálný backend | Android | iOS |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **FL-10: Přihlášení administrátora a kontrola oprávnění** | Plně funkční | ✅ **Implementováno v Maestro** (`smoke_admin_navigation.yaml`) | ✅ Podporováno | ✅ Připraveno | ✅ Připraveno |
-| **FL-11: Schválení / zamítnutí rezervace** | Plně funkční | ✅ Podporováno (mock sandbox) | ✅ Podporováno | ✅ Připraveno | ✅ Připraveno |
+| **FL-10: Přihlášení administrátora a navigace** | Plně funkční | ✅ **Implementováno v Maestro** (`smoke_admin_navigation.yaml`, `login_as_admin.yaml`) | ✅ Podporováno | ✅ Připraveno | ✅ Připraveno |
+| **FL-11: Správa žádostí (čekající a schválené)** | Plně funkční | ✅ **Implementováno v Maestro** (`admin_protocol_handover.yaml`) | ✅ Podporováno | ✅ Připraveno | ✅ Připraveno |
 | **FL-12: Provedení předávacího protokolu (Pickup)** | Plně funkční | ✅ Podporováno (mock sandbox s fotografiemi) | ✅ Podporováno | ✅ Připraveno | ✅ Připraveno |
 | **FL-13: Provedení protokolu o vrácení (Return)** | Plně funkční | ✅ Podporováno (mock sandbox s fotografiemi) | ✅ Podporováno | ✅ Připraveno | ✅ Připraveno |
 | **FL-14: Přidání nového vozidla** | ⚠️ Rozhraní `add_button` je přítomno, formulář chybí | ❌ Neimplementováno v UI | ❌ Neimplementováno v UI | ❌ Blokováno UI | ❌ Blokováno UI |
@@ -77,6 +77,6 @@ Dokument shrnuje inventář funkčních uživatelských průchodů, matici pokry
 
 ## 4. Omezení prostředí a verifikace
 
-- **Maestro CLI:** Na daném testovacím uzlu není binárka `maestro` nainstalována v PATH. Toky jsou vytvořeny dle oficiální specifikace Maestro a jsou připraveny k okamžitému spuštění na CI či lokální pracovní stanici s nainstalovaným Maestro a spuštěným emulátorem/zařízením.
-- **Nativní runtime zařízení:** V prostředí nejsou k dispozici žádné Android emulátory ani připojená reálná zařízení (žádné AVD, žádné ADB zařízení).
+- **Maestro CLI:** Maestro 2.12.0 je nainstalováno v `~/.maestro/bin/maestro`. Všechny vytvořené toky byly syntakticky ověřeny příkazem `maestro check-syntax` (všechny OK).
+- **Nativní runtime zařízení:** V prostředí nejsou k dispozici žádné Android emulátory ani připojená reálná zařízení (žádné AVD, žádné ADB zařízení). Spuštění celých testů `maestro test` vyžaduje běh na zařízení nebo v emulátoru.
 - **iOS simulátor:** V prostředí je přítomen pouze Xcode CommandLineTools, nikoliv plný Xcode s `simctl`. Sestavení iOS aplikace je ověřeno na úrovni KMP Kotlin kompilace (`compileKotlinIosSimulatorArm64`).

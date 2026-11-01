@@ -1,0 +1,58 @@
+appId: ${APP_ID}
+---
+# Flow FL-07 & FL-08: Vehicle Reservation Lifecycle and Calendar Selection
+# Environment: MOCK (cz.kudladev.vehicletracking.mock)
+
+- launchApp:
+    clearState: true
+
+# 1. Login as standard user
+- runFlow:
+    file: "../subflows/login_as_user.yaml"
+
+# 2. Open vehicle detail
+- assertVisible:
+    id: "vehicles:grid"
+- assertVisible:
+    id: "vehicles:item:${DEFAULT_VEHICLE_ID}"
+- tapOn:
+    id: "vehicles:item:${DEFAULT_VEHICLE_ID}"
+
+# 3. Assert detail and calendar components
+- assertVisible:
+    id: "vehicle_detail:title"
+- assertVisible:
+    id: "vehicle_detail:calendar"
+
+# 4. Select deterministic reservation dates (Mock now = 2026-11-02T08:00:00Z)
+- tapOn:
+    id: "calendar:date:2026-11-03"
+- tapOn:
+    id: "calendar:select_start_time"
+- tapOn:
+    id: "calendar:time_slot:09:00"
+
+- tapOn:
+    id: "calendar:date:2026-11-03"
+- tapOn:
+    id: "calendar:select_end_time"
+- tapOn:
+    id: "calendar:time_slot:11:00"
+
+# 5. Reserve vehicle
+- assertVisible:
+    id: "vehicle_detail:reserve_button"
+- tapOn:
+    id: "vehicle_detail:reserve_button"
+
+# 6. Verify tracking screen
+- tapOn:
+    id: "vehicle_detail:back_button"
+- tapOn:
+    id: "nav:bottom_bar:tracking"
+- assertVisible:
+    id: "nav:bottom_bar"
+
+# 7. Logout
+- runFlow:
+    file: "../subflows/logout.yaml"

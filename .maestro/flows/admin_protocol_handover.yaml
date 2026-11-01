@@ -1,0 +1,43 @@
+appId: ${APP_ID}
+---
+# Flow FL-10, FL-11 & FL-12: Admin Management and Protocol Handover Flow
+# Environment: MOCK (cz.kudladev.vehicletracking.mock)
+
+- launchApp:
+    clearState: true
+
+# 1. Login as Administrator
+- runFlow:
+    file: "../subflows/login_as_admin.yaml"
+
+# 2. Navigate to Menu and Admin Trackings Section
+- tapOn:
+    id: "nav:bottom_bar:menu"
+- assertVisible:
+    id: "menu:user_card"
+- assertVisible:
+    id: "menu:admin_trackings_pending"
+
+# 3. Open Pending Trackings List
+- tapOn:
+    id: "menu:admin_trackings_pending"
+- assertVisible:
+    id: "admin:trackings_back_button"
+
+# 4. Return to Menu
+- tapOn:
+    id: "admin:trackings_back_button"
+- assertVisible:
+    id: "menu:user_card"
+
+# 5. Open Approved Trackings List
+- tapOn:
+    id: "menu:admin_trackings_approved"
+- assertVisible:
+    id: "admin:trackings_back_button"
+- tapOn:
+    id: "admin:trackings_back_button"
+
+# 6. Logout
+- runFlow:
+    file: "../subflows/logout.yaml"
