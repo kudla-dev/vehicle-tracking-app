@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -125,7 +126,10 @@ private fun ManageTrackingsScreen(
                     )
                 },
                 navigationIcon = {
-                    BackButton(onClick = onBack)
+                    BackButton(
+                        modifier = Modifier.testTag("admin:trackings_back_button"),
+                        onClick = onBack
+                    )
                 },
                 scrollBehavior = topAppBarScrollBehavior
             )
@@ -167,7 +171,8 @@ private fun ManageTrackingsScreen(
                             Column(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(combinedPadding),
+                                    .padding(combinedPadding)
+                                    .testTag("admin:trackings_empty_view"),
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
@@ -193,6 +198,7 @@ private fun ManageTrackingsScreen(
                                     val item = trackings[tracking]
                                     if (item != null) {
                                         TrackingItem(
+                                            modifier = Modifier.testTag("admin:tracking_item:${item.id}"),
                                             tracking = item,
                                             onClick = { onTrackingClicked(item) },
                                         )

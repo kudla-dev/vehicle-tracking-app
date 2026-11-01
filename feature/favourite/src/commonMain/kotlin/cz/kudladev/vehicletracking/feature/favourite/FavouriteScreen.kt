@@ -12,6 +12,7 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontStyle
 import cz.kudladev.vehicletracking.core.designsystem.LargeTopAppBar
 import kotlinx.serialization.Serializable
@@ -46,7 +47,8 @@ private fun FavouritesScreen(
         modifier = Modifier
             .fillMaxSize()
             .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
-            .nestedScroll(bottomAppBarScrollBehavior.nestedScrollConnection),
+            .nestedScroll(bottomAppBarScrollBehavior.nestedScrollConnection)
+            .testTag("favourites:root"),
         topBar = {
             LargeTopAppBar(
                 title = {

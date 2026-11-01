@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -45,7 +46,8 @@ fun PasswordTextField(
     error: String? = null,
     focusManager: FocusManager,
     passwordVisible: Boolean = false,
-    onPasswordVisibleChange: (Boolean) -> Unit = {}
+    onPasswordVisibleChange: (Boolean) -> Unit = {},
+    testTag: String? = null,
 ){
 
     val showError = error != null
@@ -70,7 +72,8 @@ fun PasswordTextField(
         modifier = Modifier.fillMaxWidth(),
     ) {
         OutlinedTextField(
-            modifier = modifier,
+            modifier = modifier.then(if (testTag != null) Modifier.testTag(testTag) else Modifier),
+            testTag = testTag,
             value = password,
             onValueChange = onPasswordChange,
             label = {
@@ -96,113 +99,46 @@ fun PasswordTextField(
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 IconButton(
+                    modifier = Modifier.testTag("auth:register_password_toggle"),
                     onClick = {
                         onPasswordVisibleChange(!passwordVisible)
                     }
                 ){
                     Icon(
                         imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                        contentDescription = "password",
+                        contentDescription = "Password",
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
         )
-        Box(
-            modifier = modifier
-                .padding(start = 16.dp, end = 16.dp, top = 8.dp)
-                .height(6.dp)
-                .clip(MaterialTheme.shapes.extraLarge)
-                .background(MaterialTheme.colorScheme.outlineVariant),
-            contentAlignment = Alignment.CenterStart
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 4.dp, start = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth(animated)
-                    .height(4.dp)
-                    .clip(MaterialTheme.shapes.extraLarge)
-                    .background(MaterialTheme.colorScheme.primary)
-            )
-        }
-        Column(
-            modifier = Modifier
-                .padding(
-                    top = 8.dp,
-                    start = 24.dp,
-                    end = 24.dp
-                ),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            PasswordRule(
-                rule = "At least 8 characters",
-                valid = !tooShort,
-                showError = showError
-            )
-            PasswordRule(
-                rule = "At least 1 uppercase letter",
-                valid = hasUpperCase,
-                showError = showError
-            )
-            PasswordRule(
-                rule = "At least 1 special character",
-                valid = hasSpecialChar,
-                showError = showError
-            )
-            PasswordRule(
-                rule = "At least 1 number",
-                valid = hasNumber,
-                showError = showError
-            )
-        }
-    }
-}
-
-@Composable
-fun PasswordRule(
-    rule: String,
-    valid: Boolean,
-    showError: Boolean = false
-){
-    val rotate by animateFloatAsState(
-        if (valid) 0f else 360f,
-    )
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Crossfade(
-            targetState = valid
-        ) {
-            when (it) {
-                true -> {
-                    Icon(
-                        modifier = Modifier
-                            .height(16.dp)
-                            .rotate(rotate),
-                        imageVector = Icons.Default.Check,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-                false -> {
-                    Icon(
-                        modifier = Modifier
-                            .height(16.dp)
-                            .rotate(-rotate),
-                        imageVector = Icons.Default.Close,
-                        contentDescription = null,
-                        tint = if (showError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
-                    )
-                }
+                    .fillMaxWidth(0.9f)
+                    .height(6.dp)
+                    .clip(MaterialTheme.shapes.extraSmall)
+                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
+            ){
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(animated)
+                        .height(6.dp)
+                        .clip(MaterialTheme.shapes.extraSmall)
+                        .background(MaterialTheme.colorScheme.primary)
+                )
             }
+            Text(
+                text = "${(animated * 100).toInt()}%",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                modifier = Modifier.padding(start = 8.dp)
+            )
         }
-        Text(
-            text = rule,
-            style = MaterialTheme.typography.bodySmall,
-            color = if (showError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
     }
 }

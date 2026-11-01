@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -121,7 +122,9 @@ private fun MenuScreen(
             ) {
                 item {
                     UserCard(
-                        modifier = Modifier.padding(horizontal = 16.dp),
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .testTag("menu:user_card"),
                         user = user!!,
                         onClick = {
 
@@ -167,6 +170,7 @@ private fun LazyListScope.accountSection(
             title = stringResource(Res.string.accountSection)
         ) {
             MenuSectionItem(
+                modifier = Modifier.testTag("menu:personal_data"),
                 icon = Icons.TwoTone.ManageAccounts,
                 title = stringResource(Res.string.personalData),
                 onClick = {
@@ -174,6 +178,7 @@ private fun LazyListScope.accountSection(
                 }
             )
             MenuSectionItem(
+                modifier = Modifier.testTag("menu:change_password"),
                 icon = Icons.TwoTone.Lock,
                 title = stringResource(Res.string.changePassword),
                 onClick = {
@@ -181,6 +186,7 @@ private fun LazyListScope.accountSection(
                 }
             )
             MenuSectionItem(
+                modifier = Modifier.testTag("menu:logout_button"),
                 icon = Icons.AutoMirrored.TwoTone.Logout,
                 title = stringResource(Res.string.logout),
                 onClick = onLogout,
@@ -200,6 +206,7 @@ private fun LazyListScope.adminSection(
             title = stringResource(Res.string.adminSection)
         ) {
             MenuSectionItem(
+                modifier = Modifier.testTag("menu:admin_manage_users"),
                 icon = Icons.TwoTone.Groups,
                 title = stringResource(Res.string.manageUsers),
                 onClick = {
@@ -207,6 +214,7 @@ private fun LazyListScope.adminSection(
                 }
             )
             MenuSectionItem(
+                modifier = Modifier.testTag("menu:admin_manage_vehicles"),
                 icon = Icons.TwoTone.DirectionsCar,
                 title = stringResource(Res.string.manageVehicles),
                 onClick = {
@@ -214,6 +222,7 @@ private fun LazyListScope.adminSection(
                 },
             )
             MenuSectionItem(
+                modifier = Modifier.testTag("menu:admin_tracking_history"),
                 icon = Icons.TwoTone.TrackChanges,
                 title = stringResource(Res.string.trackingHistory),
                 onClick = {
@@ -221,6 +230,7 @@ private fun LazyListScope.adminSection(
                 },
             )
             MenuSectionItem(
+                modifier = Modifier.testTag("menu:admin_settings"),
                 icon = Icons.TwoTone.AdminPanelSettings,
                 title = stringResource(Res.string.adminSettings),
                 onClick = onAdminSettings,
@@ -241,6 +251,7 @@ private fun LazyListScope.trackingSection(
             title = stringResource(Res.string.trackingsSection)
         ) {
             MenuSectionItem(
+                modifier = Modifier.testTag("menu:admin_trackings_new_requests"),
                 icon = Icons.TwoTone.MarkunreadMailbox,
                 title = stringResource(Res.string.trackingsNewRequest),
                 badgeCount = state.newRequestsCount,
@@ -249,6 +260,7 @@ private fun LazyListScope.trackingSection(
                 },
             )
             MenuSectionItem(
+                modifier = Modifier.testTag("menu:admin_trackings_ready_to_start"),
                 icon = Icons.TwoTone.SportsScore,
                 title = stringResource(Res.string.trackingsReadyToStart),
                 badgeCount = state.readyToStartCount,
@@ -257,6 +269,7 @@ private fun LazyListScope.trackingSection(
                 }
             )
             MenuSectionItem(
+                modifier = Modifier.testTag("menu:admin_trackings_active"),
                 icon = Icons.TwoTone.Motorcycle,
                 title = stringResource(Res.string.trackingsActive),
                 badgeCount = state.activeCount,

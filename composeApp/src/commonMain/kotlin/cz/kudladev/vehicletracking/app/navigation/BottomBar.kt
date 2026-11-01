@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -110,6 +111,7 @@ fun BottomBar(
     ){
         BottomAppBar(
             modifier = Modifier
+                .testTag("nav:bottom_bar")
                 .shadowWithClipIntersect(
                     elevation = 16.dp
                 ),
@@ -138,7 +140,16 @@ fun RowScope.BottomBarItem(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
+    val itemTestTag = when (destination) {
+        BottomBarDestinations.VehicleListDest -> "nav:bottom_bar:vehicles"
+        BottomBarDestinations.FavouriteDest -> "nav:bottom_bar:favourites"
+        BottomBarDestinations.CurrentTrackingDest -> "nav:bottom_bar:tracking"
+        BottomBarDestinations.HistoryDest -> "nav:bottom_bar:history"
+        BottomBarDestinations.MenuDest -> "nav:bottom_bar:menu"
+    }
+
     NavigationBarItem(
+        modifier = Modifier.testTag(itemTestTag),
         selected = isSelected,
         onClick = onClick,
         icon = {

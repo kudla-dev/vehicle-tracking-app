@@ -1,0 +1,50 @@
+appId: ${APP_ID}
+---
+# Smoke Test: Admin Authentication, Management Navigation and Logout
+# Environment: MOCK (cz.kudladev.vehicletracking.mock)
+
+- launchApp:
+    clearState: true
+
+- assertVisible:
+    id: "auth:welcome_login_button"
+
+# 1. Login as administrator
+- runFlow:
+    file: "../subflows/login_as_admin.yaml"
+
+# 2. Check admin capabilities on vehicles screen
+- assertVisible:
+    id: "vehicles:add_button"
+- assertVisible:
+    id: "vehicles:item:${DEFAULT_VEHICLE_ID}"
+
+# 3. Check admin menu options
+- tapOn:
+    id: "nav:bottom_bar:menu"
+- assertVisible:
+    id: "menu:user_card"
+- assertVisible:
+    id: "menu:admin_manage_users"
+- assertVisible:
+    id: "menu:admin_manage_vehicles"
+- assertVisible:
+    id: "menu:admin_tracking_history"
+- assertVisible:
+    id: "menu:admin_trackings_new_requests"
+- assertVisible:
+    id: "menu:admin_trackings_ready_to_start"
+- assertVisible:
+    id: "menu:admin_trackings_active"
+
+# 4. Navigate into Admin Trackings (New requests)
+- tapOn:
+    id: "menu:admin_trackings_new_requests"
+- assertVisible:
+    id: "admin:trackings_back_button"
+- tapOn:
+    id: "admin:trackings_back_button"
+
+# 5. Logout
+- runFlow:
+    file: "../subflows/logout.yaml"

@@ -1,0 +1,8 @@
+appId: cz.kudladev.vehicletracking.mock
+env:
+  APP_ID: "cz.kudladev.vehicletracking.mock"
+  USER_EMAIL: "user@example.invalid"
+  ADMIN_EMAIL: "admin@example.invalid"
+  USER_PASSWORD: "Fixture-only-1!"
+  DEFAULT_VEHICLE_ID: "2147483648"
+  DEFAULT_VEHICLE_NAME: "Škoda Octavia Combi"

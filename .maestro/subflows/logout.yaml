@@ -1,0 +1,11 @@
+appId: ${APP_ID}
+---
+# Subflow: Logout from main application
+- tapOn:
+    id: "nav:bottom_bar:menu"
+- assertVisible:
+    id: "menu:logout_button"
+- tapOn:
+    id: "menu:logout_button"
+- assertVisible:
+    id: "auth:welcome_login_button"

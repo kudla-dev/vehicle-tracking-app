@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -113,39 +114,39 @@ fun DatePickerWithTimePicker(
                     }
                     dates.map {
                         it.copy(
-                            isInSelectedRange = it.date in start.date..end.date,
                             isSelected = it.date == start.date || it.date == end.date,
+                            isInSelectedRange = it.date in start.date..end.date,
                             isStartOfRange = it.date == start.date
                         )
                     }
                 }
-            } else if (firstDate != null) {
-                formatedDayFrom = firstDate!!.date.toString()
-                finalDate = formatedDayFrom
-                if (!range) {
+            } else {
+                if (firstDate != null) {
+                    formatedDayFrom = firstDate!!.date.format()
+                    finalDate = formatedDayFrom
                     onSelectDate(firstDate!!.date)
-                }
-                if (firstTime != null) {
-                    dates = updateAvailableTimesAndDisabledDates(dates, firstDate!!.date, firstTime!!)
-                    formatedDayFrom = firstDate!!.date.toString() + " " + firstTime!!.toString()
+                    if (firstTime != null) {
+                        dates = updateAvailableTimesAndDisabledDates(dates, firstDate!!.date, firstTime!!)
+                        formatedDayFrom = firstDate!!.date.toString() + " " + firstTime!!.toString()
+                    }
                 }
                 dates.map {
-                    it.copy(isSelected = it.date == firstDate!!.date)
+                    it.copy(
+                        isSelected = it.date == firstDate?.date,
+                        isInSelectedRange = false,
+                        isStartOfRange = false,
+                    )
                 }
-            } else {
-                dates
             }
         }
     }
+
 
     Column(
         modifier = modifier
     ) {
         DatePickerWithTimePickerHeader()
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
+        Column {
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -197,6 +198,7 @@ fun DatePickerWithTimePicker(
                             modifier = Modifier
                                 .aspectRatio(1f)
                                 .weight(1f)
+                                .testTag("calendar:date:${calendarDate.date}")
                                 .then(if (firstDate?.date != secondDate?.date) Modifier.datePickerBoxSelectedRange(calendarDate, dateTimePickerColors) else Modifier)
                                 .clip(shape = RoundedCornerShape(100))
                                 .datePickerBoxToday(calendarDate, dateTimePickerColors)
@@ -277,6 +279,7 @@ fun DatePickerWithTimePicker(
             fontStyle = FontStyle.Italic,
         )
         SelectTimeSection(
+            modifier = Modifier.testTag("calendar:select_start_time"),
             enabled = firstDate != null && firstTime == null && calendarDates.first { it.date == firstDate!!.date }.availableTimeSlots.any { it.canStartRange },
             title = stringResource(Res.string.startTime),
             targetState = when {
@@ -292,6 +295,7 @@ fun DatePickerWithTimePicker(
             }
         )
         SelectTimeSection(
+            modifier = Modifier.testTag("calendar:select_end_time"),
             enabled = secondDate != null && secondTime == null && calendarDates.first { it.date == secondDate!!.date }.availableTimeSlots.any { it.isAvailable },
             title = stringResource(Res.string.endTime),
             targetState = when {
@@ -351,6 +355,7 @@ fun DatePickerWithTimePicker(
 
 @Composable
 private fun SelectTimeSection(
+    modifier: Modifier = Modifier,
     enabled: Boolean = false,
     title: String,
     targetState: String,
@@ -360,7 +365,7 @@ private fun SelectTimeSection(
     onTimeSelect: (Boolean) -> Unit
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.medium)
             .clickable(

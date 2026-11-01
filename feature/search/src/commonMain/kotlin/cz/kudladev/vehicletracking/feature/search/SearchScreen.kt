@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -108,7 +109,8 @@ fun SearchScreen(
                         SearchQueryItem(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                .testTag("search:query_item"),
                             query = state.searchQuery,
                             onClick = {
                                 onSearch(state.searchQuery)
@@ -131,7 +133,8 @@ fun SearchScreen(
                             SearchResultItem(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                                    .testTag("search:result:${vehicle.id}"),
                                 title = "${vehicle.model} ${vehicle.year} ${vehicle.color}",
                                 place = vehicle.place,
                                 spz = vehicle.spz,

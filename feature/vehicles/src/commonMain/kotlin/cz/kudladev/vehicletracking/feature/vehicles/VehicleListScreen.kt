@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -128,6 +129,7 @@ private fun VehicleListScreen(
                     },
                     actions = {
                         IconButton(
+                            modifier = Modifier.testTag("vehicles:search_action"),
                             onClick = {
                                 onSearch("vehicle")
                             }
@@ -139,6 +141,7 @@ private fun VehicleListScreen(
                             )
                         }
                         IconButton(
+                            modifier = Modifier.testTag("vehicles:toggle_view_action"),
                             onClick = {
                                 onAction(VehicleListAction.ToggleView)
                             }
@@ -159,6 +162,7 @@ private fun VehicleListScreen(
             floatingActionButton = {
                 if (onCreate != null && user?.isAdmin() == true) {
                     IconFloatingActionButton(
+                        modifier = Modifier.testTag("vehicles:add_button"),
                         onClick = onCreate,
                         icon = {
                             Icon(
@@ -218,7 +222,8 @@ private fun VehicleListScreen(
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(paddingValues.calculateBottomPadding()),
+                                .padding(paddingValues.calculateBottomPadding())
+                                .testTag("vehicles:error_view"),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
@@ -250,7 +255,8 @@ private fun VehicleListScreen(
                                 Column(
                                     modifier = Modifier
                                         .fillMaxSize()
-                                        .padding(combinedPadding),
+                                        .padding(combinedPadding)
+                                        .testTag("vehicles:empty_view"),
                                     verticalArrangement = Arrangement.Center,
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
@@ -270,7 +276,8 @@ private fun VehicleListScreen(
                             false -> {
                                 LazyVerticalGrid(
                                     modifier = Modifier
-                                        .fillMaxSize(),
+                                        .fillMaxSize()
+                                        .testTag("vehicles:grid"),
                                     contentPadding = combinedPadding,
                                     columns = when(state.selectedView){
                                         VehicleListView.Grid -> GridCells.Adaptive(150.dp)
@@ -288,7 +295,8 @@ private fun VehicleListScreen(
                                                         modifier = Modifier
                                                             .animateItem()
                                                             .heightIn(min = 225.dp, max = 270.dp)
-                                                            .fillMaxWidth(),
+                                                            .fillMaxWidth()
+                                                            .testTag("vehicles:item:${vehicle.id}"),
                                                         vehicle = vehicle,
                                                         onClick = {
                                                             onVehicleClick(vehicle.id ?: 0)
@@ -300,7 +308,8 @@ private fun VehicleListScreen(
                                                         modifier = Modifier
                                                             .animateItem()
                                                             .heightIn(min = 100.dp, max = 130.dp)
-                                                            .fillMaxWidth(),
+                                                            .fillMaxWidth()
+                                                            .testTag("vehicles:item:${vehicle.id}"),
                                                         vehicle = vehicle,
                                                         onClick = {
                                                             onVehicleClick(vehicle.id ?: 0)

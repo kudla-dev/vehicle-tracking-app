@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -61,21 +62,21 @@ data class VehicleDetails(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VehicleDetailRoot(
-    vehicleDetailViewModel: VehicleDetailViewModel = koinViewModel(),
-    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior,
     paddingValues: PaddingValues,
+    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior,
+    onBack: () -> Unit,
     onCreate: (() -> Unit)? = null,
-    onBack: (() -> Unit),
+    vehicleDetailViewModel: VehicleDetailViewModel = koinViewModel(),
     userStateHolder: UserStateHolder = koinInject()
 ){
     val state by vehicleDetailViewModel.state.collectAsStateWithLifecycle()
     val userState by userStateHolder.user.collectAsStateWithLifecycle()
 
-    LaunchedEffect(state.trackingCreatingState){
+    LaunchedEffect(state.trackingCreatingState) {
         when (state.trackingCreatingState) {
             is UiState.Success -> {
                 SnackbarController.sendEvent(Snackbar(
-                    title = "Reservation created successfully",
+                    title = "Tracking created successfully",
                     snackbarStyle = SnackbarStyle.SUCCESS
                 ))
                 vehicleDetailViewModel.onAction(VehicleDetailAction.ReservationAcknowledged)
@@ -150,7 +151,9 @@ fun VehicleDetailScreen(
                         }
                         item {
                             VehicleDetailTitle(
-                                modifier = Modifier.padding(horizontal = 16.dp),
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp)
+                                    .testTag("vehicle_detail:title"),
                                 vehicle = state.vehicle.data
                             )
                             VehicleSpecificationSection(
@@ -173,7 +176,8 @@ fun VehicleDetailScreen(
                                     DatePickerWithTimePicker(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(horizontal = 16.dp),
+                                            .padding(horizontal = 16.dp)
+                                            .testTag("vehicle_detail:calendar"),
                                         range = true,
                                         dateTimePickerDefaults = DateTimePickerDefaults(
                                             disablePastDates = true,
@@ -204,6 +208,7 @@ fun VehicleDetailScreen(
                                         "Admin Options"
                                     ) {
                                         MenuSectionItem(
+                                            modifier = Modifier.testTag("vehicle_detail:admin_edit_vehicle"),
                                             icon = Icons.TwoTone.Edit,
                                             title = "Edit Vehicle",
                                             onClick = {},
@@ -260,7 +265,8 @@ fun VehicleDetailScreen(
                 ){
                     PrimaryButton(
                         modifier = Modifier
-                            .padding(bottom = 16.dp),
+                            .padding(bottom = 16.dp)
+                            .testTag("vehicle_detail:reserve_button"),
                         onClick = {
                             onAction(VehicleDetailAction.CreateTracking)
                         },
@@ -270,7 +276,8 @@ fun VehicleDetailScreen(
             }
             BackButton(
                 modifier = Modifier
-                    .statusBarsPadding(),
+                    .statusBarsPadding()
+                    .testTag("vehicle_detail:back_button"),
                 onClick = onBackClick
             )
         }
@@ -295,6 +302,4 @@ private fun VehicleDetailTitleLoadingPreview() {
             user = null
         )
     }
-
 }
-

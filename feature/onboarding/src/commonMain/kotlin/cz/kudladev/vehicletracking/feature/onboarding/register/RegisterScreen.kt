@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -136,6 +137,7 @@ private fun RegisterScreen(
                 },
                 navigationIcon = {
                     BackButton(
+                        modifier = Modifier.testTag("auth:register_back_button"),
                         onClick = onBack
                     )
                 },
@@ -156,6 +158,7 @@ private fun RegisterScreen(
             ) {
                 OutlinedTextField(
                     modifier = Modifier.widthIn(500.dp, 750.dp).padding(horizontal = 8.dp),
+                    testTag = "auth:register_first_name_input",
                     value = state.firstName,
                     onValueChange = {
                         onAction(RegisterScreenAction.OnFirstNameChanged(it))
@@ -183,6 +186,7 @@ private fun RegisterScreen(
                 )
                 OutlinedTextField(
                     modifier = Modifier.widthIn(500.dp, 750.dp).padding(horizontal = 8.dp),
+                    testTag = "auth:register_last_name_input",
                     value = state.lastName,
                     onValueChange = {
                         onAction(RegisterScreenAction.OnLastNameChanged(it))
@@ -210,6 +214,7 @@ private fun RegisterScreen(
                 )
                 OutlinedTextField(
                     modifier = Modifier.widthIn(500.dp, 750.dp).padding(horizontal = 8.dp),
+                    testTag = "auth:register_email_input",
                     value = state.email,
                     onValueChange = {
                         onAction(RegisterScreenAction.OnEmailChanged(it))
@@ -238,6 +243,7 @@ private fun RegisterScreen(
                 )
                 OutlinedTextField(
                     modifier = Modifier.widthIn(500.dp, 750.dp).padding(horizontal = 8.dp),
+                    testTag = "auth:register_phone_input",
                     value = state.phoneNumber,
                     onValueChange = {
                         onAction(RegisterScreenAction.OnPhoneNumberChanged(it))
@@ -266,6 +272,7 @@ private fun RegisterScreen(
                 )
                 PasswordTextField(
                     modifier = Modifier.widthIn(500.dp, 750.dp).padding(horizontal = 8.dp),
+                    testTag = "auth:register_password_input",
                     password = state.password,
                     onPasswordChange = {
                         if (!it.any { it.isWhitespace() }){
@@ -281,6 +288,7 @@ private fun RegisterScreen(
                 )
                 OutlinedTextField(
                     modifier = Modifier.widthIn(500.dp, 750.dp).padding(horizontal = 8.dp),
+                    testTag = "auth:register_confirm_password_input",
                     value = state.confirmPassword,
                     onValueChange = {
                         if (!it.any { it.isWhitespace() }){
@@ -299,6 +307,7 @@ private fun RegisterScreen(
                     visualTransformation = if (state.visiblePassword) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
                         IconButton(
+                            modifier = Modifier.testTag("auth:register_confirm_password_toggle"),
                             onClick = {
                                 onAction(RegisterScreenAction.OnPasswordVisibleChanged(!state.visiblePassword))
                             }
@@ -337,6 +346,7 @@ private fun RegisterScreen(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     PrimaryButton(
+                        modifier = Modifier.testTag("auth:register_submit_button"),
                         onClick = {
                             focusManager.clearFocus()
                             if (state.registrationProcess !is RegistrationProcess.Loading){

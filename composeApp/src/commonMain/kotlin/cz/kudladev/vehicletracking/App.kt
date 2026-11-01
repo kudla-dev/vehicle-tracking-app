@@ -25,7 +25,9 @@ import org.koin.compose.koinInject
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 @Preview
-fun App() {
+fun App(
+    modifier: Modifier = Modifier,
+) {
     val httpClient = koinInject<HttpClient>()
     setSingletonImageLoaderFactory { context ->
         getAsyncImageLoader(context,httpClient)
@@ -40,7 +42,7 @@ fun App() {
     }
 
     AppTheme {
-        Column {
+        Column(modifier = modifier) {
             UploadRecovery()
             Box(Modifier.weight(1f)) { VehicleTracking(appState) }
         }

@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import cz.kudladev.vehicletracking.core.designsystem.theme.AppTheme
@@ -97,12 +98,16 @@ fun OutlinedTextField(
     singleLine: Boolean = false,
     maxLines: Int = if (singleLine) 1 else Int. MAX_VALUE,
     minLines: Int = 1,
+    testTag: String? = null,
+    textFieldModifier: Modifier = Modifier,
 ){
     Column(
         modifier = modifier
     ) {
         TextField(
-            modifier = modifier,
+            modifier = modifier
+                .then(if (testTag != null) Modifier.testTag(testTag) else Modifier)
+                .then(textFieldModifier),
             value = value,
             onValueChange = onValueChange,
             label = label,
@@ -227,4 +232,3 @@ private fun OutlinedTextFieldErrorPreview() {
         }
     }
 }
-

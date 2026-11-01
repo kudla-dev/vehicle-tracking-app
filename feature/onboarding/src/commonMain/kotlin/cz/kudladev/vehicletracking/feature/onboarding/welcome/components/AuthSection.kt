@@ -11,18 +11,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cz.kudladev.vehicletracking.core.designsystem.PrimaryButton
 import cz.kudladev.vehicletracking.core.designsystem.SecondaryButton
@@ -69,38 +66,19 @@ fun AuthSection(
         ) {
             PrimaryButton(
                 modifier = Modifier
-                    .fillMaxWidth(0.8f),
+                    .fillMaxWidth(0.8f)
+                    .testTag("auth:welcome_register_button"),
                 text = stringResource(Res.string.registrationTitle),
                 onClick = onRegister
             )
             Spacer(modifier = Modifier.padding(8.dp))
             SecondaryButton(
                 modifier = Modifier
-                    .fillMaxWidth(0.8f),
+                    .fillMaxWidth(0.8f)
+                    .testTag("auth:welcome_login_button"),
                 text = stringResource(Res.string.loginTitle),
                 onClick = onLogin
             )
         }
     }
 }
-
-
-//@Composable
-//fun AuthButton(
-//    modifier: Modifier = Modifier,
-//    content: @Composable () -> Unit,
-//    contentColor: Color,
-//    containerColor: Color,
-//    onClick: () -> Unit
-//){
-//    Button(
-//        modifier = modifier,
-//        onClick = onClick,
-//        colors = ButtonDefaults.buttonColors(
-//            contentColor = contentColor,
-//            containerColor = containerColor
-//        )
-//    ) {
-//        content()
-//    }
-//}

@@ -1,0 +1,67 @@
+appId: ${APP_ID}
+---
+# Smoke Test: User Authentication, Vehicle Browsing, Search and Logout
+# Environment: MOCK (cz.kudladev.vehicletracking.mock)
+
+- launchApp:
+    clearState: true
+
+- assertVisible:
+    id: "auth:welcome_login_button"
+
+# 1. Login as standard user
+- runFlow:
+    file: "../subflows/login_as_user.yaml"
+
+# 2. Verify vehicles catalog
+- assertVisible:
+    id: "vehicles:grid"
+- assertVisible:
+    id: "vehicles:item:${DEFAULT_VEHICLE_ID}"
+
+# 3. View vehicle detail
+- tapOn:
+    id: "vehicles:item:${DEFAULT_VEHICLE_ID}"
+- assertVisible:
+    id: "vehicle_detail:title"
+- assertVisible:
+    id: "vehicle_detail:calendar"
+- assertVisible:
+    id: "vehicle_detail:reserve_button"
+- tapOn:
+    id: "vehicle_detail:back_button"
+
+# 4. Search vehicle
+- assertVisible:
+    id: "vehicles:search_action"
+- tapOn:
+    id: "vehicles:search_action"
+- assertVisible:
+    id: "search:input"
+- tapOn:
+    id: "search:input"
+- inputText: "Octavia"
+- assertVisible:
+    id: "search:result:${DEFAULT_VEHICLE_ID}"
+- tapOn:
+    id: "search:cancel_button"
+
+# 5. Bottom navigation check
+- tapOn:
+    id: "nav:bottom_bar:tracking"
+- assertVisible:
+    id: "tracking:empty_view"
+
+- tapOn:
+    id: "nav:bottom_bar:history"
+- assertVisible:
+    id: "history:empty_view"
+
+- tapOn:
+    id: "nav:bottom_bar:menu"
+- assertVisible:
+    id: "menu:user_card"
+
+# 6. Logout
+- runFlow:
+    file: "../subflows/logout.yaml"

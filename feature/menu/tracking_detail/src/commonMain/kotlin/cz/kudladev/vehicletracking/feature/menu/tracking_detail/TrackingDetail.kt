@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -97,6 +98,7 @@ private fun TrackingDetailScreen(
                 scrollBehavior = topAppBarScrollBehavior,
                 navigationIcon = {
                     BackButton(
+                        modifier = Modifier.testTag("admin:tracking_detail_back_button"),
                         onClick = onBack
                     )
                 }
@@ -119,14 +121,14 @@ private fun TrackingDetailScreen(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         SecondaryButton(
-                                            modifier = Modifier.weight(1f),
+                                            modifier = Modifier.weight(1f).testTag("admin:tracking_reject_button"),
                                             onClick = {
                                                 onAction(TrackingDetailAction.RejectTracking(state.tracking.data.id))
                                             },
                                             text = rejectString()
                                         )
                                         PrimaryButton(
-                                            modifier = Modifier.weight(1f),
+                                            modifier = Modifier.weight(1f).testTag("admin:tracking_approve_button"),
                                             onClick = {
                                                 onAction(TrackingDetailAction.ApproveTracking(state.tracking.data.id))
                                             },
@@ -136,6 +138,7 @@ private fun TrackingDetailScreen(
                                 }
                                 TrackingState.APPROVED -> {
                                     PrimaryButton(
+                                        modifier = Modifier.testTag("admin:tracking_pickup_button"),
                                         onClick = {
                                             onPickUpProtocol(state.tracking.data.id, TrackingState.ACTIVE)
                                         },
@@ -144,6 +147,7 @@ private fun TrackingDetailScreen(
                                 }
                                 TrackingState.ACTIVE -> {
                                     PrimaryButton(
+                                        modifier = Modifier.testTag("admin:tracking_return_button"),
                                         onClick = {
                                             onReturnProtocol(state.tracking.data.id, TrackingState.RETURNED)
                                         },

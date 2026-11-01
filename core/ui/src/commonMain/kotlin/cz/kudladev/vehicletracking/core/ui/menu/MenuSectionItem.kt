@@ -26,6 +26,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun MenuSectionItem(
+    modifier: Modifier = Modifier,
     icon: ImageVector,
     title: String,
     badgeCount: Long? = null,
@@ -34,7 +35,7 @@ fun MenuSectionItem(
     isLast: Boolean = false,
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable(
                 enabled = onClick != null,

@@ -24,6 +24,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -136,6 +137,7 @@ fun ProtocolsScreen(
                 },
                 navigationIcon = {
                     BackButton(
+                        modifier = Modifier.testTag("protocols:back_button"),
                         onClick = onBack
                     )
                 },
@@ -381,6 +383,7 @@ fun ProtocolsCapture(
                             Box(
                                 modifier = Modifier
                                     .size(64.dp)
+                                    .testTag("protocols:camera_capture_button")
                                     .clip(RoundedCornerShape(100))
                                     .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f), RoundedCornerShape(100))
                                     .clickable(
@@ -407,6 +410,7 @@ fun ProtocolsCapture(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             TextButton(
+                                modifier = Modifier.testTag("protocols:retake_button"),
                                 onClick = {
                                     onRetake()
                                 }
@@ -416,6 +420,7 @@ fun ProtocolsCapture(
                                 )
                             }
                             Button(
+                                modifier = Modifier.testTag("protocols:next_button"),
                                 onClick = {
                                     onNext()
                                 }
@@ -482,7 +487,9 @@ fun SummaryProtocol(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp),
+                    .padding(top = 8.dp)
+                    .testTag("protocols:tachometer_input"),
+                testTag = "protocols:tachometer_input",
                 maxLines = 1,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
@@ -508,7 +515,9 @@ fun SummaryProtocol(
                     )
                 },
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .testTag("protocols:notes_input"),
+                testTag = "protocols:notes_input",
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done
@@ -526,6 +535,7 @@ fun SummaryProtocol(
                 contentAlignment = Alignment.Center
             ) {
                 PrimaryButton(
+                    modifier = Modifier.testTag("protocols:submit_button"),
                     onClick = {
                         onSubmit()
                     },

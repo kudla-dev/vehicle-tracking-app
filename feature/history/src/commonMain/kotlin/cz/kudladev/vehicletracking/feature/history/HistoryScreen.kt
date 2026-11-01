@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -116,7 +117,8 @@ fun HistoryScreen(
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(columnPadding),
+                                .padding(columnPadding)
+                                .testTag("history:error_view"),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
@@ -145,7 +147,8 @@ fun HistoryScreen(
                                 Column(
                                     modifier = Modifier
                                         .fillMaxSize()
-                                        .padding(columnPadding),
+                                        .padding(columnPadding)
+                                        .testTag("history:empty_view"),
                                     verticalArrangement = Arrangement.Center,
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
@@ -189,6 +192,7 @@ fun HistoryScreen(
                                         val item = trackings[tracking]
                                         if (item != null) {
                                             TrackingItem(
+                                                modifier = Modifier.testTag("history:item:${item.id}"),
                                                 tracking = item,
                                                 onClick = {
 

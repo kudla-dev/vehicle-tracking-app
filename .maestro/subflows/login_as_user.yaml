@@ -1,0 +1,17 @@
+appId: ${APP_ID}
+---
+# Subflow: Login as standard user
+- tapOn:
+    id: "auth:welcome_login_button"
+- assertVisible:
+    id: "auth:login_email_input"
+- tapOn:
+    id: "auth:login_email_input"
+- inputText: ${USER_EMAIL}
+- tapOn:
+    id: "auth:login_password_input"
+- inputText: ${USER_PASSWORD}
+- tapOn:
+    id: "auth:login_submit_button"
+- assertVisible:
+    id: "nav:bottom_bar:vehicles"

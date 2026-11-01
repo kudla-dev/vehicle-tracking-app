@@ -25,6 +25,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -152,7 +153,8 @@ private fun TrackingScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(paddingValues.calculateBottomPadding())
-                            .verticalScroll(rememberScrollState()),
+                            .verticalScroll(rememberScrollState())
+                            .testTag("tracking:error_view"),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -195,7 +197,8 @@ private fun TrackingScreen(
                                             start = 16.dp,
                                             end = 16.dp,
                                             top = innerPadding.calculateTopPadding()
-                                        )),
+                                        ))
+                                        .testTag("tracking:empty_view"),
                                     verticalArrangement = Arrangement.Center,
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
@@ -236,7 +239,7 @@ private fun TrackingScreen(
                                 ) {
                                     item {
                                         VehicleHeader(
-                                            modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
+                                            modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp).testTag("tracking:vehicle_header"),
                                             vehicle = data!!.vehicle,
                                             onClick = {
                                                 onVehicleClick(data!!.vehicle.id!!)
@@ -245,7 +248,7 @@ private fun TrackingScreen(
                                     }
                                     item {
                                         CurrentState(
-                                            modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
+                                            modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp).testTag("tracking:current_state"),
                                             currentTracking = data!!.stateLogs.last(),
                                         )
                                     }
@@ -254,7 +257,7 @@ private fun TrackingScreen(
                                             visible = lastState?.state == TrackingState.ACTIVE
                                         ){
                                             TimeRemaining(
-                                                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                                                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp).testTag("tracking:time_remaining"),
                                                 startTime = data!!.startTime,
                                                 endTime = data!!.endTime,
                                             )
@@ -292,6 +295,7 @@ private fun TrackingScreen(
                                                     contentAlignment = Alignment.Center
                                                 ) {
                                                     PrimaryButton(
+                                                        modifier = Modifier.testTag("tracking:confirm_return_button"),
                                                         text = stringResource(Res.string.confirmReturn),
                                                         onClick = {
                                                             onAction(TrackingScreenAction.ConfirmReturn(data!!.id, lastState.state))
@@ -337,9 +341,4 @@ private fun TrackingScreen(
             }
         }
     }
-
-    LoadingDialog(
-        title = "Confirming return",
-        isLoading = state.confirmTracking is UiState.Loading,
-    )
 }

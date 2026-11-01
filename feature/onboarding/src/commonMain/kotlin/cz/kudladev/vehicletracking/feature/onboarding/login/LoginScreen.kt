@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -113,6 +114,7 @@ fun LoginScreenScreen(
                 },
                 navigationIcon = {
                     BackButton(
+                        modifier = Modifier.testTag("auth:login_back_button"),
                         onClick = onBack,
                     )
                 },
@@ -134,7 +136,11 @@ fun LoginScreenScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 OutlinedTextField(
-                    modifier = Modifier.widthIn(500.dp, 550.dp).padding(horizontal = 8.dp),
+                    modifier = Modifier
+                        .widthIn(500.dp, 550.dp)
+                        .padding(horizontal = 8.dp)
+                        .testTag("auth:login_email_input"),
+                    testTag = "auth:login_email_input",
                     value = state.email,
                     onValueChange = {
                         onAction(LoginScreenAction.OnEmailChanged(it))
@@ -161,7 +167,11 @@ fun LoginScreenScreen(
                     )
                 )
                 OutlinedTextField(
-                    modifier = Modifier.widthIn(500.dp, 750.dp).padding(horizontal = 8.dp),
+                    modifier = Modifier
+                        .widthIn(500.dp, 750.dp)
+                        .padding(horizontal = 8.dp)
+                        .testTag("auth:login_password_input"),
+                    testTag = "auth:login_password_input",
                     value = state.password,
                     onValueChange = {
                         onAction(LoginScreenAction.OnPasswordChanged(it))
@@ -177,6 +187,7 @@ fun LoginScreenScreen(
                     visualTransformation = if (state.visiblePassword) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
                         IconButton(
+                            modifier = Modifier.testTag("auth:login_password_toggle"),
                             onClick = {
                                 onAction(LoginScreenAction.OnPasswordVisibleChanged(!state.visiblePassword))
                             }
@@ -206,6 +217,7 @@ fun LoginScreenScreen(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     PrimaryButton(
+                        modifier = Modifier.testTag("auth:login_submit_button"),
                         onClick = {
                             focusManager.clearFocus()
                             onAction(LoginScreenAction.OnLogin)
