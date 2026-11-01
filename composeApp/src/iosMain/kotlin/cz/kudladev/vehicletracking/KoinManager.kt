@@ -8,14 +8,21 @@ import platform.Foundation.NSProcessInfo
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 
-fun initKoin(){
+private fun launchConfig(): AppConfig {
+    val environment = AppEnvironment.valueOf(requireNotNull(
+        NSBundle.mainBundle.objectForInfoDictionaryKey("MotoparkEnvironment") as? String
+    ) { "Missing build environment" })
+    if (environment == AppEnvironment.MOCK) return AppConfig.create(environment)
     val override = NSProcessInfo.processInfo.environment["MOTOPARK_API_BASE_URL"] as? String
     val bundled = NSBundle.mainBundle.objectForInfoDictionaryKey("MotoparkAPIBaseURL") as? String
-    val config = AppConfig.create(AppEnvironment.DEV, override ?: bundled ?: "http://127.0.0.1:8080")
+    return AppConfig.create(environment, override ?: bundled)
+}
+
+internal val iosAppConfig by lazy { launchConfig() }
+
+fun initKoin() {
+    val config = iosAppConfig
+    if (config.environment == AppEnvironment.MOCK) return
     stopKoin()
-    startKoin {
-        modules(
-            appModules(config)
-        )
-    }
+    startKoin { modules(appModules(config)) }
 }

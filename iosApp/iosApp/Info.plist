@@ -2,31 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>MotoparkAPIBaseURL</key>
-    <string>$(MOTOPARK_API_SCHEME)://$(MOTOPARK_API_HOST):$(MOTOPARK_API_PORT)</string>
-    <key>NSCameraUsageDescription</key>
-    <string>Motopark uses the camera to document the vehicle at pickup and return.</string>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>Motopark lets you attach selected photos to vehicle and handover records.</string>
-    <key>NSAllowsLocalNetworking</key>
-    <true/>
-    <key>NSAllowsArbitraryLoads</key>
-    <true/>
-    <key>NSAppTransportSecurity</key>
-    <dict>
-        <key>NSAllowsLocalNetworking</key>
-        <true/>
-        <key>NSExceptionDomains</key>
-        <dict>
-            <key>0.0.0.0</key>
-            <dict>
-                <key>NSExceptionAllowsInsecureHTTPLoads</key>
-                <true/>
-                <key>NSIncludesSubdomains</key>
-                <true/>
-            </dict>
-        </dict>
-    </dict>
+	<key>MotoparkAPIBaseURL</key>
+	<string>$(MOTOPARK_API_SCHEME)://$(MOTOPARK_API_HOST):$(MOTOPARK_API_PORT)</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Motopark uses the camera to document the vehicle at pickup and return.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Motopark lets you attach selected photos to vehicle and handover records.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -71,5 +52,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>MotoparkEnvironment</key>
+	<string>$(MOTOPARK_ENVIRONMENT)</string>
+	<key>CFBundleDisplayName</key>
+	<string>$(APP_NAME)</string>
 </dict>
 </plist>

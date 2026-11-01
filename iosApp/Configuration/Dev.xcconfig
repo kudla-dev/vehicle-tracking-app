@@ -1,0 +1,8 @@
+#include "Config.xcconfig"
+MOTOPARK_ENVIRONMENT=DEV
+BUNDLE_ID=cz.kudladev.vehicletracking.VehicleTracking
+APP_NAME=Motopark DEV
+MOTOPARK_API_SCHEME=http
+MOTOPARK_API_HOST=127.0.0.1
+MOTOPARK_API_PORT=8080
+#include? "Dev.local.xcconfig"

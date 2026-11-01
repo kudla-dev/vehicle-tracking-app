@@ -12,14 +12,14 @@ Use JDK 17, the checked-in Gradle wrapper, Android SDK platform 35 and Build Too
 # Homebrew paths on this development machine; adjust for your installation.
 export JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home
 export ANDROID_HOME=/opt/homebrew/share/android-commandlinetools
-bash ./gradlew :composeApp:assembleDebug :core:data:testDebugUnitTest :core:network:testDebugUnitTest :composeApp:lintDebug
+bash ./gradlew :composeApp:assembleDevDebug :core:datastore:testDebugUnitTest :core:data:testDebugUnitTest :core:network:testDebugUnitTest :composeApp:lintDevDebug
 ```
 
 On a new machine, install the SDK packages after accepting Google's SDK licenses.
 You can also point ignored `local.properties` at an existing SDK with `sdk.dir`.
 Do not commit machine-specific absolute SDK or JDK paths.
 
-The debug APK is generated at `composeApp/build/outputs/apk/debug/composeApp-debug.apk`.
+The debug APK is generated at `composeApp/build/outputs/apk/dev/debug/composeApp-dev-debug.apk`.
 Lint reports are in `composeApp/build/reports/`. A unit-test task reporting
 `NO-SOURCE` means no tests ran, not that behavior was tested.
 
@@ -27,7 +27,7 @@ Device installation is separate from building:
 
 ```sh
 adb devices -l
-bash ./gradlew :composeApp:installDebug
+bash ./gradlew :composeApp:installDevDebug
 adb shell am start -n cz.kudladev.vehicletracking/.MainActivity
 ```
 
@@ -37,50 +37,40 @@ Android defaults to `http://10.0.2.2:8080`, the host address seen by the Android
 emulator. Override it at build time for a device or another isolated backend:
 
 ```sh
-bash ./gradlew :composeApp:assembleDebug -Pmotopark.apiBaseUrl=http://192.168.1.20:8080
+bash ./gradlew :composeApp:assembleDevDebug -Pmotopark.apiBaseUrl=http://192.168.1.20:8080
 ```
 
-`composeApp` generates its `BuildConfig.API_BASE_URL` from this property and passes
-an immutable `AppConfig` to Koin. `core/network` receives the configuration and
-does not read platform settings itself. The
-debug variant permits HTTP to development hosts. Other variants retain the main
-network security configuration; configure the intended HTTPS origin before a
-hosted release. The defaults target local development. `NetworkConstants` is legacy code
-and is not the active configuration source.
+`composeApp` owns the `mock`, `dev`, `stage`, `prod` flavors. Feature modules
+remain flavor-free. DEV retains the previous application ID and development
+sandbox. Other environments have distinct IDs and visible names. A release build
+uses the environment of its flavor: use `prodRelease` for production packaging.
 
-iOS reads `MOTOPARK_API_BASE_URL` from the process environment first (for example
-an Xcode scheme variable). Otherwise it reads the `MotoparkAPIBaseURL` Info.plist
-entry, assembled from `MOTOPARK_API_SCHEME`, `MOTOPARK_API_HOST` and
-`MOTOPARK_API_PORT` in `Configuration/Config.xcconfig`. Defaults are
-`http`, `127.0.0.1`, `8080` for the simulator. Set a reachable host for a physical
-device. Process-variable changes apply on the next application launch.
+Stage/prod have **no default API**. Supply explicit HTTPS origins with
+`-Pmotopark.stage.apiBaseUrl=...` / `-Pmotopark.prod.apiBaseUrl=...`.
+`motopark.apiBaseUrl` remains a DEV-only compatibility alias;
+`motopark.dev.apiBaseUrl` takes precedence. Only DEV permits native cleartext.
+Mock starts an unavailable-transport notice, never application/network services;
+it is not yet a functional mock client. Android mock also has no INTERNET permission.
 
-Only an absolute HTTP(S) origin is accepted: no `/api` prefix, query, fragment,
-credentials or wildcard server address. Existing repository routes start at `/`.
-The HTTP client withholds API bearer tokens from foreign image hosts, including
-401 challenges and cross-origin redirects. Session persistence/refresh hardening
-remains separate work.
+In Xcode choose `Motopark-Dev`, `Motopark-Mock`, `Motopark-Stage` or `Motopark-Prod`.
+Each shared scheme uses separate Debug/Release configurations and xcconfig files.
+DEV keeps the old bundle ID. Set API SCHEME/HOST/PORT in an ignored
+`iosApp/Configuration/Stage.local.xcconfig` or `Prod.local.xcconfig`; both require
+explicit `https`, host and port. DEV alone defaults to `http`, `127.0.0.1`, `8080`.
+A process `MOTOPARK_API_BASE_URL` overrides the bundled origin at launch and passes
+the same validation and storage isolation. It cannot change the build environment.
 
-Use an isolated backend when verifying the app. A successful build does not
-establish device connectivity or complete API compatibility.
+Session/user preferences and upload journals/photos are isolated by environment
+and a SHA-256 of the canonical API origin (scheme, host, effective port). Returning
+to a previous origin restores only its own state. **Legacy unscoped data is retained
+but not adopted**, because its server cannot be established. Existing installations
+will need to sign in again. See [environment configuration and recovery details](docs/environment-config.md)
+for paths, test commands and native verification limits. Keychain is not used in
+this source tree; tokens currently remain in sandbox DataStore, not encrypted storage.
 
-### Environment configuration foundation
-
-The shared `AppConfig` models `MOCK`, `DEV`, `STAGE` and `PROD`. Every network
-environment requires an explicit, validated API origin. Stage and production
-require HTTPS, including image requests and redirects through the shared HTTP
-client. Mock has no remote API origin and cannot initialize the native network
-module; its dedicated transport is a separate upcoming step.
-
-Both platform hosts currently select **DEV** explicitly and preserve the existing
-API overrides and local defaults described above. No environment switch is exposed
-yet: Android flavors, iOS schemes, application IDs and storage isolation must be
-implemented together before enabling stage/prod/mock builds. A release build is
-therefore not yet a production environment. Do not reuse the current app's stored
-session or pending uploads by switching its origin to another environment.
-
-`AppConfigTest` covers required HTTPS, invalid origins, mock network rejection,
-DI configuration identity and blocking HTTP image requests/redirects before send.
+Only an absolute HTTP(S) origin is accepted: no path prefix, query, fragment,
+credentials or wildcard address. API bearer tokens are withheld from foreign image
+hosts and cross-origin redirects. No real stage/prod service is configured by this change.
 
 ## iOS
 

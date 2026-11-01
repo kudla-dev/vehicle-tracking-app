@@ -1,5 +1,6 @@
 package cz.kudladev.vehicletracking.core.data.images
 
+import cz.kudladev.vehicletracking.core.datastore.StorageScope
 import cz.kudladev.vehicletracking.core.data.images.upload.UploadRecord
 import cz.kudladev.vehicletracking.core.data.images.upload.UploadStore
 import kotlinx.cinterop.BetaInteropApi
@@ -20,11 +21,11 @@ import platform.Foundation.writeToFile
 import platform.posix.memcpy
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-internal class IosUploadStore : UploadStore {
+internal class IosUploadStore(scope: StorageScope) : UploadStore {
     private val files = NSFileManager.defaultManager
     private val directory = requireNotNull(files.URLForDirectory(
         NSApplicationSupportDirectory, NSUserDomainMask, null, true, null
-    )?.path) + "/image-uploads"
+    )?.path) + "/${scope.directory}/image-uploads"
     private val json = Json { ignoreUnknownKeys = true }
 
     init {

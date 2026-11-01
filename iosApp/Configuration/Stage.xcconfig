@@ -1,0 +1,8 @@
+#include "Config.xcconfig"
+MOTOPARK_ENVIRONMENT=STAGE
+BUNDLE_ID=cz.kudladev.vehicletracking.VehicleTracking.stage
+APP_NAME=Motopark STAGE
+MOTOPARK_API_SCHEME=
+MOTOPARK_API_HOST=
+MOTOPARK_API_PORT=
+#include? "Stage.local.xcconfig"

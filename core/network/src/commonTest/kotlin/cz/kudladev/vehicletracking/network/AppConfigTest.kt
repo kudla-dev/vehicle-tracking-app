@@ -14,6 +14,40 @@ import org.koin.dsl.koinApplication
 import kotlin.test.*
 
 class AppConfigTest {
+    @Test fun storageSeparatesEnvironmentSchemeHostAndPort() {
+        val configs = listOf(
+            AppConfig.create(AppEnvironment.DEV, "https://api.example.invalid"),
+            AppConfig.create(AppEnvironment.STAGE, "https://api.example.invalid"),
+            AppConfig.create(AppEnvironment.PROD, "https://api.example.invalid"),
+            AppConfig.create(AppEnvironment.MOCK),
+            AppConfig.create(AppEnvironment.DEV, "http://api.example.invalid"),
+            AppConfig.create(AppEnvironment.DEV, "https://other.example.invalid"),
+            AppConfig.create(AppEnvironment.DEV, "https://api.example.invalid:8443"),
+        )
+        assertEquals(configs.size, configs.map { it.storageScope.key }.toSet().size)
+        configs.forEach { config ->
+            assertTrue(config.storageScope.key.matches(Regex("v1-[a-z]+-[a-f0-9]{64}")))
+        }
+    }
+
+    @Test fun equivalentOriginsRecoverTheSameStorage() {
+        val original = AppConfig.create(AppEnvironment.DEV, "https://api.example.invalid")
+        val relaunched = AppConfig.create(AppEnvironment.DEV, "https://API.EXAMPLE.INVALID:443/")
+        assertEquals(original.storageScope.key, relaunched.storageScope.key)
+        val other = AppConfig.create(AppEnvironment.DEV, "https://other.example.invalid")
+        assertNotEquals(original.storageScope.key, other.storageScope.key)
+        assertEquals(original.storageScope.key,
+            AppConfig.create(AppEnvironment.DEV, "https://api.example.invalid/").storageScope.key)
+    }
+
+    @Test fun workFromLegacyOrAnotherOriginIsRejected() {
+        val current = AppConfig.create(AppEnvironment.DEV, "https://a.example.invalid").storageScope
+        val other = AppConfig.create(AppEnvironment.DEV, "https://b.example.invalid").storageScope
+        assertFalse(current.acceptsWorker(null))
+        assertFalse(current.acceptsWorker(other.key))
+        assertTrue(current.acceptsWorker(current.key))
+    }
+
     @Test fun hostedEnvironmentsRequireExplicitHttpsOrigin() {
         for (environment in listOf(AppEnvironment.STAGE, AppEnvironment.PROD)) {
             for (url in listOf(null, "", " ", "http://localhost:8080", "http://api.example.invalid")) {
@@ -47,6 +81,7 @@ class AppConfigTest {
         try {
             assertSame(config, application.koin.get<AppConfig>())
             assertSame(config.api, application.koin.get<ApiConfig>())
+            assertSame(config.storageScope, application.koin.get<cz.kudladev.vehicletracking.core.datastore.StorageScope>())
         } finally { application.close() }
     }
 

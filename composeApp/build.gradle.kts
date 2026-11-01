@@ -1,4 +1,4 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import java.net.URI
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -105,16 +105,48 @@ android {
     buildFeatures { buildConfig = true }
 
     defaultConfig {
-        val apiUrl = providers.gradleProperty("motopark.apiBaseUrl").orElse("http://10.0.2.2:8080").get()
-        require(apiUrl.none { it == '\n' || it == '\r' }) { "Invalid API URL" }
-        val quoted = "\"" + apiUrl.replace("\\", "\\\\").replace("\"", "\\\"") + "\""
-        buildConfigField("String", "API_BASE_URL", quoted)
-
         applicationId = "cz.kudladev.vehicletracking"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+    }
+    flavorDimensions += "environment"
+    productFlavors {
+        listOf("mock", "dev", "stage", "prod").forEach { environment ->
+            create(environment) {
+                dimension = "environment"
+                // DEV retains the existing sandbox; all other installs are separate.
+                if (environment != "dev") applicationIdSuffix = ".$environment"
+                resValue("string", "app_name", if (environment == "prod") "Motopark" else "Motopark ${environment.uppercase()}")
+                buildConfigField("String", "APP_ENVIRONMENT", "\"${environment.uppercase()}\"")
+                val apiUrl = when (environment) {
+                    "mock" -> ""
+                    "dev" -> providers.gradleProperty("motopark.dev.apiBaseUrl")
+                        .orElse(providers.gradleProperty("motopark.apiBaseUrl"))
+                        .orElse("http://10.0.2.2:8080").get()
+                    else -> providers.gradleProperty("motopark.$environment.apiBaseUrl").orElse("").get()
+                }
+                require(apiUrl.none { it.code < 32 }) { "Invalid API URL" }
+                val quoted = "\"" + apiUrl.replace("\\", "\\\\").replace("\"", "\\\"") + "\""
+                buildConfigField("String", "API_BASE_URL", quoted)
+                if (environment in listOf("stage", "prod")) {
+                    // Validate only selected variants; DEV/tests need no hosted service configuration.
+                    tasks.configureEach {
+                        if (name.matches(Regex("pre${environment.replaceFirstChar { it.uppercase() }}(Debug|Release)Build"))) {
+                            doFirst {
+                                val uri = URI(apiUrl)
+                                require(uri.scheme == "https" && !uri.host.isNullOrBlank() &&
+                                    uri.rawUserInfo == null && uri.rawQuery == null && uri.rawFragment == null &&
+                                    uri.rawPath in listOf("", "/") && uri.port in -1..65535 && uri.port != 0) {
+                                    "Supply explicit HTTPS origin with -Pmotopark.$environment.apiBaseUrl=..."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     packaging {
         resources {

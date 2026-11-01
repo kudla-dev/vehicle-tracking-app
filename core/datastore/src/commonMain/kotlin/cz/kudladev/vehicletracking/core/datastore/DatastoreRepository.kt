@@ -12,10 +12,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 
 class DataStoreRepository(
-    context: AppContext
+    context: AppContext,
+    scope: StorageScope
 ) {
 
-    private val dataStore: DataStore<Preferences> = createDataStore(context)
+    private val dataStore: DataStore<Preferences> = createDataStore(context, scope)
 
     companion object {
         val ACCESS_TOKEN = stringPreferencesKey(name = "access_token")

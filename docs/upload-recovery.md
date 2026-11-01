@@ -58,7 +58,7 @@ legacy originál. Původní přepsané nebo již ztracené soubory obnovit nelze
 Příkaz (JDK 17 / Android SDK 35 podle klientského README):
 
 ```sh
-bash ./gradlew :core:data:testDebugUnitTest :composeApp:compileKotlinIosSimulatorArm64 :composeApp:assembleDebug :composeApp:lintDebug --console=plain
+bash ./gradlew :core:data:testDebugUnitTest :composeApp:compileKotlinIosSimulatorArm64 :composeApp:assembleDevDebug :composeApp:lintDevDebug --console=plain
 ```
 
 - `core/data`: 31 testů, 0 failures/errors. Z toho fronta 15 a upload transport 10.

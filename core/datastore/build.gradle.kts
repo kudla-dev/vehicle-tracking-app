@@ -28,6 +28,10 @@ kotlin {
     }
 
     sourceSets {
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
+        }
         commonMain.dependencies {
             plugins.apply(libs.plugins.jetbrains.kotlin.serialization.get().pluginId)
 

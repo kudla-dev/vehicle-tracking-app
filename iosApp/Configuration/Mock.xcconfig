@@ -1,0 +1,8 @@
+#include "Config.xcconfig"
+MOTOPARK_ENVIRONMENT=MOCK
+BUNDLE_ID=cz.kudladev.vehicletracking.VehicleTracking.mock
+APP_NAME=Motopark MOCK
+MOTOPARK_API_SCHEME=
+MOTOPARK_API_HOST=
+MOTOPARK_API_PORT=
+#include? "Mock.local.xcconfig"

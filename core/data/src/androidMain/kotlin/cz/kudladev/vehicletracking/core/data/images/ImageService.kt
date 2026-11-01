@@ -4,21 +4,22 @@ import android.content.Context
 import androidx.work.*
 import cz.kudladev.vehicletracking.core.data.images.upload.*
 import cz.kudladev.vehicletracking.model.ImageUploadState
+import cz.kudladev.vehicletracking.core.datastore.StorageScope
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.util.UUID
 
-actual class ImageService(context: Context, httpClient: HttpClient) {
+actual class ImageService(context: Context, httpClient: HttpClient, private val storageScope: StorageScope) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val manager = WorkManager.getInstance(context)
-    private val store = AndroidUploadStore(context)
+    private val store = AndroidUploadStore(context, storageScope)
     private val client = ImageUploadClient(httpClient)
     private val queue = PersistentUploadQueue(store, scope, schedule = { id ->
-        manager.enqueueUniqueWork("upload-$id", ExistingWorkPolicy.REPLACE,
+        manager.enqueueUniqueWork("${storageScope.key}-upload-$id", ExistingWorkPolicy.REPLACE,
             OneTimeWorkRequestBuilder<DurableImageWorker>()
                 .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
-                .setInputData(workDataOf("uploadId" to id)).addTag("image_upload").build())
+                .setInputData(workDataOf("uploadId" to id, "storageScope" to storageScope.key)).addTag("image_upload").build())
     }, prepare = client::snapshotIds) { record, bytes ->
         when {
             record.sourceUrl != null -> client.vehicleUrl(record.sourceUrl, requireNotNull(record.vehicleId), record.position, record.id)
@@ -46,7 +47,7 @@ actual class ImageService(context: Context, httpClient: HttpClient) {
             trackingState = state, position = position), imageData)
     }
     actual fun cancelUpload(uploadId: String) {
-        manager.cancelUniqueWork("upload-$uploadId")
+        manager.cancelUniqueWork("${storageScope.key}-upload-$uploadId")
         scope.launch(start = CoroutineStart.UNDISPATCHED) { queue.cancel(uploadId) }
     }
     actual fun clearUploadStatus() {
@@ -64,7 +65,10 @@ actual class ImageService(context: Context, httpClient: HttpClient) {
     actual fun getUploadStatusByTag(tag: String): Flow<List<ImageUploadState>> = queue.snapshots.map { snapshots ->
         snapshots.filter { tag.isEmpty() || it.record.tag == tag || (tag == "image_upload" && it.record.vehicleId != null) }.sortedBy { it.record.position }.map { it.imageState() }
     }
-    internal suspend fun process(id: String) = queue.process(id)
+    internal suspend fun process(id: String, workerScope: String?) {
+        // WorkManager survives APK updates. Old/foreign work must never use the current client.
+        if (storageScope.acceptsWorker(workerScope)) queue.process(id)
+    }
     internal fun close() { scope.cancel() }
     private fun id() = UUID.randomUUID().toString()
 }
@@ -73,8 +77,10 @@ class DurableImageWorker(context: Context, parameters: WorkerParameters) : Corou
     org.koin.core.component.KoinComponent {
     override suspend fun doWork(): Result {
         val id = inputData.getString("uploadId") ?: return Result.failure()
+        val workerScope = inputData.getString("storageScope")
+        if (!getKoin().get<StorageScope>().acceptsWorker(workerScope)) return Result.success()
         val service = getKoin().get<ImageService>()
-        service.process(id)
+        service.process(id, workerScope)
         // Business failures are durable in the journal; never ask WorkManager to replay a POST.
         return Result.success()
     }

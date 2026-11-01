@@ -1,5 +1,7 @@
 package cz.kudladev.vehicletracking.network
 
+import cz.kudladev.vehicletracking.core.datastore.StorageScope
+
 enum class AppEnvironment {
     MOCK, DEV, STAGE, PROD
 }
@@ -9,6 +11,11 @@ class AppConfig private constructor(
     val environment: AppEnvironment,
     val api: ApiConfig?,
 ) {
+    // Normalize default ports, host case and trailing slash before deriving the namespace.
+    val storageScope = StorageScope(environment.name.lowercase(), api?.let {
+        "${it.url.protocol.name}://${it.url.host.lowercase()}:${it.url.port}"
+    } ?: "offline")
+
     fun requireNetworkApi(): ApiConfig = checkNotNull(api) {
         "Mock requires a dedicated transport; a real network engine is not allowed"
     }

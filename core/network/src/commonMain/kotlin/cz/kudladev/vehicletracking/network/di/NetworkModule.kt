@@ -18,6 +18,7 @@ fun networkModule(config: AppConfig): Module {
         includes(platformNetworkModule)
 
         single { config }
+        single { config.storageScope }
         single { api }
 
         singleOf(::HttpClientFactory)

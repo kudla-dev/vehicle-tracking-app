@@ -5,6 +5,7 @@ import cz.kudladev.vehicletracking.core.data.images.upload.PersistentUploadQueue
 import cz.kudladev.vehicletracking.core.data.images.upload.uploadError
 import cz.kudladev.vehicletracking.core.data.images.upload.UploadRecord
 import cz.kudladev.vehicletracking.model.ImageUploadState
+import cz.kudladev.vehicletracking.core.datastore.StorageScope
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,11 +21,11 @@ import platform.Foundation.NSUUID
 import cz.kudladev.vehicletracking.core.data.images.upload.*
 
 /** Application-lifetime transfers; records/photos survive suspension and relaunch. */
-actual class ImageService(httpClient: HttpClient) {
+actual class ImageService(httpClient: HttpClient, storageScope: StorageScope) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val client = ImageUploadClient(httpClient)
     private val pendingClear = MutableStateFlow<Job?>(null)
-    private val store = IosUploadStore()
+    private val store = IosUploadStore(storageScope)
     private val queue = PersistentUploadQueue(store, scope, prepare = client::snapshotIds) { record, bytes ->
         when {
             record.sourceUrl != null -> client.vehicleUrl(record.sourceUrl, requireNotNull(record.vehicleId), record.position, record.id)

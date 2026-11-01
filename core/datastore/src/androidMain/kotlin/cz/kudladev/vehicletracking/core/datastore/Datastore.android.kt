@@ -3,7 +3,7 @@ package cz.kudladev.vehicletracking.core.datastore
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-actual fun createDataStore(context: Any?): DataStore<Preferences> {
+actual fun createDataStore(context: Any?, scope: StorageScope): DataStore<Preferences> {
     try {
         require(
             value = context is AppContext,
@@ -14,6 +14,7 @@ actual fun createDataStore(context: Any?): DataStore<Preferences> {
         return AppSetting.getDataStore(
             producePath = {
                 appContext.filesDir
+                    .resolve(scope.directory).apply { check(isDirectory || mkdirs()) }
                     .resolve(dataStoreFileName)
                     .absolutePath
             }
