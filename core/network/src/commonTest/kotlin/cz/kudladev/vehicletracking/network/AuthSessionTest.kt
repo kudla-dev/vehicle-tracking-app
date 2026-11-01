@@ -68,6 +68,25 @@ class AuthSessionTest {
     }
 
     @Test
+    fun accountSwitchAndLogoutUseCurrentSessionOnSameClient() = runTest {
+        val session = FakeSessionManager(accessToken = "user", refreshToken = "user-refresh")
+        val headers = mutableListOf<String?>()
+        val client = HttpClientFactory(session, ApiConfig("https://api.example.com")).create(MockEngine { request ->
+            headers += request.headers[HttpHeaders.Authorization]
+            respond("ok")
+        })
+        try {
+            client.get("/auth")
+            session.clearSession()
+            client.get("/public")
+            session.accessToken = "admin"
+            session.refreshToken = "admin-refresh"
+            client.get("/auth")
+            assertEquals(listOf("Bearer user", null, "Bearer admin"), headers)
+        } finally { client.close() }
+    }
+
+    @Test
     fun authenticatedSession_sendsBearerHeader() = runTest {
         val session = FakeSessionManager(accessToken = "valid-token", refreshToken = "valid-refresh")
         val requests = mutableListOf<String?>()

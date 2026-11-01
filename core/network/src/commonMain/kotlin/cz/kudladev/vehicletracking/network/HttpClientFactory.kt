@@ -3,6 +3,9 @@ package cz.kudladev.vehicletracking.network
 import io.ktor.client.*
 import io.ktor.client.engine.*
 import io.ktor.client.plugins.*
+import io.ktor.client.plugins.api.createClientPlugin
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -17,6 +20,8 @@ class HttpClientFactory(
 ) {
 
     fun create(httpClientEngine: HttpClientEngine): HttpClient {
+        val sessionLock = Mutex()
+        var observedTokens: Pair<String?, String?>? = null
         return HttpClient(httpClientEngine) {
             apiEndpoint(apiConfig)
 
@@ -37,6 +42,20 @@ class HttpClientFactory(
                 sanitizeHeader { it == HttpHeaders.Authorization }
                 level = LogLevel.INFO
             }
+            // BearerAuthProvider caches credentials independently of DataStore. Invalidate
+            // before Auth adds headers when login/logout changes the current account.
+            install(createClientPlugin("CurrentSession") {
+                val sessionClient = client
+                onRequest { _, _ ->
+                    sessionLock.withLock {
+                        val current = sessionManager.loadTokens()
+                        if (current != observedTokens) {
+                            sessionClient.authProvider<BearerAuthProvider>()?.clearToken()
+                            observedTokens = current
+                        }
+                    }
+                }
+            })
             install(Auth) {
                 bearer {
                     sendWithoutRequest { apiConfig.contains(it.url.build()) }
