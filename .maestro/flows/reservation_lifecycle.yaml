@@ -21,37 +21,57 @@ appId: ${APP_ID}
 # 3. Assert detail and calendar components
 - assertVisible:
     id: "vehicle_detail:title"
+- scrollUntilVisible:
+    element:
+      id: "calendar:date:2026-11-03"
+    direction: DOWN
 - assertVisible:
-    id: "vehicle_detail:calendar"
+    id: "calendar:date:2026-11-03"
 
 # 4. Select deterministic reservation dates (Mock now = 2026-11-02T08:00:00Z)
 - tapOn:
     id: "calendar:date:2026-11-03"
+- scrollUntilVisible:
+    element:
+      id: "calendar:select_start_time"
+    direction: DOWN
 - tapOn:
     id: "calendar:select_start_time"
 - tapOn:
-    id: "calendar:time_slot:09:00"
+    text: "09:00"
 
+- scrollUntilVisible:
+    element:
+      id: "calendar:date:2026-11-03"
+    direction: UP
 - tapOn:
     id: "calendar:date:2026-11-03"
+- scrollUntilVisible:
+    element:
+      id: "calendar:select_end_time"
+    direction: DOWN
 - tapOn:
     id: "calendar:select_end_time"
 - tapOn:
-    id: "calendar:time_slot:11:00"
+    text: "11:00"
 
 # 5. Reserve vehicle
+- scrollUntilVisible:
+    element:
+      id: "vehicle_detail:reserve_button"
+    direction: DOWN
 - assertVisible:
     id: "vehicle_detail:reserve_button"
 - tapOn:
     id: "vehicle_detail:reserve_button"
 
 # 6. Verify tracking screen
-- tapOn:
-    id: "vehicle_detail:back_button"
-- tapOn:
-    id: "nav:bottom_bar:tracking"
 - assertVisible:
-    id: "nav:bottom_bar"
+    id: "tracking:vehicle_header"
+- assertVisible:
+    id: "tracking:current_state"
+- assertNotVisible:
+    text: "Tracking created successfully"
 
 # 7. Logout
 - runFlow:

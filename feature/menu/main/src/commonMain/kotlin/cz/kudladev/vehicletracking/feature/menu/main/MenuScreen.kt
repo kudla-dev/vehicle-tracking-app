@@ -10,6 +10,9 @@ import androidx.compose.material.icons.twotone.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -44,6 +47,7 @@ fun MenuScreenRoot(
     onNonStartedTrackings: () -> Unit,
     onNewRequestsTrackings: () -> Unit,
     onTrackingHistory: () -> Unit,
+    onLogout: () -> Unit = {},
 ) {
     val user = userStateHolder.user.collectAsStateWithLifecycle().value
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -61,6 +65,7 @@ fun MenuScreenRoot(
         onTrackingHistory = onTrackingHistory,
         onLogout = {
             viewModel.onAction(MenuScreenAction.Logout)
+            onLogout()
         }
     )
 }
@@ -81,6 +86,10 @@ private fun MenuScreen(
     onLogout: () -> Unit,
 ) {
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    var lastUser by remember { mutableStateOf(user) }
+    if (user != null) {
+        lastUser = user
+    }
 
     Scaffold(
         modifier = Modifier
@@ -115,39 +124,42 @@ private fun MenuScreen(
         AnimatedVisibility(
             visible = user != null,
         ){
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentPadding = padding,
-            ) {
-                item {
-                    UserCard(
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .testTag("menu:user_card"),
-                        user = user!!,
-                        onClick = {
+            val currentUser = user ?: lastUser
+            if (currentUser != null) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentPadding = padding,
+                ) {
+                    item {
+                        UserCard(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .testTag("menu:user_card"),
+                            user = currentUser,
+                            onClick = {
 
-                        }
-                    )
+                            }
+                        )
+                    }
+                    if (currentUser.role == Role.ADMIN){
+                        adminSection(
+                            onManageVehicles = onManageVehicles,
+                            onAdminSettings = onAdminSettings,
+                            onTrackingHistory = onTrackingHistory,
+                        )
+                    }
+                    if (currentUser.role == Role.ADMIN){
+                        trackingSection(
+                            state = state,
+                            onActiveTrackings = onActiveTrackings,
+                            onNonStartedTrackings= onNonStartedTrackings,
+                            onNewRequestsTrackings = onNewRequestsTrackings
+                        )
+                    }
+                    accountSection(onLogout = onLogout)
+                    versionSection()
                 }
-                if (user!!.role == Role.ADMIN){
-                    adminSection(
-                        onManageVehicles = onManageVehicles,
-                        onAdminSettings = onAdminSettings,
-                        onTrackingHistory = onTrackingHistory,
-                    )
-                }
-                if (user!!.role == Role.ADMIN){
-                    trackingSection(
-                        state = state,
-                        onActiveTrackings = onActiveTrackings,
-                        onNonStartedTrackings= onNonStartedTrackings,
-                        onNewRequestsTrackings = onNewRequestsTrackings
-                    )
-                }
-                accountSection(onLogout = onLogout)
-                versionSection()
             }
         }
     }

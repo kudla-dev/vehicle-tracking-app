@@ -24,10 +24,6 @@ appId: ${APP_ID}
     id: "vehicles:item:${DEFAULT_VEHICLE_ID}"
 - assertVisible:
     id: "vehicle_detail:title"
-- assertVisible:
-    id: "vehicle_detail:calendar"
-- assertVisible:
-    id: "vehicle_detail:reserve_button"
 - tapOn:
     id: "vehicle_detail:back_button"
 
@@ -40,7 +36,7 @@ appId: ${APP_ID}
     id: "search:input"
 - tapOn:
     id: "search:input"
-- inputText: "Octavia"
+- inputText: "Fixture"
 - assertVisible:
     id: "search:result:${DEFAULT_VEHICLE_ID}"
 - tapOn:

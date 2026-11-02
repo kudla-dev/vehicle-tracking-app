@@ -116,8 +116,7 @@ fun BottomBar(
                     elevation = 16.dp
                 ),
             containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-            scrollBehavior = appState.bottomAppBarScrollBehavior
+            contentColor = MaterialTheme.colorScheme.onSurface
         ) {
             BottomBarDestinations.entries.forEach { destination ->
                 val isSelected = selectedRoutes[destination] ?: false

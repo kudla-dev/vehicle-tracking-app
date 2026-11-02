@@ -15,12 +15,16 @@ appId: ${APP_ID}
     id: "nav:bottom_bar:menu"
 - assertVisible:
     id: "menu:user_card"
+- scrollUntilVisible:
+    element:
+      id: "menu:admin_trackings_new_requests"
+    direction: DOWN
 - assertVisible:
-    id: "menu:admin_trackings_pending"
+    id: "menu:admin_trackings_new_requests"
 
 # 3. Open Pending Trackings List
 - tapOn:
-    id: "menu:admin_trackings_pending"
+    id: "menu:admin_trackings_new_requests"
 - assertVisible:
     id: "admin:trackings_back_button"
 
@@ -32,7 +36,7 @@ appId: ${APP_ID}
 
 # 5. Open Approved Trackings List
 - tapOn:
-    id: "menu:admin_trackings_approved"
+    id: "menu:admin_trackings_ready_to_start"
 - assertVisible:
     id: "admin:trackings_back_button"
 - tapOn:

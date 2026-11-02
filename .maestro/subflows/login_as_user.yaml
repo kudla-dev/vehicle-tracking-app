@@ -15,3 +15,5 @@ appId: ${APP_ID}
     id: "auth:login_submit_button"
 - assertVisible:
     id: "nav:bottom_bar:vehicles"
+- tapOn:
+    id: "nav:bottom_bar:vehicles"

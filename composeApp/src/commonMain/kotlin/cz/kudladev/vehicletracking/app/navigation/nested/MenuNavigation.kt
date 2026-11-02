@@ -7,6 +7,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import cz.kudladev.vehicletracking.app.AppState
+import cz.kudladev.vehicletracking.app.navigation.core.CoreRoot
+import cz.kudladev.vehicletracking.feature.onboarding.welcome.Welcome
 import cz.kudladev.vehicletracking.app.navigation.core.sharedKoinViewModel
 import cz.kudladev.vehicletracking.feature.favourite.Favourites
 import cz.kudladev.vehicletracking.feature.favourite.FavouritesScreenRoot
@@ -59,6 +61,13 @@ fun MenuNavigation(
             MenuScreenRoot(
                 paddingValues = appState.paddingValues,
                 bottomAppBarScrollBehavior = appState.bottomAppBarScrollBehavior,
+                onLogout = {
+                    appState.coreNavController.navigate(Welcome) {
+                        popUpTo(CoreRoot) {
+                            inclusive = true
+                        }
+                    }
+                },
                 onAdminSettings = {
                     navController.navigate(AdminSettings)
                 },

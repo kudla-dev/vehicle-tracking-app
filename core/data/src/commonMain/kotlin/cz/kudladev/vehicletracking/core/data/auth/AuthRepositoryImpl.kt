@@ -15,6 +15,8 @@ import cz.kudladev.vehicletracking.network.safeCall
 import io.ktor.client.HttpClient
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withContext
 
 class AuthRepositoryImpl(
     private val httpClient: HttpClient,
@@ -89,8 +91,8 @@ class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun logout(): Result<Boolean, ErrorMessage> {
-        return try {
+    override suspend fun logout(): Result<Boolean, ErrorMessage> = withContext(NonCancellable) {
+        try {
             safeCall<Boolean> {
                 httpClient.post("/auth/logout")
             }

@@ -4,6 +4,13 @@ appId: ${APP_ID}
 - tapOn:
     id: "nav:bottom_bar:menu"
 - assertVisible:
+    id: "menu:user_card"
+- scrollUntilVisible:
+    element:
+      id: "menu:logout_button"
+    direction: DOWN
+    centerElement: true
+- assertVisible:
     id: "menu:logout_button"
 - tapOn:
     id: "menu:logout_button"

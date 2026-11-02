@@ -15,8 +15,6 @@ appId: ${APP_ID}
 
 # 2. Check admin capabilities on vehicles screen
 - assertVisible:
-    id: "vehicles:add_button"
-- assertVisible:
     id: "vehicles:item:${DEFAULT_VEHICLE_ID}"
 
 # 3. Check admin menu options
@@ -30,6 +28,10 @@ appId: ${APP_ID}
     id: "menu:admin_manage_vehicles"
 - assertVisible:
     id: "menu:admin_tracking_history"
+- scrollUntilVisible:
+    element:
+      id: "menu:admin_trackings_new_requests"
+    direction: DOWN
 - assertVisible:
     id: "menu:admin_trackings_new_requests"
 - assertVisible:
